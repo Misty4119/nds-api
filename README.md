@@ -494,6 +494,58 @@ public class ShopPlugin {
 
 ---
 
+## 📦 Dependency Setup
+
+Before you start using NDS API, you need to configure dependencies in your project.
+
+### 1. Gradle (Kotlin DSL) - Recommended
+
+```kotlin
+repositories {
+    // NDS Protocol Layer Repository
+    maven("https://repo.repsy.io/mvn/linmimeng/releases")
+}
+
+dependencies {
+    // Use compileOnly because NDS will provide this API at runtime
+    compileOnly("noie.linmimeng:noiedigitalsystem-api:2.0.0")
+}
+```
+
+### 2. Gradle (Groovy DSL)
+
+```groovy
+repositories {
+    maven { url 'https://repo.repsy.io/mvn/linmimeng/releases' }
+}
+
+dependencies {
+    compileOnly 'noie.linmimeng:noiedigitalsystem-api:2.0.0'
+}
+```
+
+### 3. Maven
+
+```xml
+<repositories>
+    <repository>
+        <id>nds-repo</id>
+        <url>https://repo.repsy.io/mvn/linmimeng/releases</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>noie.linmimeng</groupId>
+        <artifactId>noiedigitalsystem-api</artifactId>
+        <version>2.0.0</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+---
+
 ## 🚀 Quick Start
 
 ### Getting API Instance

@@ -494,6 +494,58 @@ public class ShopPlugin {
 
 ---
 
+## 📦 依賴設置（Dependency Setup）
+
+在開始使用 NDS API 之前，您需要在專案中配置依賴。
+
+### 1. Gradle (Kotlin DSL) - 推薦
+
+```kotlin
+repositories {
+    // NDS Protocol Layer Repository
+    maven("https://repo.repsy.io/mvn/linmimeng/releases")
+}
+
+dependencies {
+    // 使用 compileOnly 因為 NDS 在伺服器運行時會提供此 API
+    compileOnly("noie.linmimeng:noiedigitalsystem-api:2.0.0")
+}
+```
+
+### 2. Gradle (Groovy DSL)
+
+```groovy
+repositories {
+    maven { url 'https://repo.repsy.io/mvn/linmimeng/releases' }
+}
+
+dependencies {
+    compileOnly 'noie.linmimeng:noiedigitalsystem-api:2.0.0'
+}
+```
+
+### 3. Maven
+
+```xml
+<repositories>
+    <repository>
+        <id>nds-repo</id>
+        <url>https://repo.repsy.io/mvn/linmimeng/releases</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>noie.linmimeng</groupId>
+        <artifactId>noiedigitalsystem-api</artifactId>
+        <version>2.0.0</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+---
+
 ## 🚀 快速開始
 
 ### 取得 API 實例
