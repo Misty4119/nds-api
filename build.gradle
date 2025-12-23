@@ -33,6 +33,13 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:24.0.0'
 }
 
+// 生成源碼和文檔 JAR（方便其他開發者查看源碼）
+java {
+    withSourcesJar()
+    // 暫時跳過 JavaDoc 生成（有警告但不影響發布）
+    // withJavadocJar()
+}
+
 // 發布設定 (Repsy)
 publishing {
     publications {
@@ -45,8 +52,22 @@ publishing {
             // 生成的 POM 資訊 (讓使用者知道這是什麼)
             pom {
                 name = 'NoieDigitalSystem API'
-                description = 'The Protocol Layer for NoieDigitalSystem (NDS)'
+                description = 'The Protocol Layer for NoieDigitalSystem (NDS) - Next-Generation Economy Protocol'
                 url = 'https://github.com/Misty4119/nds-docs'
+                
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id = 'linmimeng'
+                        name = 'LinMimeng'
+                    }
+                }
             }
         }
     }
@@ -54,7 +75,6 @@ publishing {
     // 設定上傳目標：Repsy.io
     repositories {
         maven {
-            // ⚠️ 請修改：將 USERNAME 換成你的 Repsy 帳號
             url = uri("https://repo.repsy.io/mvn/linmimeng/releases")
             credentials {
                 // 從 gradle.properties 讀取帳密 (最安全)
@@ -69,4 +89,27 @@ publishing {
 // 設定編碼為 UTF-8，避免中文註解亂碼
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    // 啟用所有警告
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-processing']
+}
+
+// 發布前驗證任務
+tasks.named('publish') {
+    dependsOn 'build'
+    doFirst {
+        // 檢查版本號格式
+        if (!project.version.matches(/^\d+\.\d+\.\d+$/)) {
+            throw new GradleException("版本號格式錯誤：${project.version}，應為 MAJOR.MINOR.PATCH 格式")
+        }
+        
+        // 檢查認證信息
+        def username = project.findProperty("repsyUsername") ?: System.getenv("REPSY_USERNAME")
+        def password = project.findProperty("repsyPassword") ?: System.getenv("REPSY_PASSWORD")
+        
+        if (!username || !password) {
+            throw new GradleException("缺少 Repsy 認證信息！請在 gradle.properties 中設置 repsyUsername 和 repsyPassword，或設置環境變數 REPSY_USERNAME 和 REPSY_PASSWORD")
+        }
+        
+        println "準備發布 ${project.group}:${project.findProperty('artifactId') ?: 'noiedigitalsystem-api'}:${project.version}"
+    }
 }

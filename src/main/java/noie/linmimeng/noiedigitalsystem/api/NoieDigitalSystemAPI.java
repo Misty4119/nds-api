@@ -14,9 +14,9 @@ import java.util.concurrent.CompletableFuture;
  * <p><b>核心定位：協議層（Protocol Layer），非功能層</b></p>
  * 
  * <p>NDS 不是另一個經濟插件，而是 Minecraft 生態中的「經濟/狀態協議層」。
- * 就像 HTTP 對 Web、JDBC 對資料庫，NDS 提供統一的狀態管理協議。</p>
+ * 就像 HTTP 對 Web、JDBC 對資料庫，NDS 提供統一的狀態管理協議。</p> 
  * 
- * <h3>設計原則：</h3>
+ * <h2>設計原則：</h2>
  * <ul>
  *   <li><b>單一真相來源（Single Source of Truth）</b>：所有經濟狀態由 NDS 管理</li>
  *   <li><b>非同步優先（Async-first）</b>：所有操作返回 CompletableFuture，禁止阻塞</li>
@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
  *   <li><b>安全與一致性</b>：BigDecimal 精度、交易原子性、跨服同步</li>
  * </ul>
  * 
- * <h3>使用範例：</h3>
+ * <h2>使用範例：</h2>
  * <pre>{@code
  * // 取得 API 實例
  * Plugin ndsPlugin = getServer().getPluginManager().getPlugin("NoieDigitalSystem");
