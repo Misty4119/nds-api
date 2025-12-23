@@ -38,7 +38,7 @@ buildNumber.properties
 .flattened-pom.xml
 .bat
 .sh
-.properties
+gradle.properties
 .gradle
 .gitignore
 # ============================================
