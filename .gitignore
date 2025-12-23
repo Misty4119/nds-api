@@ -13,10 +13,13 @@ run/
 *.ipr
 *.iws
 Report/
+
 # VS Code
 .vscode/
-build.gradle
-.gitignore
+
+# Cursor
+.cursor/
+
 # ============================================
 # 構建工具
 # ============================================
@@ -24,10 +27,9 @@ build.gradle
 .gradle/
 build/
 */build/
-.sh
-.bat
+gradle/
 
-# Maven
+# Maven (如果使用)
 target/
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
@@ -39,18 +41,19 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .flattened-pom.xml
-.bat
-.sh
+
+# ============================================
+# 敏感配置文件（包含憑證信息）
+# ============================================
 gradle.properties
-.gradle
-.gitignore
+
 # ============================================
 # 編譯和構建輸出
 # ============================================
 # Java 編譯文件
 *.class
-.cursor/
-# 打包文件
+
+# 打包文件（構建產物）
 *.jar
 *.war
 *.nar
@@ -58,16 +61,12 @@ gradle.properties
 *.zip
 *.tar.gz
 *.rar
-# 構建輸出目錄
-# 1. 先忽略所有的 .md 檔案
-*.md
 
-# 2. 使用 ! 設定例外，將 README.md 排除在忽略名單之外（即保留它）
-!README.md
-scripts/
+# 構建輸出目錄
 out/
 nds-docs/
-gradle/
+scripts/
+
 # ============================================
 # 前端構建輸出
 # ============================================
@@ -76,6 +75,7 @@ nds-web/node_modules/
 nds-web/.vite/
 node_modules/
 images/
+
 # ============================================
 # 日誌和臨時文件
 # ============================================
@@ -89,6 +89,10 @@ hs_err_pid*
 
 # BlueJ
 *.ctxt
+
+# Shell 腳本（如果只是臨時腳本）
+*.sh
+*.bat
 
 # ============================================
 # 操作系統文件
