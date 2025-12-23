@@ -23,6 +23,8 @@ Report/
 .gradle/
 build/
 */build/
+.sh
+.bat
 
 # Maven
 target/
