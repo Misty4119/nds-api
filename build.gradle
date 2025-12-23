@@ -99,7 +99,7 @@ tasks.named('publish') {
     doFirst {
         // 檢查版本號格式
         if (!project.version.matches(/^\d+\.\d+\.\d+$/)) {
-            throw new GradleException("版本號格式錯誤：${project.version}，應為 MAJOR.MINOR.PATCH 格式")
+            throw new RuntimeException("版本號格式錯誤：${project.version}，應為 MAJOR.MINOR.PATCH 格式")
         }
         
         // 檢查認證信息
@@ -107,9 +107,9 @@ tasks.named('publish') {
         def password = project.findProperty("repsyPassword") ?: System.getenv("REPSY_PASSWORD")
         
         if (!username || !password) {
-            throw new GradleException("缺少 Repsy 認證信息！請在 gradle.properties 中設置 repsyUsername 和 repsyPassword，或設置環境變數 REPSY_USERNAME 和 REPSY_PASSWORD")
+            throw new RuntimeException("缺少 Repsy 認證信息！請在 gradle.properties 中設置 repsyUsername 和 repsyPassword，或設置環境變數 REPSY_USERNAME 和 REPSY_PASSWORD")
         }
-        
+
         println "準備發布 ${project.group}:${project.findProperty('artifactId') ?: 'noiedigitalsystem-api'}:${project.version}"
     }
 }

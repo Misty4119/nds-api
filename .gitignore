@@ -36,7 +36,9 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .flattened-pom.xml
-
+.bat
+.sh
+.properties
 # ============================================
 # 編譯和構建輸出
 # ============================================
