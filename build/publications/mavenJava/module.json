@@ -1,0 +1,60 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "noie.linmimeng",
+    "module": "noiedigitalsystem-api",
+    "version": "2.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.0.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "noiedigitalsystem-api-2.0.0.jar",
+          "url": "noiedigitalsystem-api-2.0.0.jar",
+          "size": 7576,
+          "sha512": "5bd4ee0045ab28d70f3afb098af03abb06278a87cb459cd1985cd17d22fccf510074afedefddc973e21d5458991b2a0ce83e3e29c16f0e365743dbe41f4cc688",
+          "sha256": "5aec8ec9b235b2742057a9a352ed5f767d6b44737f5fa119f22bca745620e1d5",
+          "sha1": "7a0cfe3e8a4922836435ad016adba710754f9891",
+          "md5": "edbcbebb813ad0183ff9a82e55e00f08"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "noiedigitalsystem-api-2.0.0.jar",
+          "url": "noiedigitalsystem-api-2.0.0.jar",
+          "size": 7576,
+          "sha512": "5bd4ee0045ab28d70f3afb098af03abb06278a87cb459cd1985cd17d22fccf510074afedefddc973e21d5458991b2a0ce83e3e29c16f0e365743dbe41f4cc688",
+          "sha256": "5aec8ec9b235b2742057a9a352ed5f767d6b44737f5fa119f22bca745620e1d5",
+          "sha1": "7a0cfe3e8a4922836435ad016adba710754f9891",
+          "md5": "edbcbebb813ad0183ff9a82e55e00f08"
+        }
+      ]
+    }
+  ]
+}
