@@ -636,9 +636,7 @@ PostgreSQL + Redis
 
 ## 📖 Resources
 
-- **AGENTS.md**: AI development context and patterns
 - **JavaDoc**: See interface comments
-- **Technical Report**: `Plan/NDS-API岩層開發計畫/技術報告.md`
 
 ---
 
@@ -693,5 +691,5 @@ When you follow this guide to develop plugins, you have become an **NDS-native P
 ---
 
 **Version**: 2.0.0  
-**Last Updated**: 2024-12-19  
+**Last Updated**: 2025-12-24  
 **Status**: ✅ Stable
