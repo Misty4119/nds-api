@@ -9,47 +9,25 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * NoieDigitalSystem API - Next-Generation Economy Protocol (NGEP)
+ * NoieDigitalSystem API - 舊 API 橋接層（Deprecated）
  * 
- * <p><b>核心定位：協議層（Protocol Layer），非功能層</b></p>
+ * <p><b>⚠️ 此接口已棄用，請使用新的 NDS-API v2.0</b></p>
  * 
- * <p>NDS 不是另一個經濟插件，而是 Minecraft 生態中的「經濟/狀態協議層」。
- * 就像 HTTP 對 Web、JDBC 對資料庫，NDS 提供統一的狀態管理協議。</p> 
+ * <p>此接口保留用於向後兼容。新插件應該直接使用 {@link noie.linmimeng.noiedigitalsystem.api.NdsRuntime} 和相關接口。</p>
  * 
- * <h2>設計原則：</h2>
+ * <p><b>遷移指南：</b></p>
  * <ul>
- *   <li><b>單一真相來源（Single Source of Truth）</b>：所有經濟狀態由 NDS 管理</li>
- *   <li><b>非同步優先（Async-first）</b>：所有操作返回 CompletableFuture，禁止阻塞</li>
- *   <li><b>協議優先，功能為輔</b>：核心狀態層獨立，應用層（Web/商店/拍賣）可選</li>
- *   <li><b>安全與一致性</b>：BigDecimal 精度、交易原子性、跨服同步</li>
+ *   <li>使用 {@link noie.linmimeng.noiedigitalsystem.api.NdsProvider#get()} 獲取 NdsRuntime</li>
+ *   <li>使用 {@link noie.linmimeng.noiedigitalsystem.api.projection.NdsQueryService#queryBalance(noie.linmimeng.noiedigitalsystem.api.asset.AssetId, noie.linmimeng.noiedigitalsystem.api.identity.NdsIdentity)} 查詢餘額</li>
+ *   <li>使用 {@link noie.linmimeng.noiedigitalsystem.api.transaction.NdsTransactionBuilder} 創建交易</li>
  * </ul>
  * 
- * <h2>使用範例：</h2>
- * <pre>{@code
- * // 取得 API 實例
- * Plugin ndsPlugin = getServer().getPluginManager().getPlugin("NoieDigitalSystem");
- * if (!(ndsPlugin instanceof NoieDigitalSystem)) {
- *     return;
- * }
- * NoieDigitalSystemAPI api = ((NoieDigitalSystem) ndsPlugin).getAPI();
- * 
- * // 非同步操作（推薦）
- * api.getPlayerDigitalAmount(uuid, "coins")
- *     .thenAccept(balance -> {
- *         // 處理餘額
- *     })
- *     .exceptionally(ex -> {
- *         getLogger().severe("Error: " + ex.getMessage());
- *         return null;
- *     });
- * }</pre>
- * 
- * <p><b>注意：</b>所有方法都是非同步的，請勿在主線程使用 {@code .get()} 阻塞操作。</p>
- * 
+ * @deprecated 使用 {@link noie.linmimeng.noiedigitalsystem.api.NdsRuntime} 和相關接口替代
  * @author NoieDigitalSystem Team
  * @version 2.0.0
- * @since 2.0.0
+ * @since 1.0.0
  */
+@Deprecated(since = "2.0.0", forRemoval = true)
 public interface NoieDigitalSystemAPI {
 
     // ==================== Server Digital Operations ====================

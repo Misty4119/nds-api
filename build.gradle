@@ -40,7 +40,7 @@ publishing {
             pom {
                 name = 'NoieDigitalSystem API'
                 description = 'The Protocol Layer for NoieDigitalSystem (NDS) - Next-Generation Economy Protocol'
-                url = 'https://github.com/Misty4119/nds-docs'
+                url = 'https://github.com/Misty4119/nds-api'
                 
                 licenses {
                     license {

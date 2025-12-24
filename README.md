@@ -1,7 +1,7 @@
-# NDS Developer Guide - Next-Generation Economy Protocol
+# NDS API v2.0 Developer Guide - Next-Generation Economy Protocol
 
-> **NDS – Next-Generation Economy Protocol (NGEP)**
-> *The successor of Vault, not a replacement — a protocol.*
+> **NDS – Next-Generation Economy Protocol (NGEP) v2.0**  
+> *The successor of Vault, not a replacement — a protocol layer.*
 
 ---
 
@@ -20,68 +20,56 @@ NDS provides a unified state management protocol, allowing plugin authors to foc
 
 ## ⚖️ Protocol Authority & Compliance
 
-### Maintainer Statement
+This guide is the official specification maintained by the **Noie Team**. The final interpretation authority belongs to the NDS protocol owner.
 
-This developer guide is maintained by the **NDS Core Team** and is the official specification document for the NDS protocol.
-
-### Final Interpretation Authority
-
-Whether a plugin meets the "NDS-native Plugin" standard, **the final interpretation authority belongs to the NDS protocol owner**.
-
-This protocol requires all plugin developers using NDS to follow the specifications in this guide. Plugins that violate this guide will be considered non-compliant with the NDS-native plugin standard.
-
-### Compliance Determination
-
-The determination criteria for NDS-native plugins are based on the "Must Do" and "Absolutely Forbidden" clauses explicitly listed in this guide. Any violation of these clauses will result in the plugin not meeting the NDS-native standard.
-
-### Actual Impact Scope of Protocol Compliance
-
-To avoid misunderstandings, we clearly distinguish the boundaries between "Guideline", "Certification", and "Enforcement":
-
-1. **Technical Enforcement (Enforced)**: NDS core **will NOT** actively prevent non-compliant plugins from running. As long as API calls are legal, NDS will execute them.
-2. **Official Certification (Certified)**: "NDS-native" is an official certification standard. Only plugins that meet the standard can receive official recommendations and the "NDS-native" mark.
-3. **Guarantee Scope (Guaranteed)**: Non-compliant plugins can still use NDS, but do not enjoy future version compatibility, state consistency commitments, and performance optimization guarantees.
+**Compliance Scope**:
+- **Enforcement**: NDS will not prevent non-compliant plugins from running (legal API calls are executed)
+- **Certification**: Only compliant plugins receive "NDS-native" mark and official recommendations
+- **Guarantees**: Non-compliant plugins do not enjoy future compatibility, consistency, or performance guarantees
 
 ---
 
-## 🎯 Design Principles
+## 🎯 Design Principles (Bedrock Specification)
 
-### 1. Single Source of Truth
+### 1. Protocol First
 
-All economic values, cross-plugin states, and transaction results **must exist only in NDS**.
+**API is a protocol, not a tool, not an implementation.**
 
-👉 **Plugins always "request state" rather than "own state"**
+- API layer has **zero dependencies** on Bukkit/Paper/Database/Network
+- Only interfaces and contracts are defined
+- Implementation is isolated in nds-core module
 
-### 2. Async-first by Design
+### 2. Event Is The Source Of Truth
 
-- All APIs return `CompletableFuture`
-- **Blocking is prohibited** (do not use `.get()` on the main thread)
-- Built for high concurrency, Folia, and cross-server environments
+**State can ONLY be obtained through event projection. Direct state modification is forbidden.**
 
-### 3. Protocol First, Features Optional
+- All state changes must go through events
+- State is computed from event history (Event Sourcing)
+- Any point in time can be reconstructed from historical events
 
-NDS doesn't care:
-- How shops sell
-- How quests give rewards
-- How auctions bid
+### 3. Replayable By Design
 
-NDS only cares:
-> **Whether state is legal, consistent, and secure**
+**Any point in time can be reconstructed from historical events.**
 
-### 4. Safety & Consistency
+- All events must be serializable
+- Events are immutable historical records
+- Projections are pure functions (no side effects)
 
-- **BigDecimal precision**: Avoids double precision issues
-- **Transaction atomicity**: Operations automatically roll back on failure
-- **Cross-server synchronization**: Redis ensures multi-server consistency
+### 4. AI-Ready Default
 
-### 5. Why No Synchronous Events? (Architectural Decision)
+**All data structures must be semanticizable, vectorizable, and analyzable.**
 
-NDS **intentionally does not provide** synchronous event hooks (such as `PlayerPreWithdrawEvent`) for the following reasons:
+- Support tags and metadata
+- All assets and events can be semanticized
+- Built for future AI analysis
 
-1. **Prevent Race Conditions**: Synchronous events allow plugins to intercept and modify results, which is a major source of data inconsistency in async/cross-server environments.
-2. **Force Result-driven Design**: Developers should focus on "operation results (Future)" rather than "operation process (Event)".
+### 5. Implementation Isolation
 
-This is an architectural choice by NDS, not a missing feature.
+**API layer must not depend on concrete implementations.**
+
+- Only interfaces and contracts are defined
+- No Bukkit/Paper/Database/Network dependencies
+- Protocol layer is completely isolated
 
 ---
 
@@ -96,16 +84,18 @@ The following principles are **non-negotiable and unchangeable** in all versions
 - NDS is the single source of truth for economic state
 - Plugins **must not** manage any economic/state data themselves
 - All state queries and modifications **must** go through NDS API
+- State can only be obtained through event projection
 - Violating this principle will cause state inconsistency, and NDS does not guarantee correct behavior
 
 ### Principle 2: API is Always Async (Async-first)
 
 **Immutability**: NDS will never provide synchronous APIs.
 
-- All API methods **must** return `CompletableFuture`
-- NDS **will not** provide any synchronous APIs (such as convenience methods for `.get()`)
+- All API methods **must** return `CompletableFuture<NdsResult<T>>`
+- NDS **will not** provide any synchronous APIs
 - Plugins **must** use async callbacks to handle results
 - Blocking Futures on the main thread is a **forbidden** design error
+- Use `runtime.mainThreadExecutor()` when calling Bukkit API in callbacks
 
 ### Principle 3: Core Values Always Use BigDecimal
 
@@ -113,21 +103,26 @@ The following principles are **non-negotiable and unchangeable** in all versions
 
 - All core numeric operations **must** use `BigDecimal`
 - Precision guarantee is a core feature of the NDS protocol
-- API methods **will not** accept `double` as primary parameters (only provide backward-compatible default methods)
+- API methods **will not** accept `double` as primary parameters
 - Using `double` for economic calculations is **forbidden**
 
-### Principle 4: Vault is Always Just a Compatibility Layer
+### Principle 4: Event-Driven Architecture
 
-**Immutability**: Vault Bridge will never become a core feature of NDS.
+**Immutability**: State changes must always go through events.
 
-- Vault Bridge is only for **legacy plugin compatibility**
-- Newly developed plugins **must** use NDS API and must not use Vault API
-- Plugins using Vault API will be considered Legacy Plugins
-- NDS core evolution will revolve around NDS API, not Vault API
+- All state changes **must** be expressed as events
+- Events are immutable and serializable
+- State is computed from event history
+- Direct state modification is **forbidden**
 
-### Version Compatibility Guarantee
+### Principle 5: Result-Driven Error Handling
 
-These principles will remain unchanged in all future versions of NDS. Any changes that violate these principles will be considered breaking changes and will be clearly marked as incompatible versions.
+**Immutability**: Errors are expressed as `NdsResult`, not exceptions.
+
+- Business failures are expressed as `NdsResult.isSuccess() == false`
+- System errors are expressed as exceptions in `.exceptionally()`
+- **Must** check `NdsResult.isSuccess()` before accessing `.data()`
+- Do not use exceptions to determine business results
 
 ---
 
@@ -138,365 +133,44 @@ These principles will remain unchanged in all future versions of NDS. Any change
 **NDS-native Plugin = Must simultaneously satisfy all of the following conditions:**
 
 ✅ **Must Do:**
+- ✅ Use `NdsProvider.get()` to get `NdsRuntime` (the only entry point)
 - ✅ All state comes from NDS (do not store any economic/state data)
 - ✅ All behavior is driven by "result callbacks" (async-first)
-- ✅ Use NDS API directly (do not use Vault API)
-- ✅ Properly handle exceptions and failure cases
+- ✅ Use `NdsResult` for error handling (check `isSuccess()` before accessing `.data()`)
+- ✅ Use `NdsTransactionBuilder` to create transactions
+- ✅ Use `runtime.mainThreadExecutor()` when calling Bukkit API in callbacks
+- ✅ Properly handle `NdsResult` failures with `.onFailure()` or `.exceptionally()`
 
 ❌ **Absolutely Forbidden:**
+- ❌ Do not use `.get()` on `CompletableFuture` (blocks main thread)
+- ❌ Do not use `double`, `float`, or `int` for economic values
 - ❌ Do not store any economic/state data locally
-- ❌ Do not cache Digital values (state is managed by NDS)
-- ❌ Do not assume state always exists (always check results)
-- ❌ Do not use Vault API (new plugins must use NDS API directly)
-- ❌ Do not block Futures on the main thread (using `.get()`)
+- ❌ Do not cache balance or asset values
+- ❌ Do not put Bukkit/JVM objects in `NdsPayload`
+- ❌ Do not use deprecated `NoieDigitalSystemAPI` in new plugins
+- ❌ Do not call Bukkit API directly in async callbacks
+- ❌ Do not access `.data()` on failed `NdsResult` (check `isSuccess()` first)
+- ❌ Do not modify state directly (only through events)
 
-### Why Become an NDS-native Plugin?
-
-1. **State Consistency Guarantee**: All state is managed uniformly by NDS, preventing desynchronization
-2. **Cross-server Compatibility**: Automatically supports multi-server environments
-3. **Future Extensibility**: Can seamlessly use new NDS features
-4. **Performance Optimization**: NDS internal optimizations automatically apply to your plugin
 
 ---
 
-## ⚠️ Enforcement & Consequences
-
-This section clearly states the consequences of violating NDS protocol specifications. These consequences are not threats, but necessary measures for protocol self-protection.
-
-### Consequences of Not Meeting NDS-native Standards
-
-If a plugin does not meet the "NDS-native Plugin" standard (violating "Must Do" or "Absolutely Forbidden" clauses), it will result in:
-
-1. **Not Listed in Official Recommendations**
-   - Will not appear in NDS official recommended plugin list
-   - Will not receive the "NDS-native Plugin" certification mark
-
-2. **No Guarantee of Compatibility with Future NDS Versions**
-   - Future NDS evolution may cause these plugins to malfunction
-   - Need to bear upgrade and maintenance costs themselves
-
-3. **Do Not Enjoy NDS-native Plugin Advantages**
-   - Cannot use new NDS features
-   - Cannot receive NDS-native plugin performance optimizations
-   - May experience state inconsistency issues in cross-server environments
-
-### Consequences of Violating Core Principles
-
-Violating "Non-Negotiable Principles" will result in:
-
-1. **No Guarantee of Correct Behavior**
-   - NDS cannot guarantee plugin state consistency
-   - May experience serious issues like data loss, duplicate deductions, etc.
-
-2. **May Cause State Inconsistency**
-   - Cross-plugin states may become out of sync
-   - State conflicts may occur in cross-server environments
-
-3. **May Experience Issues in Cross-server Environments**
-   - Redis synchronization may fail
-   - State may become inconsistent in multi-server environments
-
-### Legacy Plugin Positioning
-
-New plugins using Vault API will be considered **Legacy Plugins**:
-
-- **Only Considered as Legacy Plugin**: Will not be considered NDS-native plugins
-- **Do Not Enjoy NDS-native Plugin Advantages**: Cannot use new NDS features and optimizations
-- **Technical Debt**: Need to migrate to NDS API in the future
-- **Maintenance Costs**: Need to handle Vault API limitations (precision, synchronization, etc.) themselves
-
-### Official Recommendation Policy
-
-NDS officially only recommends plugins that meet the following conditions:
-
-- ✅ Fully comply with "NDS-native Plugin" standard
-- ✅ Follow all "Non-Negotiable Principles"
-- ✅ Pass NDS-native plugin checklist
-- ✅ Use NDS API instead of Vault API
-
-Plugins that do not meet the above conditions will not receive official recommendations but can still use NDS normally (through Vault Bridge or partial use of NDS API).
-
----
-
-## ❌ Common Anti-Patterns
-
-### ❌ Anti-Pattern 1: Caching Balance in Plugin
-
-```java
-// ❌ Wrong: Caching causes state desynchronization
-private final Map<UUID, BigDecimal> balanceCache = new HashMap<>();
-
-public void checkBalance(UUID uuid) {
-    if (balanceCache.containsKey(uuid)) {
-        return balanceCache.get(uuid); // Wrong: may be outdated
-    }
-    // ...
-}
-```
-
-**Problem**: Other plugins or servers may have modified the balance, and caching will cause state inconsistency.
-
-**✅ Correct Approach**: Always query from NDS
-
-```java
-// ✅ Correct: Always query latest state
-public void checkBalance(UUID uuid) {
-    api.getPlayerDigitalAmount(uuid, "coins")
-        .thenAccept(balance -> {
-            // Use latest balance
-        });
-}
-```
-
-### ❌ Anti-Pattern 2: Assuming take Always Succeeds
-
-```java
-// ❌ Wrong: No result check
-api.takePlayerDigital(uuid, "coins", BigDecimal.valueOf(100));
-player.getInventory().addItem(new ItemStack(Material.DIAMOND)); // May give item for free
-```
-
-**Problem**: If balance is insufficient, the item has been given but money wasn't deducted.
-
-**✅ Correct Approach**: Check result before executing
-
-```java
-// ✅ Correct: Check result
-api.takePlayerDigital(uuid, "coins", BigDecimal.valueOf(100))
-    .thenAccept(success -> {
-        if (success) {
-            // Deduction successful, then give item
-            player.getInventory().addItem(new ItemStack(Material.DIAMOND));
-        } else {
-            player.sendMessage("Insufficient balance!");
-        }
-    });
-```
-
-### ❌ Anti-Pattern 3: Blocking Main Thread
-
-```java
-// ❌ Wrong: Blocking main thread
-public void onPlayerCommand(Player player) {
-    BigDecimal balance = api.getPlayerDigitalAmount(player.getUniqueId(), "coins").get(); // Blocking!
-    player.sendMessage("Balance: " + balance);
-}
-```
-
-**Problem**: Will cause server lag, violating async design principles.
-
-**✅ Correct Approach**: Use callbacks
-
-```java
-// ✅ Correct: Async callback
-public void onPlayerCommand(Player player) {
-    api.getPlayerDigitalAmount(player.getUniqueId(), "coins")
-        .thenAccept(balance -> {
-            player.sendMessage("Balance: " + balance);
-        })
-        .exceptionally(ex -> {
-            player.sendMessage("Query failed: " + ex.getMessage());
-            return null;
-        });
-}
-```
-
-### ❌ Anti-Pattern 4: Check Then Deduct (Race Condition)
-
-```java
-// ❌ Wrong: Balance may be modified between check and deduction
-api.getPlayerDigitalAmount(uuid, "coins")
-    .thenAccept(balance -> {
-        if (balance.compareTo(BigDecimal.valueOf(100)) >= 0) {
-            api.takePlayerDigital(uuid, "coins", BigDecimal.valueOf(100)); // May fail
-            giveItem();
-        }
-    });
-```
-
-**Problem**: Between check and deduction, balance may be modified by other operations.
-
-**✅ Correct Approach**: Deduct directly, let NDS handle atomicity
-
-```java
-// ✅ Correct: Deduct directly, NDS guarantees atomicity
-api.takePlayerDigital(uuid, "coins", BigDecimal.valueOf(100))
-    .thenAccept(success -> {
-        if (success) {
-            giveItem(); // Only give item if deduction succeeds
-        } else {
-            player.sendMessage("Insufficient balance!");
-        }
-    });
-```
-
-### ❌ Anti-Pattern 5: Not Handling Exceptions
-
-```java
-// ❌ Wrong: No exception handling
-api.getPlayerDigitalAmount(uuid, "coins")
-    .thenAccept(balance -> {
-        // If error occurs, this won't execute, but also no error message
-    });
-```
-
-**Problem**: Database errors, network issues, and other exceptions will be silently ignored.
-
-**✅ Correct Approach**: Always handle exceptions
-
-```java
-// ✅ Correct: Handle exceptions
-api.getPlayerDigitalAmount(uuid, "coins")
-    .thenAccept(balance -> {
-        // Success handling
-    })
-    .exceptionally(ex -> {
-        getLogger().severe("Failed to query balance: " + ex.getMessage());
-        player.sendMessage("Query failed, please try again later");
-        return null;
-    });
-```
-
-### ❌ Anti-Pattern 6: Using Vault API (New Plugins)
-
-```java
-// ❌ Wrong: New plugins should not use Vault API
-Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
-economy.withdrawPlayer(player, 100);
-```
-
-**Problem**: Vault API is synchronous, uses double precision, and doesn't support cross-server.
-
-**✅ Correct Approach**: Use NDS API directly
-
-```java
-// ✅ Correct: Use NDS API directly
-api.takePlayerDigital(player.getUniqueId(), "coins", BigDecimal.valueOf(100))
-    .thenAccept(success -> {
-        // Handle result
-    });
-```
-
----
-
-## 🎨 Design Pattern: Result-driven Design
-
-### Traditional Design (Forbidden)
-
-```text
-Player clicks purchase
-↓
-Check balance first
-↓
-Then deduct
-↓
-Then give item
-```
-
-**Problem**: Many steps, error-prone, has Race Condition risk. This design violates NDS protocol principles.
-
-### NDS-native Design (Required)
-
-```text
-Player clicks purchase
-↓
-Request NDS deduction (atomic operation)
-↓
-Success → Give reward
-Failure → Provide feedback
-```
-
-**Advantages**:
-- Fewer steps, clear logic
-- NDS guarantees atomicity
-- No Race Condition
-- Automatically handles concurrency
-
-### Practical Example
-
-```java
-// ✅ NDS-native design: Result-driven
-public void onPlayerPurchase(Player player, ItemStack item, BigDecimal price) {
-    UUID uuid = player.getUniqueId();
-    
-    // Deduct directly, let NDS handle all checks
-    api.takePlayerDigital(uuid, "coins", price)
-        .thenAccept(success -> {
-            if (success) {
-                // Deduction successful, give item
-                player.getInventory().addItem(item);
-                player.sendMessage("Purchase successful!");
-            } else {
-                // Deduction failed, inform reason
-                api.getPlayerDigitalAmount(uuid, "coins")
-                    .thenAccept(balance -> {
-                        player.sendMessage("Insufficient balance! Current balance: " + balance);
-                    });
-            }
-        })
-        .exceptionally(ex -> {
-            // Handle exception
-            getLogger().severe("Purchase failed: " + ex.getMessage());
-            player.sendMessage("Purchase failed, please try again later");
-            return null;
-        });
-}
-```
-
----
-
-## 📋 Responsibility Boundaries
-
-Clearly understand "what is NDS's responsibility and what is the plugin's responsibility":
-
-| Responsibility Item | NDS Responsible | Plugin Responsible |
-|---------------------|----------------|-------------------|
-| **State Consistency** | ✅ Guarantee all state consistent | ❌ Should not manage state themselves |
-| **Precision Handling** | ✅ Use BigDecimal for precision | ❌ Should not use double |
-| **Atomic Transactions** | ✅ Guarantee operation atomicity | ❌ Should not implement transaction logic themselves |
-| **Cross-server Sync** | ✅ Automatically sync multiple servers | ❌ Should not handle synchronization themselves |
-| **Business Logic** | ❌ Doesn't care about business logic | ✅ Implement shop, quest, etc. logic |
-| **UI / Feedback** | ❌ Doesn't provide UI | ✅ Provide player interface and messages |
-| **Data Validation** | ✅ Validate value legality | ✅ Validate business rules (e.g., price) |
-
-### Example: Shop Plugin
-
-```java
-// ✅ Correct responsibility division
-public class ShopPlugin {
-    
-    // Plugin responsibility: Business logic and UI
-    public void onPlayerClickShopItem(Player player, ShopItem item) {
-        UUID uuid = player.getUniqueId();
-        BigDecimal price = item.getPrice();
-        
-        // NDS responsibility: State management and atomic operations
-        api.takePlayerDigital(uuid, "coins", price)
-            .thenAccept(success -> {
-                if (success) {
-                    // Plugin responsibility: Give item and feedback
-                    player.getInventory().addItem(item.getItemStack());
-                    player.sendMessage("Purchase successful!");
-                } else {
-                    // Plugin responsibility: Inform failure reason
-                    player.sendMessage("Insufficient balance!");
-                }
-            })
-            .exceptionally(ex -> {
-                // Plugin responsibility: Error handling and feedback
-                getLogger().severe("Purchase failed: " + ex.getMessage());
-                player.sendMessage("Purchase failed, please try again later");
-                return null;
-            });
-    }
-}
-```
+## ⚠️ Consequences of Violation
+
+**Non-compliant plugins** (violating "Must Do" or "Absolutely Forbidden"):
+- Not listed in official recommendations
+- No future version compatibility guarantee
+- Cannot use new NDS features or optimizations
+
+**Violating core principles**:
+- No guarantee of correct behavior (may cause data loss, inconsistency)
+- State may desynchronize in cross-server environments
 
 ---
 
 ## 📦 Dependency Setup
 
-Before you start using NDS API, you need to configure dependencies in your project.
+Before you start using NDS API v2.0, you need to configure dependencies in your project.
 
 ### 1. Gradle (Kotlin DSL) - Recommended
 
@@ -548,272 +222,423 @@ dependencies {
 
 ## 🚀 Quick Start
 
-### Getting API Instance
+### Getting Runtime Instance
 
 ```java
-import noie.linmimeng.noiedigitalsystem.NoieDigitalSystem;
-import noie.linmimeng.noiedigitalsystem.api.NoieDigitalSystemAPI;
+import noie.linmimeng.noiedigitalsystem.api.NdsProvider;
+import noie.linmimeng.noiedigitalsystem.api.NdsRuntime;
 
-Plugin ndsPlugin = getServer().getPluginManager().getPlugin("NoieDigitalSystem");
-if (ndsPlugin == null || !(ndsPlugin instanceof NoieDigitalSystem)) {
-    getLogger().severe("NoieDigitalSystem not found!");
+// Check if NDS is initialized
+if (!NdsProvider.isInitialized()) {
+    getLogger().severe("NDS not initialized!");
     return;
 }
 
-NoieDigitalSystem nds = (NoieDigitalSystem) ndsPlugin;
-NoieDigitalSystemAPI api = nds.getAPI();
+NdsRuntime runtime = NdsProvider.get();
 ```
 
-### Basic Operation Examples
-
-#### Get Balance
+### Creating Identity
 
 ```java
-api.getPlayerDigitalAmount(uuid, "coins")
-    .thenAccept(balance -> {
-        getLogger().info("Player balance: " + balance);
-    })
-    .exceptionally(ex -> {
-        getLogger().severe("Failed to get balance: " + ex.getMessage());
-        return null;
-    });
+import noie.linmimeng.noiedigitalsystem.api.identity.NdsIdentity;
+import noie.linmimeng.noiedigitalsystem.api.identity.IdentityType;
+
+// Lightweight creation (no async query needed)
+NdsIdentity player = NdsIdentity.fromString("550e8400-e29b-41d4-a716-446655440000");
+// or
+NdsIdentity player = NdsIdentity.of("550e8400-e29b-41d4-a716-446655440000", IdentityType.PLAYER);
 ```
 
-#### Deduct (One-time Atomic Operation)
+### Creating Asset ID
 
 ```java
-api.takePlayerDigital(uuid, "coins", BigDecimal.valueOf(100))
-    .thenAccept(success -> {
-        if (success) {
-            // Deduction successful, give item
-            player.getInventory().addItem(new ItemStack(Material.DIAMOND));
+import noie.linmimeng.noiedigitalsystem.api.asset.AssetId;
+import noie.linmimeng.noiedigitalsystem.api.asset.AssetScope;
+
+AssetId coins = AssetId.of(AssetScope.PLAYER, "coins");
+// or
+AssetId coins = AssetId.fromString("player:coins");
+```
+
+### Querying Balance
+
+```java
+import java.math.BigDecimal;
+
+runtime.query().queryBalance(assetId, identity)
+    .thenAcceptAsync(result -> {
+        if (result.isSuccess()) {
+            BigDecimal balance = result.data();
+            player.sendMessage("Balance: " + balance);
         } else {
-            // Insufficient balance
-            player.sendMessage("Insufficient balance!");
+            player.sendMessage("Failed to query balance: " + result.error().message());
         }
-    })
+    }, runtime.mainThreadExecutor())
     .exceptionally(ex -> {
-        getLogger().severe("Failed to deduct: " + ex.getMessage());
-        return false;
-    });
-```
-
-#### Add Balance
-
-```java
-api.givePlayerDigital(uuid, "coins", BigDecimal.valueOf(50))
-    .thenRun(() -> {
-        player.sendMessage("Received 50 coins!");
-    })
-    .exceptionally(ex -> {
-        getLogger().severe("Failed to add balance: " + ex.getMessage());
-        return null;
-    });
-```
-
----
-
-## 📚 API Method Overview
-
-### API Contract Definitions
-
-When using methods like `takePlayerDigital` that return `CompletableFuture<Boolean>`, strictly follow these semantics:
-
-* **`Boolean = false`**: **Business failure** (e.g., insufficient balance, deduction conditions not met). This is an expected business logic result.
-* **`Exception`**: **System error** (e.g., database disconnection, Redis sync failure, concurrent write conflict). This is an unexpected system failure.
-
-> **Important**: Plugins **must not** rely on Exception to judge business results (e.g., should not treat "database timeout" as "insufficient balance").
-
-### Player Digital Operations (Most Common)
-
-| Method | Description | Return Value |
-|--------|-------------|--------------|
-| `getPlayerDigitalAmount(uuid, name)` | Get balance | `CompletableFuture<BigDecimal>` |
-| `givePlayerDigital(uuid, name, amount)` | Add balance | `CompletableFuture<Void>` |
-| `takePlayerDigital(uuid, name, amount)` | Deduct (atomic operation) | `CompletableFuture<Boolean>` |
-| `setPlayerDigitalAmount(uuid, name, amount)` | Set balance | `CompletableFuture<Void>` |
-| `getAllPlayerDigitals(uuid)` | Get all Digitals | `CompletableFuture<Map<String, PlayerDigital>>` |
-
-### Server Digital Operations (Server-wide Variables)
-
-| Method | Description | Return Value |
-|--------|-------------|--------------|
-| `getServerDigitalAmount(name)` | Get server variable | `CompletableFuture<BigDecimal>` |
-| `giveServerDigital(name, amount)` | Add server variable | `CompletableFuture<Void>` |
-| `takeServerDigital(name, amount)` | Subtract server variable | `CompletableFuture<Boolean>` |
-| `setServerDigitalAmount(name, amount)` | Set server variable | `CompletableFuture<Void>` |
-
-### Global Player Digital (System Setup)
-
-| Method | Description | Return Value |
-|--------|-------------|--------------|
-| `createGlobalPlayerDigital(name, initial, limit)` | Create global Digital | `CompletableFuture<Void>` |
-| `isGlobalPlayerDigital(name)` | Check if global Digital | `CompletableFuture<Boolean>` |
-| `getAllGlobalPlayerDigitals()` | Get all global Digitals | `CompletableFuture<Map<String, Digital>>` |
-
----
-
-## ⚠️ Important Notes
-
-### 1. Prohibit Blocking Main Thread
-
-```java
-// ❌ Wrong: Blocking main thread
-BigDecimal balance = api.getPlayerDigitalAmount(uuid, "coins").get();
-
-// ✅ Correct: Use CompletableFuture callback
-api.getPlayerDigitalAmount(uuid, "coins")
-    .thenAccept(balance -> {
-        // Handle balance
-    });
-```
-
-### 2. Must Handle Exceptions
-
-**Requirement**: All API calls must handle exceptions. This is a mandatory requirement for NDS-native plugins.
-
-```java
-api.getPlayerDigitalAmount(uuid, "coins")
-    .thenAccept(balance -> {
-        // Success handling
-    })
-    .exceptionally(ex -> {
-        // Must handle exceptions (mandatory requirement)
         getLogger().severe("Error: " + ex.getMessage());
         return null;
     });
 ```
 
-**Consequence of Violation**: Plugins that don't handle exceptions do not meet NDS-native standards and may cause errors to be silently ignored.
-
-### 3. Must Use BigDecimal, Prohibit Using double
-
-**Requirement**: All economic numeric operations must use BigDecimal. This is one of the "Non-Negotiable Principles".
+### Creating and Publishing Transaction
 
 ```java
-// ❌ Wrong: Precision issues (violates Non-Negotiable Principle)
-api.givePlayerDigital(uuid, "coins", 100.0);
+import noie.linmimeng.noiedigitalsystem.api.transaction.NdsTransaction;
+import noie.linmimeng.noiedigitalsystem.api.transaction.NdsTransactionBuilder;
+import noie.linmimeng.noiedigitalsystem.api.transaction.ConsistencyMode;
+
+// Create transaction
+NdsTransaction transaction = NdsTransactionBuilder.create()
+    .actor(identity)
+    .asset(assetId)
+    .delta(BigDecimal.valueOf(100))  // Positive = add, negative = subtract
+    .consistency(ConsistencyMode.STRONG)
+    .source(sourceIdentity)  // Optional, for transfers
+    .target(targetIdentity)   // Optional, for transfers
+    .reason("purchase")       // Optional
+    .build();
+
+// Publish transaction (Future completes when persisted)
+runtime.eventBus().publish(transaction)
+    .thenAcceptAsync(result -> {
+        if (result.isSuccess()) {
+            // Transaction persisted successfully
+            player.sendMessage("Transaction completed!");
+        } else {
+            player.sendMessage("Transaction failed: " + result.error().message());
+        }
+    }, runtime.mainThreadExecutor())
+    .exceptionally(ex -> {
+        getLogger().severe("Error: " + ex.getMessage());
+        return null;
+    });
+```
+
+---
+
+## 📚 API Overview
+
+**Error Handling**: `NdsResult.isSuccess() == false` = business failure (expected), `Exception` = system error (unexpected). Do not use exceptions to judge business results.
+
+**Core Services**:
+- `runtime.query()` - Query state through projections
+- `runtime.eventBus()` - Publish events (Future completes when persisted)
+- `runtime.identity()` - Identity management
+
+**Key Methods**:
+- `queryBalance(assetId, identity)` → `CompletableFuture<NdsResult<BigDecimal>>`
+- `publish(event)` → `CompletableFuture<NdsResult<Void>>`
+- `NdsTransactionBuilder.create().actor().asset().delta().consistency().build()`
+
+---
+
+## ❌ Common Anti-Patterns
+
+### ❌ Anti-Pattern 1: Caching Balance in Plugin
+
+```java
+// ❌ Wrong: Caching causes state desynchronization
+private final Map<UUID, BigDecimal> balanceCache = new HashMap<>();
+
+public void checkBalance(UUID uuid) {
+    if (balanceCache.containsKey(uuid)) {
+        return balanceCache.get(uuid); // Wrong: may be outdated
+    }
+    // ...
+}
+```
+
+**Problem**: Other plugins or servers may have modified the balance, and caching will cause state inconsistency.
+
+**✅ Correct Approach**: Always query from NDS
+
+```java
+// ✅ Correct: Always query latest state
+runtime.query().queryBalance(assetId, identity)
+    .thenAccept(result -> {
+        if (result.isSuccess()) {
+            BigDecimal balance = result.data();
+            // Use latest balance
+        }
+    });
+```
+
+### ❌ Anti-Pattern 2: Not Checking NdsResult Success
+
+```java
+// ❌ Wrong: No result check
+runtime.query().queryBalance(assetId, identity)
+    .thenAccept(result -> {
+        BigDecimal balance = result.data(); // Throws if failed!
+    });
+```
+
+**Problem**: If query fails, accessing `.data()` will throw `IllegalStateException`.
+
+**✅ Correct Approach**: Check result before accessing data
+
+```java
+// ✅ Correct: Check result
+runtime.query().queryBalance(assetId, identity)
+    .thenAccept(result -> {
+        if (result.isSuccess()) {
+            BigDecimal balance = result.data();
+            // Use balance
+        } else {
+            // Handle failure
+            result.onFailure(error -> {
+                getLogger().severe("Failed: " + error.message());
+            });
+        }
+    });
+```
+
+### ❌ Anti-Pattern 3: Blocking Main Thread
+
+```java
+// ❌ Wrong: Blocking main thread
+public void onPlayerCommand(Player player) {
+    NdsResult<BigDecimal> result = runtime.query().queryBalance(assetId, identity).get(); // Blocking!
+    BigDecimal balance = result.data();
+    player.sendMessage("Balance: " + balance);
+}
+```
+
+**Problem**: Will cause server lag, violating async design principles.
+
+**✅ Correct Approach**: Use callbacks
+
+```java
+// ✅ Correct: Async callback
+public void onPlayerCommand(Player player) {
+    runtime.query().queryBalance(assetId, identity)
+        .thenAcceptAsync(result -> {
+            if (result.isSuccess()) {
+                player.sendMessage("Balance: " + result.data());
+            }
+        }, runtime.mainThreadExecutor())
+        .exceptionally(ex -> {
+            player.sendMessage("Query failed: " + ex.getMessage());
+            return null;
+        });
+}
+```
+
+### ❌ Anti-Pattern 4: Calling Bukkit API in Async Thread
+
+```java
+// ❌ Wrong: Bukkit API in async thread
+runtime.query().queryBalance(assetId, identity)
+    .thenAccept(result -> {
+        player.sendMessage("Balance: " + result.data()); // May throw!
+    });
+```
+
+**Problem**: Bukkit API is not thread-safe. All Bukkit operations must run on the main thread.
+
+**✅ Correct Approach**: Use main thread executor
+
+```java
+// ✅ Correct: Use main thread executor
+runtime.query().queryBalance(assetId, identity)
+    .thenAcceptAsync(result -> {
+        player.sendMessage("Balance: " + result.data());
+    }, runtime.mainThreadExecutor());
+```
+
+### ❌ Anti-Pattern 5: Using Primitive Types Instead of BigDecimal
+
+```java
+// ❌ Wrong: Precision issues
+double price = 100.5;
+int amount = 100;
 
 // ✅ Correct: Must use BigDecimal
-api.givePlayerDigital(uuid, "coins", BigDecimal.valueOf(100));
+BigDecimal price = BigDecimal.valueOf(100.5);
+BigDecimal amount = BigDecimal.valueOf(100);
+// or
+BigDecimal price = new BigDecimal("100.5");
 ```
 
-**Consequence of Violation**: Using double for economic calculations violates Non-Negotiable Principles, and NDS does not guarantee correct behavior.
+### ❌ Anti-Pattern 6: Putting Bukkit Objects in Payload
 
-### 4. Digital Naming Convention
+```java
+// ❌ Wrong: Bukkit objects in payload
+NdsPayload payload = NdsPayload.builder()
+    .put("item", itemStack)  // Illegal!
+    .put("location", location)  // Illegal!
+    .build();
 
-**Requirement**: Digital names must follow these conventions:
+// ✅ Correct: Only primitive types
+NdsPayload payload = NdsPayload.builder()
+    .put("itemId", "diamond")
+    .put("world", "world")
+    .put("x", location.getX())
+    .put("y", location.getY())
+    .put("z", location.getZ())
+    .build();
+```
 
-- **Must** use lowercase letters and underscores
-- Examples: `coins`, `gold`, `stamina`, `world_boss_hp`
-- **Forbidden**: `Coins`, `gold-coin`, `gold.coin`
+### ❌ Anti-Pattern 7: Using EventBuilder for Transactions
 
-**Consequence of Violation**: Digitals that don't follow naming conventions may not work properly.
+```java
+// ❌ Wrong: Cannot cast
+NdsEvent event = NdsEventBuilder.create()
+    .actor(identity)
+    .type(EventType.TRANSACTION)
+    .build();
+NdsTransaction transaction = (NdsTransaction) event; // Compilation error!
+
+// ✅ Correct: Use TransactionBuilder
+NdsTransaction transaction = NdsTransactionBuilder.create()
+    .actor(identity)
+    .asset(assetId)
+    .delta(BigDecimal.valueOf(100))
+    .consistency(ConsistencyMode.STRONG)
+    .build();
+```
 
 ---
 
-## 🔌 Vault Compatibility (Legacy Support)
+## 🎨 Design Pattern: Result-driven Design
 
-> **Important**: Vault Bridge is only for **legacy plugin compatibility**. Newly developed plugins **must** use NDS API directly and must not use Vault API.
+### Traditional Design (Forbidden)
 
-NDS provides an **official Vault Bridge** for seamless integration of legacy plugins:
-
+```text
+Player clicks purchase
+↓
+Check balance first
+↓
+Then deduct
+↓
+Then give item
 ```
-Old Plugin ── Vault ──┐
-                      ▼
-                 NDS Core
-                      ▲
-New Plugin ── NDS API ─┘
+
+**Problem**: Many steps, error-prone, has Race Condition risk. This design violates NDS protocol principles.
+
+### NDS-native Design (Required)
+
+```text
+Player clicks purchase
+↓
+Create and publish transaction (atomic operation)
+↓
+Success → Give reward
+Failure → Provide feedback
 ```
 
-Legacy plugins "think they're using Vault", but state is managed by NDS.
+**Advantages**:
+- Fewer steps, clear logic
+- NDS guarantees atomicity
+- No Race Condition
+- Automatically handles concurrency
+- Full audit trail through events
 
-### Configuring Vault Bridge
+### Practical Example
 
-In `config.yml`:
-
-```yaml
-vault:
-  enabled_digitals:
-    - "coins"
-    - "gems"
-  default_currency: "coins"
+```java
+// ✅ NDS-native design: Result-driven
+public void onPlayerPurchase(Player player, AssetId itemAssetId, BigDecimal price) {
+    NdsIdentity identity = NdsIdentity.fromString(player.getUniqueId().toString());
+    AssetId coinsAssetId = AssetId.of(AssetScope.PLAYER, "coins");
+    
+    // Create transaction (negative delta = deduction)
+    NdsTransaction transaction = NdsTransactionBuilder.create()
+        .actor(identity)
+        .asset(coinsAssetId)
+        .delta(price.negate())  // Negative = subtract
+        .consistency(ConsistencyMode.STRONG)
+        .reason("purchase:" + itemAssetId.name())
+        .build();
+    
+    // Publish transaction
+    runtime.eventBus().publish(transaction)
+        .thenAcceptAsync(result -> {
+            if (result.isSuccess()) {
+                // Transaction succeeded, give item
+                player.getInventory().addItem(itemStack);
+                player.sendMessage("Purchase successful!");
+            } else {
+                // Transaction failed (e.g., insufficient balance)
+                player.sendMessage("Purchase failed: " + result.error().message());
+            }
+        }, runtime.mainThreadExecutor())
+        .exceptionally(ex -> {
+            // Handle exception
+            getLogger().severe("Purchase failed: " + ex.getMessage());
+            player.sendMessage("Purchase failed, please try again later");
+            return null;
+        });
+}
 ```
 
 ---
 
-## 📖 Phase-oriented Development Guide
+## 📋 Responsibility Boundaries
 
-### Phase 1: Legacy Plugin (Using Vault)
+Clearly understand "what is NDS's responsibility and what is the plugin's responsibility":
 
-**Target Audience**: Existing Vault plugins that need seamless migration
+| Responsibility Item | NDS Responsible | Plugin Responsible |
+|---------------------|----------------|-------------------|
+| **State Consistency** | ✅ Guarantee all state consistent | ❌ Should not manage state themselves |
+| **Precision Handling** | ✅ Use BigDecimal for precision | ❌ Should not use double |
+| **Atomic Transactions** | ✅ Guarantee operation atomicity | ❌ Should not implement transaction logic themselves |
+| **Cross-server Sync** | ✅ Automatically sync multiple servers | ❌ Should not handle synchronization themselves |
+| **Event Sourcing** | ✅ Store and replay events | ❌ Should not manage event storage |
+| **Business Logic** | ❌ Doesn't care about business logic | ✅ Implement shop, quest, etc. logic |
+| **UI / Feedback** | ❌ Doesn't provide UI | ✅ Provide player interface and messages |
+| **Data Validation** | ✅ Validate value legality | ✅ Validate business rules (e.g., price) |
 
-- Continue using Vault API
-- NDS provides state management transparently as backend
-- No code modification needed
 
-### Phase 2: NDS-native Plugin (Currently Required)
+---
 
-**Target Audience**: Newly developed plugins
+## ⚠️ Critical Rules
 
-**Requirements** (not suggestions):
-- ✅ **Must** use NDS API directly
-- ✅ **Must** follow all principles in this guide
-- ✅ **Must** become NDS-native plugins
-
-**Checklist** (all items must pass):
-- [ ] **Must** not use Vault API
-- [ ] **Must** not cache any state
-- [ ] **Must** have all operations be async
-- [ ] **Must** properly handle exceptions
-- [ ] **Must** use result-driven design
-
-**Note**: Plugins that don't meet this checklist will be considered non-compliant with NDS-native standards and will not enjoy official recommendations and future version compatibility guarantees.
-
-### Phase 3: Advanced Features (Future)
-
-**Target Audience**: Plugins requiring advanced features
-
-- Multi-Digital collaborative operations
-- Cross-system state management
-- Custom Digital types
+1. **Never block main thread**: Use callbacks, never `.get()`
+2. **Always check `NdsResult.isSuccess()`** before accessing `.data()`
+3. **Always use `BigDecimal`** for economic values (never `double`)
+4. **Asset names**: lowercase + underscores only (e.g., `coins`, `world_boss_hp`)
+5. **Event publish**: Future completes when **persisted**, not just queued
 
 ---
 
 ## 🏗️ Architecture Diagram
 
 ```
-Plugins (Shop / Quest / RPG / Gacha)
-        │
-        ▼
+Your Plugin
+    │
+    ▼
 ┌──────────────────────┐
-│   NDS API / Protocol │  ← Protocol Layer (You use this)
+│   NDS API v2.0       │  ← Protocol Layer (this module)
+│   (Interfaces Only)  │
 └──────────────────────┘
-        │
- ┌──────┴────────┐
- │               │
- ▼               ▼
-PostgreSQL      Redis
-(State)         (Sync / Cache)
+    │
+    ▼
+┌──────────────────────┐
+│   NDS Core          │  ← Implementation (nds-core module)
+│   (Event Store,     │
+│    Projections)     │
+└──────────────────────┘
+    │
+    ▼
+PostgreSQL + Redis
+(Event Store)  (Sync / Cache)
 ```
 
+**Key Points**:
+- NDS API v2.0 is a **protocol layer**, not an implementation
+- Your plugin **requests state** from NDS, doesn't **own state**
+- All state changes go through **events** (Event Sourcing)
+- State is obtained through **projections** (not direct reads)
+- NDS handles: precision, atomicity, cross-server sync, replayability
+
 ---
 
-## 📖 More Resources
+## 📖 Resources
 
-- **API Documentation**: See `NoieDigitalSystemAPI` interface JavaDoc
-- **Example Plugins**: Refer to NDS official examples
-- **Issue Reporting**: GitHub Issues
-
----
-
-## 💡 Core Success Criteria
-
-1. **After installing NDS, core economy works even without Web/Shop/Auction**
-2. **Plugin authors can easily get started, no need to manage core state**
-3. **Admins can freely choose to enable application layer features**
-4. **Core API is stable and reliable under cross-server/high concurrency**
-5. **Official Vault Bridge guarantees legacy plugin compatibility**
+- **AGENTS.md**: AI development context and patterns
+- **JavaDoc**: See interface comments
+- **Technical Report**: `Plan/NDS-API岩層開發計畫/技術報告.md`
 
 ---
 
@@ -826,12 +651,14 @@ When you follow this guide to develop plugins, you have become an **NDS-native P
 - Handle precision issues
 - Worry about cross-server synchronization
 - Implement atomic transactions
+- Store event history
 
 ✅ **You only need to:**
 - Focus on business logic
-- Use NDS API
-- Handle result callbacks
+- Use NDS API v2.0 (`NdsProvider`, `NdsRuntime`, `NdsTransactionBuilder`)
+- Handle `NdsResult` callbacks
 - Provide user experience
+- Create and publish events
 
 ---
 
@@ -850,3 +677,21 @@ When you follow this guide to develop plugins, you have become an **NDS-native P
 > **When you start using this guide to "say no",**
 > **you truly exercise the power of the protocol owner.**
 
+---
+
+## 🔄 Migration from v1.0
+
+**Key Changes**:
+- Entry: `NdsProvider.get()` → `NdsRuntime` (not `NoieDigitalSystem.getAPI()`)
+- Error handling: `NdsResult<T>` (not `CompletableFuture<Boolean>`)
+- Transactions: `NdsTransactionBuilder` (not direct API calls)
+- Identity: `NdsIdentity` (not `UUID`)
+- Assets: `AssetId` (not string names)
+
+**Migration**: Old API deprecated but available via bridge. New plugins **must** use v2.0.
+
+---
+
+**Version**: 2.0.0  
+**Last Updated**: 2024-12-19  
+**Status**: ✅ Stable
