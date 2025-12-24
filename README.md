@@ -637,6 +637,7 @@ PostgreSQL + Redis
 ## 📖 Resources
 
 - **JavaDoc**: See interface comments
+- **Migration Plan**: See `nds_migration_next_gen_vault_replacement_plan.md` for comprehensive migration strategy, legacy feature classification, Vault compatibility approach, and detailed migration guidelines
 
 ---
 
@@ -687,6 +688,25 @@ When you follow this guide to develop plugins, you have become an **NDS-native P
 - Assets: `AssetId` (not string names)
 
 **Migration**: Old API deprecated but available via bridge. New plugins **must** use v2.0.
+
+### Comprehensive Migration Guide
+
+For detailed migration instructions, refer to the **NDS Migration & Next-Generation Economy Protocol Plan** (`nds_migration_next_gen_vault_replacement_plan.md`). This document provides:
+
+- **Strategic Design Principles**: Non-negotiable principles governing all refactoring and future development
+- **System Layering Architecture**: Target architecture with clear separation between protocol layer, compatibility adapters, and core engine
+- **Legacy Feature Classification**: Guidelines for migrating protocol-native features versus maintaining compatibility adapters
+- **Vault Compatibility Strategy**: Implementation rules for Vault adapter layer, including precision loss documentation and best-effort guarantees
+- **Migration Phases**: Four-phase migration roadmap from protocol lock-in to NDS-native ecosystem expansion
+- **Practical Migration Guidelines**: Step-by-step instructions covering:
+  - Numeric type conversion (BigDecimal enforcement)
+  - Asynchronous result handling (from event-driven to result-driven design)
+  - Namespace and identifier migration (AssetId format specifications)
+  - Vault adapter side-effect handling (blocking call considerations)
+  - Audit log integration (reason and metadata usage)
+  - Migration checklist
+
+The migration plan serves as the authoritative guide for teams migrating existing plugins to NDS v2.0 protocol compliance.
 
 ---
 
