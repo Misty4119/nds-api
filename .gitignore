@@ -19,6 +19,7 @@ Report/
 
 # 2. 使用 ! 設定例外，將 README.md 排除在忽略名單之外（即保留它）
 !README.md
+!nds_migration_next_gen_vault_replacement_plan_for_minecraft.md
 # VS Code
 .vscode/
 
@@ -50,7 +51,42 @@ buildNumber.properties
 # ============================================
 # 敏感配置文件（包含憑證信息）
 # ============================================
+# Gradle 配置文件（包含 GPG 密鑰和 Central Portal Token）
 gradle.properties
+**/gradle.properties
+*.properties
+!gradle-wrapper.properties
+!**/gradle-wrapper.properties
+
+# GPG 密鑰文件
+*.gpg
+*.asc
+*.key
+*.pem
+*.p12
+*.jks
+*.keystore
+
+# 環境變量文件
+.env
+.env.local
+.env.*.local
+*.env
+
+# 密碼和 Token 文件
+*password*
+*secret*
+*token*
+*credential*
+*api_key*
+*apikey*
+
+# 配置文件（可能包含敏感信息）
+config/local.*
+config/*.local.*
+*.local.yml
+*.local.yaml
+*.local.properties
 
 # ============================================
 # 編譯和構建輸出

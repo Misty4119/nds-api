@@ -1,17 +1,56 @@
 plugins {
-    id 'java-library'     
-    id 'maven-publish'      
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'com.vanniktech.maven.publish' version '0.28.0'  // 新增
 }
 
-group = 'noie.linmimeng'
+group = 'io.github.misty4119'  // 使用 GitHub 命名空間
 version = '2.0.0'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 
+mavenPublishing {
+    publishToMavenCentral("S01", true)  // 使用 Central Portal
+    
+    signAllPublications()
+    
+    coordinates(group, 'noiedigitalsystem-api', version)
+    
+    pom {
+        name = 'NDS-API'
+        description = 'Lightweight Event Sourcing Financial Framework for Java'
+        inceptionYear = '2024'
+        url = 'https://github.com/Misty4119/nds-api'
+        
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        
+        developers {
+            developer {
+                id = 'linmimeng'
+                name = 'LinMimeng'
+                email = 'Misty4119@gmail.com'
+            }
+        }
+        
+        scm {
+            url = 'https://github.com/Misty4119/nds-api'
+            connection = 'scm:git:git://github.com/Misty4119/nds-api.git'
+            developerConnection = 'scm:git:ssh://github.com/Misty4119/nds-api.git'
+        }
+    }
+}
 repositories {
     mavenCentral() 
     // 移除 Paper Maven 倉庫（通用化）
@@ -27,11 +66,8 @@ dependencies {
  
     compileOnly 'org.jetbrains:annotations:24.0.0'
 }
- 
-java {
-    withSourcesJar() 
-}
- 
+
+// 保留 Repsy 發布配置（向後兼容）
 publishing {
     publications {
         mavenJava(MavenPublication) {
