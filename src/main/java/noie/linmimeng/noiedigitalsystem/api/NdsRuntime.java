@@ -3,6 +3,7 @@ package noie.linmimeng.noiedigitalsystem.api;
 import noie.linmimeng.noiedigitalsystem.api.event.NdsEventBus;
 import noie.linmimeng.noiedigitalsystem.api.projection.NdsQueryService;
 import noie.linmimeng.noiedigitalsystem.api.identity.NdsIdentityService;
+import noie.linmimeng.noiedigitalsystem.api.platform.NdsPlatform;
 import java.util.concurrent.Executor;
 
 /**
@@ -57,26 +58,55 @@ public interface NdsRuntime {
     boolean isHealthy();
     
     /**
-     * 獲取主線程執行器
+     * 獲取平台抽象接口
+     * 
+     * @return 平台接口（永不為 null）
+     * @since 2.0.0
+     */
+    NdsPlatform platform();
+    
+    /**
+     * 獲取預設執行器（推薦使用）
      * 
      * <p><b>⚠️ 重要：異步回調線程責任</b></p>
      * <p>所有 API 方法返回的 CompletableFuture 的回調（如 thenAccept, thenApply）
-     * 可能在異步線程執行。如果回調中需要操作 Bukkit API（如 player.sendMessage()），
-     * 必須使用此執行器切回主線程。</p>
+     * 可能在異步線程執行。在不同環境中需要不同的執行器：</p>
+     * <ul>
+     *   <li>Minecraft 環境：必須使用主線程執行器（用於操作線程不安全的 Bukkit API）</li>
+     *   <li>Spring Boot 環境：建議使用 Spring 管理的執行器</li>
+     *   <li>通用 Java 環境：可使用預設執行器</li>
+     * </ul>
      * 
      * <p><b>使用範例：</b></p>
      * <pre>{@code
      * runtime.query().queryBalance(assetId, identity)
      *     .thenAcceptAsync(result -> {
      *         if (result.isSuccess()) {
-     *             // 操作 Bukkit API 必須在主線程
-     *             player.sendMessage("Balance: " + result.data());
+     *             // 在 Minecraft 環境中，此處必須在主線程
+     *             // 在 Spring Boot 環境中，此處在 Spring 管理的線程
+     *             System.out.println("Balance: " + result.data());
      *         }
-     *     }, runtime.mainThreadExecutor());
+     *     }, runtime.defaultExecutor());
      * }</pre>
      * 
-     * @return 主線程執行器（永不為 null）
+     * @return 預設執行器（永不為 null）
+     * @since 2.0.0
      */
-    Executor mainThreadExecutor();
+    default Executor defaultExecutor() {
+        return platform().defaultExecutor();
+    }
+    
+    /**
+     * 獲取主線程執行器（向後兼容方法）
+     * 
+     * <p>此方法已棄用，建議使用 {@link #defaultExecutor()} 以獲得更好的平台抽象。</p>
+     * 
+     * @return 主線程執行器（永不為 null）
+     * @deprecated 建議使用 {@link #defaultExecutor()} 以獲得更好的平台抽象
+     */
+    @Deprecated(since = "2.0.0", forRemoval = false)
+    default Executor mainThreadExecutor() {
+        return defaultExecutor();
+    }
 }
 

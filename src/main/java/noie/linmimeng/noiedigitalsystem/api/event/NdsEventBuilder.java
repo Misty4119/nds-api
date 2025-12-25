@@ -83,8 +83,9 @@ public interface NdsEventBuilder {
      *   <li>null</li>
      * </ul>
      * 
-     * <p>如果發現違規類型（如 Entity, Location, ItemStack 等 Bukkit 對象），
+     * <p>如果發現違規類型（如平台特定對象、不可序列化對象等），
      * <b>當場拋出 IllegalArgumentException</b>，不要等到序列化時才報錯。</p>
+     * <p>例如：在 Minecraft 環境中，Entity、Location、ItemStack 等 Bukkit 對象是禁止的。</p>
      * 
      * <p><b>⚠️ 歷史事件重放注意事項</b></p>
      * <p>當從資料庫加載歷史事件進行重放時，<b>必須使用原事件的 ID</b>，不能重新生成。

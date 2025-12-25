@@ -14,7 +14,7 @@ import java.util.Map;
  * <p><b>憲法級規則：</b></p>
  * <ul>
  *   <li>Event 必須 Immutable（不可變）</li>
- *   <li>禁止攜帶 Bukkit / JVM 類型（如 Entity, Location, ItemStack）</li>
+ *   <li>禁止攜帶平台特定類型或不可序列化對象（如 Minecraft 環境中的 Entity、Location、ItemStack 等）</li>
  *   <li>必須可序列化</li>
  *   <li>必須支持 Replay（重放）</li>
  * </ul>

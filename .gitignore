@@ -13,7 +13,12 @@ run/
 *.ipr
 *.iws
 Report/
+# 構建輸出目錄
+# 1. 先忽略所有的 .md 檔案
+*.md
 
+# 2. 使用 ! 設定例外，將 README.md 排除在忽略名單之外（即保留它）
+!README.md
 # VS Code
 .vscode/
 

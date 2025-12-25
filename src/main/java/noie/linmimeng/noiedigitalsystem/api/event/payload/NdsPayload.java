@@ -10,8 +10,8 @@ import java.util.Set;
  * 
  * <p><b>死刑條款：</b></p>
  * <ul>
- *   <li>嚴禁 Complex Object（Entity / Location / ItemStack）</li>
- *   <li>嚴禁 Bukkit / Paper 類型</li>
+ *   <li>嚴禁 Complex Object（平台特定對象，如 Minecraft 環境中的 Entity、Location、ItemStack）</li>
+ *   <li>嚴禁平台特定類型（如 Bukkit/Paper、Spring Bean 等）</li>
  *   <li>嚴禁不可序列化的對象</li>
  *   <li>Core 必須拒絕違規事件</li>
  * </ul>

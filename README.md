@@ -1,715 +1,239 @@
-# NDS API v2.0 Developer Guide - Next-Generation Economy Protocol
+# NDS-API: Lightweight Event Sourcing Financial Framework
 
-> **NDS – Next-Generation Economy Protocol (NGEP) v2.0**  
-> *The successor of Vault, not a replacement — a protocol layer.*
+> **NDS (Noie Digital System) - High-Performance, Embedded, Event-Sourced Asset Management Protocol Layer**
 
----
-
-## 📘 Core Positioning
-
-**NDS is not another economy plugin, but rather the "Economy/State Protocol Layer" in the Minecraft ecosystem.**
-
-Just like:
-- **HTTP** for Web
-- **JDBC** for databases
-- **MCP** for AI tools
-
-NDS provides a unified state management protocol, allowing plugin authors to focus on business logic without managing core economic state.
+[![Maven Central](https://img.shields.io/maven-central/v/noie.linmimeng/noiedigitalsystem-api)](https://search.maven.org/artifact/noie.linmimeng/noiedigitalsystem-api)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 
 ---
 
-## ⚖️ Protocol Authority & Compliance
-
-This guide is the official specification maintained by the **Noie Team**. The final interpretation authority belongs to the NDS protocol owner.
-
-**Compliance Scope**:
-- **Enforcement**: NDS will not prevent non-compliant plugins from running (legal API calls are executed)
-- **Certification**: Only compliant plugins receive "NDS-native" mark and official recommendations
-- **Guarantees**: Non-compliant plugins do not enjoy future compatibility, consistency, or performance guarantees
+> **🎮 Looking for the Minecraft Plugin Documentation?**  
+> [Click here → Minecraft Developer Guide](./DEVELOPER_GUIDE_TW.md)  
+> This README is for general Java developers. Minecraft plugin developers should refer to the dedicated guide.
 
 ---
 
-## 🎯 Design Principles (Bedrock Specification)
+NDS-API is a pure Java event sourcing framework designed for high-concurrency, low-latency financial systems.
+It provides comprehensive asset management, transaction processing, and state querying capabilities without requiring large frameworks (such as Kafka or Axon).
 
-### 1. Protocol First
+## ✨ Core Features
 
-**API is a protocol, not a tool, not an implementation.**
+- **Event Sourcing**: All state changes are recorded through immutable events
+- **ACID Guarantees**: Strong consistency transactions with support for rollback
+- **High Concurrency**: Non-blocking asynchronous API supporting thousands of concurrent requests
+- **Precise Calculations**: Uses BigDecimal with no floating-point errors
+- **Audit Logging**: Complete operation history compliant with financial regulations
+- **Lightweight**: No external message queue required; runs in a single Java process
+- **Embedded**: Can be embedded as a library in any Java application
 
-- API layer has **zero dependencies** on Bukkit/Paper/Database/Network
-- Only interfaces and contracts are defined
-- Implementation is isolated in nds-core module
+## 🎯 Use Cases
 
-### 2. Event Is The Source Of Truth
-
-**State can ONLY be obtained through event projection. Direct state modification is forbidden.**
-
-- All state changes must go through events
-- State is computed from event history (Event Sourcing)
-- Any point in time can be reconstructed from historical events
-
-### 3. Replayable By Design
-
-**Any point in time can be reconstructed from historical events.**
-
-- All events must be serializable
-- Events are immutable historical records
-- Projections are pure functions (no side effects)
-
-### 4. AI-Ready Default
-
-**All data structures must be semanticizable, vectorizable, and analyzable.**
-
-- Support tags and metadata
-- All assets and events can be semanticized
-- Built for future AI analysis
-
-### 5. Implementation Isolation
-
-**API layer must not depend on concrete implementations.**
-
-- Only interfaces and contracts are defined
-- No Bukkit/Paper/Database/Network dependencies
-- Protocol layer is completely isolated
-
----
-
-## 🔒 Non-Negotiable Principles
-
-The following principles are **non-negotiable and unchangeable** in all versions of NDS. These principles are the core foundation of the NDS protocol, and any changes that violate these principles will break protocol consistency.
-
-### Principle 1: NDS is Always the Single Source of Truth
-
-**Immutability**: This principle will never change in any version.
-
-- NDS is the single source of truth for economic state
-- Plugins **must not** manage any economic/state data themselves
-- All state queries and modifications **must** go through NDS API
-- State can only be obtained through event projection
-- Violating this principle will cause state inconsistency, and NDS does not guarantee correct behavior
-
-### Principle 2: API is Always Async (Async-first)
-
-**Immutability**: NDS will never provide synchronous APIs.
-
-- All API methods **must** return `CompletableFuture<NdsResult<T>>`
-- NDS **will not** provide any synchronous APIs
-- Plugins **must** use async callbacks to handle results
-- Blocking Futures on the main thread is a **forbidden** design error
-- Use `runtime.mainThreadExecutor()` when calling Bukkit API in callbacks
-
-### Principle 3: Core Values Always Use BigDecimal
-
-**Immutability**: NDS will never switch to double or other numeric types.
-
-- All core numeric operations **must** use `BigDecimal`
-- Precision guarantee is a core feature of the NDS protocol
-- API methods **will not** accept `double` as primary parameters
-- Using `double` for economic calculations is **forbidden**
-
-### Principle 4: Event-Driven Architecture
-
-**Immutability**: State changes must always go through events.
-
-- All state changes **must** be expressed as events
-- Events are immutable and serializable
-- State is computed from event history
-- Direct state modification is **forbidden**
-
-### Principle 5: Result-Driven Error Handling
-
-**Immutability**: Errors are expressed as `NdsResult`, not exceptions.
-
-- Business failures are expressed as `NdsResult.isSuccess() == false`
-- System errors are expressed as exceptions in `.exceptionally()`
-- **Must** check `NdsResult.isSuccess()` before accessing `.data()`
-- Do not use exceptions to determine business results
-
----
-
-## 🔥 What is an NDS-native Plugin?
-
-### NDS-native Plugin Definition
-
-**NDS-native Plugin = Must simultaneously satisfy all of the following conditions:**
-
-✅ **Must Do:**
-- ✅ Use `NdsProvider.get()` to get `NdsRuntime` (the only entry point)
-- ✅ All state comes from NDS (do not store any economic/state data)
-- ✅ All behavior is driven by "result callbacks" (async-first)
-- ✅ Use `NdsResult` for error handling (check `isSuccess()` before accessing `.data()`)
-- ✅ Use `NdsTransactionBuilder` to create transactions
-- ✅ Use `runtime.mainThreadExecutor()` when calling Bukkit API in callbacks
-- ✅ Properly handle `NdsResult` failures with `.onFailure()` or `.exceptionally()`
-
-❌ **Absolutely Forbidden:**
-- ❌ Do not use `.get()` on `CompletableFuture` (blocks main thread)
-- ❌ Do not use `double`, `float`, or `int` for economic values
-- ❌ Do not store any economic/state data locally
-- ❌ Do not cache balance or asset values
-- ❌ Do not put Bukkit/JVM objects in `NdsPayload`
-- ❌ Do not use deprecated `NoieDigitalSystemAPI` in new plugins
-- ❌ Do not call Bukkit API directly in async callbacks
-- ❌ Do not access `.data()` on failed `NdsResult` (check `isSuccess()` first)
-- ❌ Do not modify state directly (only through events)
-
-
----
-
-## ⚠️ Consequences of Violation
-
-**Non-compliant plugins** (violating "Must Do" or "Absolutely Forbidden"):
-- Not listed in official recommendations
-- No future version compatibility guarantee
-- Cannot use new NDS features or optimizations
-
-**Violating core principles**:
-- No guarantee of correct behavior (may cause data loss, inconsistency)
-- State may desynchronize in cross-server environments
-
----
-
-## 📦 Dependency Setup
-
-Before you start using NDS API v2.0, you need to configure dependencies in your project.
-
-### 1. Gradle (Kotlin DSL) - Recommended
-
-```kotlin
-repositories {
-    // NDS Protocol Layer Repository
-    maven("https://repo.repsy.io/mvn/linmimeng/releases")
-}
-
-dependencies {
-    // Use compileOnly because NDS will provide this API at runtime
-    compileOnly("noie.linmimeng:noiedigitalsystem-api:2.0.0")
-}
-```
-
-### 2. Gradle (Groovy DSL)
-
-```groovy
-repositories {
-    maven { url 'https://repo.repsy.io/mvn/linmimeng/releases' }
-}
-
-dependencies {
-    compileOnly 'noie.linmimeng:noiedigitalsystem-api:2.0.0'
-}
-```
-
-### 3. Maven
-
-```xml
-<repositories>
-    <repository>
-        <id>nds-repo</id>
-        <url>https://repo.repsy.io/mvn/linmimeng/releases</url>
-    </repository>
-</repositories>
-
-<dependencies>
-    <dependency>
-        <groupId>noie.linmimeng</groupId>
-        <artifactId>noiedigitalsystem-api</artifactId>
-        <version>2.0.0</version>
-        <scope>provided</scope>
-    </dependency>
-</dependencies>
-```
-
----
+- **Microservice Internal State Management**: Asset/balance management within services
+- **Financial Technology (FinTech)**: Wallet systems, payment processing, balance queries
+- **E-Commerce Systems**: Points systems, coupons, member balances
+- **Game Economics**: Virtual currency, item trading (Minecraft plugin ecosystem)
+- **Internet of Things (IoT)**: Device state tracking, resource allocation
 
 ## 🚀 Quick Start
 
-### Getting Runtime Instance
+### Maven
 
-```java
-import noie.linmimeng.noiedigitalsystem.api.NdsProvider;
-import noie.linmimeng.noiedigitalsystem.api.NdsRuntime;
+```xml
+<dependency>
+    <groupId>noie.linmimeng</groupId>
+    <artifactId>noiedigitalsystem-api</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
 
-// Check if NDS is initialized
-if (!NdsProvider.isInitialized()) {
-    getLogger().severe("NDS not initialized!");
-    return;
+### Gradle
+
+```kotlin
+dependencies {
+    implementation("noie.linmimeng:noiedigitalsystem-api:2.0.0")
 }
-
-NdsRuntime runtime = NdsProvider.get();
 ```
 
-### Creating Identity
+**Note**: Currently published to Repsy Maven repository. Maven Central publication is in progress.
 
-```java
-import noie.linmimeng.noiedigitalsystem.api.identity.NdsIdentity;
-import noie.linmimeng.noiedigitalsystem.api.identity.IdentityType;
-
-// Lightweight creation (no async query needed)
-NdsIdentity player = NdsIdentity.fromString("550e8400-e29b-41d4-a716-446655440000");
-// or
-NdsIdentity player = NdsIdentity.of("550e8400-e29b-41d4-a716-446655440000", IdentityType.PLAYER);
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://repo.repsy.io/mvn/linmimeng/releases")
+}
 ```
 
-### Creating Asset ID
+### Basic Usage
 
 ```java
-import noie.linmimeng.noiedigitalsystem.api.asset.AssetId;
-import noie.linmimeng.noiedigitalsystem.api.asset.AssetScope;
-
-AssetId coins = AssetId.of(AssetScope.PLAYER, "coins");
-// or
-AssetId coins = AssetId.fromString("player:coins");
-```
-
-### Querying Balance
-
-```java
+import noie.linmimeng.noiedigitalsystem.api.*;
 import java.math.BigDecimal;
 
-runtime.query().queryBalance(assetId, identity)
-    .thenAcceptAsync(result -> {
+// Get runtime instance
+NdsRuntime runtime = NdsProvider.get();
+
+// Create identity (account)
+NdsIdentity account = NdsIdentity.of("user-123", IdentityType.ACCOUNT);
+
+// Create asset ID
+AssetId wallet = AssetId.of(AssetScope.ACCOUNT, "wallet");
+
+// Query balance
+runtime.query().queryBalance(wallet, account)
+    .thenAccept(result -> {
         if (result.isSuccess()) {
             BigDecimal balance = result.data();
-            player.sendMessage("Balance: " + balance);
-        } else {
-            player.sendMessage("Failed to query balance: " + result.error().message());
+            System.out.println("Balance: " + balance);
         }
-    }, runtime.mainThreadExecutor())
-    .exceptionally(ex -> {
-        getLogger().severe("Error: " + ex.getMessage());
-        return null;
     });
-```
-
-### Creating and Publishing Transaction
-
-```java
-import noie.linmimeng.noiedigitalsystem.api.transaction.NdsTransaction;
-import noie.linmimeng.noiedigitalsystem.api.transaction.NdsTransactionBuilder;
-import noie.linmimeng.noiedigitalsystem.api.transaction.ConsistencyMode;
 
 // Create transaction
 NdsTransaction transaction = NdsTransactionBuilder.create()
-    .actor(identity)
-    .asset(assetId)
-    .delta(BigDecimal.valueOf(100))  // Positive = add, negative = subtract
-    .consistency(ConsistencyMode.STRONG)
-    .source(sourceIdentity)  // Optional, for transfers
-    .target(targetIdentity)   // Optional, for transfers
-    .reason("purchase")       // Optional
-    .build();
-
-// Publish transaction (Future completes when persisted)
-runtime.eventBus().publish(transaction)
-    .thenAcceptAsync(result -> {
-        if (result.isSuccess()) {
-            // Transaction persisted successfully
-            player.sendMessage("Transaction completed!");
-        } else {
-            player.sendMessage("Transaction failed: " + result.error().message());
-        }
-    }, runtime.mainThreadExecutor())
-    .exceptionally(ex -> {
-        getLogger().severe("Error: " + ex.getMessage());
-        return null;
-    });
-```
-
----
-
-## 📚 API Overview
-
-**Error Handling**: `NdsResult.isSuccess() == false` = business failure (expected), `Exception` = system error (unexpected). Do not use exceptions to judge business results.
-
-**Core Services**:
-- `runtime.query()` - Query state through projections
-- `runtime.eventBus()` - Publish events (Future completes when persisted)
-- `runtime.identity()` - Identity management
-
-**Key Methods**:
-- `queryBalance(assetId, identity)` → `CompletableFuture<NdsResult<BigDecimal>>`
-- `publish(event)` → `CompletableFuture<NdsResult<Void>>`
-- `NdsTransactionBuilder.create().actor().asset().delta().consistency().build()`
-
----
-
-## ❌ Common Anti-Patterns
-
-### ❌ Anti-Pattern 1: Caching Balance in Plugin
-
-```java
-// ❌ Wrong: Caching causes state desynchronization
-private final Map<UUID, BigDecimal> balanceCache = new HashMap<>();
-
-public void checkBalance(UUID uuid) {
-    if (balanceCache.containsKey(uuid)) {
-        return balanceCache.get(uuid); // Wrong: may be outdated
-    }
-    // ...
-}
-```
-
-**Problem**: Other plugins or servers may have modified the balance, and caching will cause state inconsistency.
-
-**✅ Correct Approach**: Always query from NDS
-
-```java
-// ✅ Correct: Always query latest state
-runtime.query().queryBalance(assetId, identity)
-    .thenAccept(result -> {
-        if (result.isSuccess()) {
-            BigDecimal balance = result.data();
-            // Use latest balance
-        }
-    });
-```
-
-### ❌ Anti-Pattern 2: Not Checking NdsResult Success
-
-```java
-// ❌ Wrong: No result check
-runtime.query().queryBalance(assetId, identity)
-    .thenAccept(result -> {
-        BigDecimal balance = result.data(); // Throws if failed!
-    });
-```
-
-**Problem**: If query fails, accessing `.data()` will throw `IllegalStateException`.
-
-**✅ Correct Approach**: Check result before accessing data
-
-```java
-// ✅ Correct: Check result
-runtime.query().queryBalance(assetId, identity)
-    .thenAccept(result -> {
-        if (result.isSuccess()) {
-            BigDecimal balance = result.data();
-            // Use balance
-        } else {
-            // Handle failure
-            result.onFailure(error -> {
-                getLogger().severe("Failed: " + error.message());
-            });
-        }
-    });
-```
-
-### ❌ Anti-Pattern 3: Blocking Main Thread
-
-```java
-// ❌ Wrong: Blocking main thread
-public void onPlayerCommand(Player player) {
-    NdsResult<BigDecimal> result = runtime.query().queryBalance(assetId, identity).get(); // Blocking!
-    BigDecimal balance = result.data();
-    player.sendMessage("Balance: " + balance);
-}
-```
-
-**Problem**: Will cause server lag, violating async design principles.
-
-**✅ Correct Approach**: Use callbacks
-
-```java
-// ✅ Correct: Async callback
-public void onPlayerCommand(Player player) {
-    runtime.query().queryBalance(assetId, identity)
-        .thenAcceptAsync(result -> {
-            if (result.isSuccess()) {
-                player.sendMessage("Balance: " + result.data());
-            }
-        }, runtime.mainThreadExecutor())
-        .exceptionally(ex -> {
-            player.sendMessage("Query failed: " + ex.getMessage());
-            return null;
-        });
-}
-```
-
-### ❌ Anti-Pattern 4: Calling Bukkit API in Async Thread
-
-```java
-// ❌ Wrong: Bukkit API in async thread
-runtime.query().queryBalance(assetId, identity)
-    .thenAccept(result -> {
-        player.sendMessage("Balance: " + result.data()); // May throw!
-    });
-```
-
-**Problem**: Bukkit API is not thread-safe. All Bukkit operations must run on the main thread.
-
-**✅ Correct Approach**: Use main thread executor
-
-```java
-// ✅ Correct: Use main thread executor
-runtime.query().queryBalance(assetId, identity)
-    .thenAcceptAsync(result -> {
-        player.sendMessage("Balance: " + result.data());
-    }, runtime.mainThreadExecutor());
-```
-
-### ❌ Anti-Pattern 5: Using Primitive Types Instead of BigDecimal
-
-```java
-// ❌ Wrong: Precision issues
-double price = 100.5;
-int amount = 100;
-
-// ✅ Correct: Must use BigDecimal
-BigDecimal price = BigDecimal.valueOf(100.5);
-BigDecimal amount = BigDecimal.valueOf(100);
-// or
-BigDecimal price = new BigDecimal("100.5");
-```
-
-### ❌ Anti-Pattern 6: Putting Bukkit Objects in Payload
-
-```java
-// ❌ Wrong: Bukkit objects in payload
-NdsPayload payload = NdsPayload.builder()
-    .put("item", itemStack)  // Illegal!
-    .put("location", location)  // Illegal!
-    .build();
-
-// ✅ Correct: Only primitive types
-NdsPayload payload = NdsPayload.builder()
-    .put("itemId", "diamond")
-    .put("world", "world")
-    .put("x", location.getX())
-    .put("y", location.getY())
-    .put("z", location.getZ())
-    .build();
-```
-
-### ❌ Anti-Pattern 7: Using EventBuilder for Transactions
-
-```java
-// ❌ Wrong: Cannot cast
-NdsEvent event = NdsEventBuilder.create()
-    .actor(identity)
-    .type(EventType.TRANSACTION)
-    .build();
-NdsTransaction transaction = (NdsTransaction) event; // Compilation error!
-
-// ✅ Correct: Use TransactionBuilder
-NdsTransaction transaction = NdsTransactionBuilder.create()
-    .actor(identity)
-    .asset(assetId)
+    .actor(account)
+    .asset(wallet)
     .delta(BigDecimal.valueOf(100))
     .consistency(ConsistencyMode.STRONG)
+    .reason("deposit")
     .build();
+
+// Publish transaction
+runtime.eventBus().publish(transaction)
+    .thenAccept(result -> {
+        if (result.isSuccess()) {
+            System.out.println("Transaction completed");
+        }
+    });
 ```
 
----
+## 🏗️ Architecture Design
 
-## 🎨 Design Pattern: Result-driven Design
-
-### Traditional Design (Forbidden)
-
-```text
-Player clicks purchase
-↓
-Check balance first
-↓
-Then deduct
-↓
-Then give item
-```
-
-**Problem**: Many steps, error-prone, has Race Condition risk. This design violates NDS protocol principles.
-
-### NDS-native Design (Required)
-
-```text
-Player clicks purchase
-↓
-Create and publish transaction (atomic operation)
-↓
-Success → Give reward
-Failure → Provide feedback
-```
-
-**Advantages**:
-- Fewer steps, clear logic
-- NDS guarantees atomicity
-- No Race Condition
-- Automatically handles concurrency
-- Full audit trail through events
-
-### Practical Example
-
-```java
-// ✅ NDS-native design: Result-driven
-public void onPlayerPurchase(Player player, AssetId itemAssetId, BigDecimal price) {
-    NdsIdentity identity = NdsIdentity.fromString(player.getUniqueId().toString());
-    AssetId coinsAssetId = AssetId.of(AssetScope.PLAYER, "coins");
-    
-    // Create transaction (negative delta = deduction)
-    NdsTransaction transaction = NdsTransactionBuilder.create()
-        .actor(identity)
-        .asset(coinsAssetId)
-        .delta(price.negate())  // Negative = subtract
-        .consistency(ConsistencyMode.STRONG)
-        .reason("purchase:" + itemAssetId.name())
-        .build();
-    
-    // Publish transaction
-    runtime.eventBus().publish(transaction)
-        .thenAcceptAsync(result -> {
-            if (result.isSuccess()) {
-                // Transaction succeeded, give item
-                player.getInventory().addItem(itemStack);
-                player.sendMessage("Purchase successful!");
-            } else {
-                // Transaction failed (e.g., insufficient balance)
-                player.sendMessage("Purchase failed: " + result.error().message());
-            }
-        }, runtime.mainThreadExecutor())
-        .exceptionally(ex -> {
-            // Handle exception
-            getLogger().severe("Purchase failed: " + ex.getMessage());
-            player.sendMessage("Purchase failed, please try again later");
-            return null;
-        });
-}
-```
-
----
-
-## 📋 Responsibility Boundaries
-
-Clearly understand "what is NDS's responsibility and what is the plugin's responsibility":
-
-| Responsibility Item | NDS Responsible | Plugin Responsible |
-|---------------------|----------------|-------------------|
-| **State Consistency** | ✅ Guarantee all state consistent | ❌ Should not manage state themselves |
-| **Precision Handling** | ✅ Use BigDecimal for precision | ❌ Should not use double |
-| **Atomic Transactions** | ✅ Guarantee operation atomicity | ❌ Should not implement transaction logic themselves |
-| **Cross-server Sync** | ✅ Automatically sync multiple servers | ❌ Should not handle synchronization themselves |
-| **Event Sourcing** | ✅ Store and replay events | ❌ Should not manage event storage |
-| **Business Logic** | ❌ Doesn't care about business logic | ✅ Implement shop, quest, etc. logic |
-| **UI / Feedback** | ❌ Doesn't provide UI | ✅ Provide player interface and messages |
-| **Data Validation** | ✅ Validate value legality | ✅ Validate business rules (e.g., price) |
-
-
----
-
-## ⚠️ Critical Rules
-
-1. **Never block main thread**: Use callbacks, never `.get()`
-2. **Always check `NdsResult.isSuccess()`** before accessing `.data()`
-3. **Always use `BigDecimal`** for economic values (never `double`)
-4. **Asset names**: lowercase + underscores only (e.g., `coins`, `world_boss_hp`)
-5. **Event publish**: Future completes when **persisted**, not just queued
-
----
-
-## 🏗️ Architecture Diagram
+NDS-API adopts a **protocol layer design** with complete separation from implementation:
 
 ```
-Your Plugin
+Your Application
     │
     ▼
 ┌──────────────────────┐
-│   NDS API v2.0       │  ← Protocol Layer (this module)
+│   NDS-API            │  ← Protocol Layer (Pure Interfaces, Zero Dependencies)
 │   (Interfaces Only)  │
 └──────────────────────┘
     │
     ▼
 ┌──────────────────────┐
-│   NDS Core          │  ← Implementation (nds-core module)
-│   (Event Store,     │
-│    Projections)     │
+│   NDS-Core           │  ← Implementation Layer (Event Store, Projections)
+│   (Implementation)   │
 └──────────────────────┘
     │
     ▼
 PostgreSQL + Redis
-(Event Store)  (Sync / Cache)
+(Event Store)  (Cache)
 ```
 
-**Key Points**:
-- NDS API v2.0 is a **protocol layer**, not an implementation
-- Your plugin **requests state** from NDS, doesn't **own state**
-- All state changes go through **events** (Event Sourcing)
-- State is obtained through **projections** (not direct reads)
-- NDS handles: precision, atomicity, cross-server sync, replayability
+**Key Design Principles**:
+- **Protocol Layer**: API layer defines only interfaces and contracts with zero dependencies
+- **Implementation Isolation**: Implementation layer (nds-core) is completely separated from protocol layer
+- **Platform Abstraction**: Supports different runtime environments through `NdsPlatform` interface
+
+## 📚 Core Concepts
+
+### Event Sourcing
+
+All state changes are recorded through **immutable events**. State is computed from event history through **projections**.
+
+**Advantages**:
+- Complete audit trail
+- Replayable to any point in time
+- No risk of state loss
+
+### Async-First
+
+All API methods return `CompletableFuture<NdsResult<T>>` and never block the calling thread.
+
+**Advantages**:
+- High concurrency performance
+- Non-blocking I/O
+- Suitable for microservice architecture
+
+### Precise Calculations (BigDecimal)
+
+All numeric operations use `BigDecimal` with no floating-point errors.
+
+**Advantages**:
+- Financial-grade precision
+- No accumulated errors
+- Compliance-ready
+
+### Result-Driven Error Handling
+
+Business failures are expressed through `NdsResult.isSuccess() == false`, while system errors are expressed through exceptions.
+
+**Advantages**:
+- Clear error semantics
+- Type-safe error handling
+- Aligns with functional programming paradigms
+
+## 🎨 Why Choose NDS-API?
+
+### vs Axon Framework
+
+- **Lightweight**: No need to deploy additional message queues or event stores
+- **Embedded**: Can be embedded as a library directly into applications
+- **Low Learning Curve**: Clean API design, easy to get started
+
+### vs Kafka
+
+- **No Infrastructure Dependencies**: No need to deploy Kafka clusters
+- **Single-Machine Friendly**: Suitable for small-to-medium applications or internal state management in microservices
+- **Low Latency**: Direct database operations with no network overhead
+
+### vs Custom Solutions
+
+- **Battle-Tested**: Originally designed for Minecraft game ecosystem, validated through years of high-concurrency scenarios
+- **Complete Feature Set**: Event sourcing, ACID guarantees, audit logging all included
+- **Active Maintenance**: Active development and community support
+
+## 📖 Complete Documentation
+
+- **General Java Developer Guide**: [GENERAL_JAVA_GUIDE.md](./GENERAL_JAVA_GUIDE.md) (Coming Soon)
+- **Minecraft Plugin Developer Guide**: [DEVELOPER_GUIDE_TW.md](./DEVELOPER_GUIDE_TW.md)
+- **API Reference**: JavaDoc (In Progress)
+- **Migration Guide**: [nds_migration_next_gen_vault_replacement_plan.md](./nds_migration_next_gen_vault_replacement_plan.md)
+
+## 🔗 Related Resources
+
+- **GitHub Repository**: [https://github.com/Misty4119/nds-api](https://github.com/Misty4119/nds-api)
+- **Maven Repository**: [Repsy](https://repo.repsy.io/mvn/linmimeng/releases)
+- **Maven Central**: Publication in progress (Coming Soon)
+
+## 📄 License
+
+Apache License 2.0
+
+## 🙏 Acknowledgments
+
+NDS-API was originally designed for the Minecraft game ecosystem. After years of validation in high-concurrency scenarios, it has evolved into a general-purpose Java framework.
 
 ---
 
-## 📖 Resources
+## 📋 Terminology Mapping
 
-- **JavaDoc**: See interface comments
-- **Migration Plan**: See `nds_migration_next_gen_vault_replacement_plan.md` for comprehensive migration strategy, legacy feature classification, Vault compatibility approach, and detailed migration guidelines
-
----
-
-## 🎯 Summary: Becoming an NDS-native Plugin Author
-
-When you follow this guide to develop plugins, you have become an **NDS-native Plugin Author**:
-
-✅ **You no longer need to:**
-- Manage economic state
-- Handle precision issues
-- Worry about cross-server synchronization
-- Implement atomic transactions
-- Store event history
-
-✅ **You only need to:**
-- Focus on business logic
-- Use NDS API v2.0 (`NdsProvider`, `NdsRuntime`, `NdsTransactionBuilder`)
-- Handle `NdsResult` callbacks
-- Provide user experience
-- Create and publish events
-
----
-
-## 📜 Protocol Statement
-
-> **NDS unifies "correctness, state, cross-server consistency, and future expansion"**
-> 
-> **This guide is not "suggestions", but "protocol specifications".**
-> 
-> **Plugins that violate this guide will not meet NDS-native plugin standards,**
-> **and will not enjoy official recommendations and future version compatibility guarantees.**
-> 
-> **When you start following "forbidden items" instead of "suggested items",**
-> **you truly understand the meaning of NDS as a protocol layer.**
-> 
-> **When you start using this guide to "say no",**
-> **you truly exercise the power of the protocol owner.**
-
----
-
-## 🔄 Migration from v1.0
-
-**Key Changes**:
-- Entry: `NdsProvider.get()` → `NdsRuntime` (not `NoieDigitalSystem.getAPI()`)
-- Error handling: `NdsResult<T>` (not `CompletableFuture<Boolean>`)
-- Transactions: `NdsTransactionBuilder` (not direct API calls)
-- Identity: `NdsIdentity` (not `UUID`)
-- Assets: `AssetId` (not string names)
-
-**Migration**: Old API deprecated but available via bridge. New plugins **must** use v2.0.
-
-### Comprehensive Migration Guide
-
-For detailed migration instructions, refer to the **NDS Migration & Next-Generation Economy Protocol Plan** (`nds_migration_next_gen_vault_replacement_plan.md`). This document provides:
-
-- **Strategic Design Principles**: Non-negotiable principles governing all refactoring and future development
-- **System Layering Architecture**: Target architecture with clear separation between protocol layer, compatibility adapters, and core engine
-- **Legacy Feature Classification**: Guidelines for migrating protocol-native features versus maintaining compatibility adapters
-- **Vault Compatibility Strategy**: Implementation rules for Vault adapter layer, including precision loss documentation and best-effort guarantees
-- **Migration Phases**: Four-phase migration roadmap from protocol lock-in to NDS-native ecosystem expansion
-- **Practical Migration Guidelines**: Step-by-step instructions covering:
-  - Numeric type conversion (BigDecimal enforcement)
-  - Asynchronous result handling (from event-driven to result-driven design)
-  - Namespace and identifier migration (AssetId format specifications)
-  - Vault adapter side-effect handling (blocking call considerations)
-  - Audit log integration (reason and metadata usage)
-  - Migration checklist
-
-The migration plan serves as the authoritative guide for teams migrating existing plugins to NDS v2.0 protocol compliance.
+| Minecraft Terminology | General Java Terminology | Description |
+|----------------------|-------------------------|-------------|
+| Player | Account / Entity | Account or entity |
+| Economy Plugin | Distributed Ledger System | Distributed ledger system |
+| Coins / Money | Assets / Currency | Assets or currency |
+| Server Performance | High Concurrency & Low Latency | High concurrency and low latency |
+| Plugin | Library / Framework / Module | Library, framework, or module |
+| Server | Node / Microservice | Node or microservice |
+| Command | API Endpoint / CLI | API endpoint or command-line interface |
+| Config.yml | Properties / YAML Configuration | Properties or YAML configuration |
+| Vault | Payment Gateway Interface | Payment gateway interface |
+| Main Thread | Event Loop / Dispatcher Thread | Event loop or dispatcher thread |
+| Scheduler | Executor / Task Scheduler | Executor or task scheduler |
 
 ---
 
 **Version**: 2.0.0  
-**Last Updated**: 2025-12-24  
+**Last Updated**: 2025-01-XX  
 **Status**: ✅ Stable

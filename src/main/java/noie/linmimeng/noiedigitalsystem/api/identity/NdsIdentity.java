@@ -64,9 +64,10 @@ public interface NdsIdentity {
      * 
      * <p><b>使用場景：</b></p>
      * <ul>
-     *   <li>當一個 Bukkit 玩家登入事件發生（同步），需要發出一個 NdsEvent</li>
-     *   <li>手上有 UUID 字符串，需要快速創建 NdsIdentity 對象</li>
+     *   <li>當一個身份登入事件發生（同步），需要發出一個 NdsEvent</li>
+     *   <li>手上有 ID 字符串，需要快速創建 NdsIdentity 對象</li>
      *   <li>不需要異步查庫，直接創建輕量級對象</li>
+     *   <li>例如：在 Minecraft 環境中，當玩家登入時，使用玩家的 UUID 創建 NdsIdentity</li>
      * </ul>
      * 
      * <p><b>格式說明：</b></p>

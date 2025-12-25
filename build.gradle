@@ -14,11 +14,13 @@ java {
 
 repositories {
     mavenCentral() 
-    maven { url "https://repo.papermc.io/repository/maven-public/" }
+    // 移除 Paper Maven 倉庫（通用化）
+    // maven { url "https://repo.papermc.io/repository/maven-public/" }
 }
 
 dependencies { 
-    compileOnly "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
+    // 移除 Paper API 依賴（通用化）
+    // compileOnly "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
  
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
