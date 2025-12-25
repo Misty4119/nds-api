@@ -2,7 +2,7 @@
 
 > **NDS (Noie Digital System) - High-Performance, Embedded, Event-Sourced Asset Management Protocol Layer**
 
-[![Maven Central](https://img.shields.io/maven-central/v/noie.linmimeng/noiedigitalsystem-api)](https://search.maven.org/artifact/noie.linmimeng/noiedigitalsystem-api)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.misty4119/noiedigitalsystem-api)](https://search.maven.org/artifact/io.github.misty4119/noiedigitalsystem-api)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 
@@ -42,7 +42,7 @@ Originally designed for the Minecraft game ecosystem, NDS-API has been validated
 
 ```xml
 <dependency>
-    <groupId>noie.linmimeng</groupId>
+    <groupId>io.github.misty4119</groupId>
     <artifactId>noiedigitalsystem-api</artifactId>
     <version>2.0.0</version>
 </dependency>
@@ -52,23 +52,20 @@ Originally designed for the Minecraft game ecosystem, NDS-API has been validated
 
 ```kotlin
 dependencies {
-    implementation("noie.linmimeng:noiedigitalsystem-api:2.0.0")
+    implementation("io.github.misty4119:noiedigitalsystem-api:2.0.0")
 }
 ```
-
-**Note**: Currently published to Repsy Maven repository. Maven Central publication is in progress.
 
 ```kotlin
 repositories {
     mavenCentral()
-    maven("https://repo.repsy.io/mvn/linmimeng/releases")
 }
 ```
 
 ### Basic Usage
 
 ```java
-import noie.linmimeng.noiedigitalsystem.api.*;
+import io.github.misty4119.noiedigitalsystem.api.*;
 import java.math.BigDecimal;
 
 // Check if NDS is initialized
@@ -240,8 +237,7 @@ Business failures are expressed through `NdsResult.isSuccess() == false`, while 
 ## 🔗 Related Resources
 
 - **GitHub Repository**: [https://github.com/Misty4119/nds-api](https://github.com/Misty4119/nds-api)
-- **Maven Repository**: [Repsy](https://repo.repsy.io/mvn/linmimeng/releases) (Current)
-- **Maven Central**: [Coming Soon](https://search.maven.org/) (Publication in progress)
+- **Maven Central**: [https://search.maven.org/artifact/io.github.misty4119/noiedigitalsystem-api](https://search.maven.org/artifact/io.github.misty4119/noiedigitalsystem-api)
 
 ## 📄 License
 
@@ -281,9 +277,9 @@ NDS-API was originally designed for the Minecraft game ecosystem. After years of
 
 ### Maven Central Publication
 
-- **Status**: Publication in progress
-- **Current Repository**: [Repsy Maven Repository](https://repo.repsy.io/mvn/linmimeng/releases)
-- **Future Group ID**: `io.github.misty4119` (GitHub namespace) or `com.linmimeng` (domain namespace)
+- **Status**: ✅ Published
+- **Group ID**: `io.github.misty4119`
+- **Maven Central**: [https://search.maven.org/artifact/io.github.misty4119/noiedigitalsystem-api](https://search.maven.org/artifact/io.github.misty4119/noiedigitalsystem-api)
 
 ### Platform Support
 

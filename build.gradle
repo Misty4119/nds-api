@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id 'com.vanniktech.maven.publish' version '0.28.0'  // 新增
+    id 'com.vanniktech.maven.publish' version '0.28.0'
 }
 
 group = 'io.github.misty4119'  // 使用 GitHub 命名空間
@@ -16,8 +16,62 @@ java {
     withJavadocJar()
 }
 
+// 修復任務依賴問題：確保 plainJavadocJar 在生成元數據之前執行
+afterEvaluate {
+    tasks.named('generateMetadataFileForMavenPublication') {
+        dependsOn tasks.named('plainJavadocJar')
+    }
+    tasks.named('generateMetadataFileForMavenJavaPublication') {
+        dependsOn tasks.named('plainJavadocJar')
+    }
+    tasks.named('signMavenPublication') {
+        dependsOn tasks.named('plainJavadocJar')
+    }
+    tasks.named('signMavenJavaPublication') {
+        dependsOn tasks.named('plainJavadocJar')
+    }
+}
+
+// GPG 簽名配置
+signing {
+    required { gradle.taskGraph.hasTask("publishAllPublicationsToMavenCentralRepository") }
+    def signingKeyFile = project.findProperty("signingKeyFile")
+    def signingKeyEnv = System.getenv("ORG_GRADLE_PROJECT_signingKey")
+    def signingPassword = project.findProperty("signing.password")
+    
+    def signingKey = null
+    if (signingKeyFile) {
+        // 從文件讀取私鑰
+        def keyFile = project.file(signingKeyFile)
+        if (keyFile.exists()) {
+            signingKey = keyFile.text
+        } else {
+            throw new GradleException("GPG key file not found: ${keyFile.absolutePath}")
+        }
+    } else if (signingKeyEnv) {
+        // 從環境變量讀取私鑰
+        signingKey = signingKeyEnv
+    }
+    
+    if (signingKey && signingPassword) {
+        // 使用內存中的 GPG 私鑰（ASCII-armored 格式）
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    } else {
+        // 嘗試使用系統 GPG 命令（需要 GPG 在 PATH 中）
+        try {
+            useGpgCmd()
+        } catch (Exception e) {
+            throw new GradleException("GPG signing configuration failed. Please either:\n" +
+                "1. Set 'signingKeyFile' property pointing to your GPG private key file, or\n" +
+                "2. Set 'ORG_GRADLE_PROJECT_signingKey' environment variable, or\n" +
+                "3. Ensure GPG is in your system PATH and use 'useGpgCmd()'", e)
+        }
+    }
+}
+
 mavenPublishing {
-    publishToMavenCentral("S01", true)  // 使用 Central Portal
+    // 使用 OSSRH Staging API（然後在 Central Portal 手動發布）
+    publishToMavenCentral("S01", false)  // S01 服務器，不自動發布（需手動在 Portal 發布）
     
     signAllPublications()
     
@@ -67,17 +121,18 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:24.0.0'
 }
 
-// 保留 Repsy 發布配置（向後兼容）
+// 標準 publishing 配置（用於 OSSRH 上傳）
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
- 
+            
             artifactId = 'noiedigitalsystem-api'
- 
+            
             pom {
-                name = 'NoieDigitalSystem API'
-                description = 'The Protocol Layer for NoieDigitalSystem (NDS) - Next-Generation Economy Protocol'
+                name = 'NDS-API'
+                description = 'Lightweight Event Sourcing Financial Framework for Java'
+                inceptionYear = '2024'
                 url = 'https://github.com/Misty4119/nds-api'
                 
                 licenses {
@@ -91,18 +146,26 @@ publishing {
                     developer {
                         id = 'linmimeng'
                         name = 'LinMimeng'
+                        email = 'Misty4119@gmail.com'
                     }
+                }
+                
+                scm {
+                    url = 'https://github.com/Misty4119/nds-api'
+                    connection = 'scm:git:git://github.com/Misty4119/nds-api.git'
+                    developerConnection = 'scm:git:ssh://github.com/Misty4119/nds-api.git'
                 }
             }
         }
     }
- 
+    
     repositories {
         maven {
-            url = uri("https://repo.repsy.io/mvn/linmimeng/releases")
-            credentials { 
-                username = project.findProperty("repsyUsername") ?: System.getenv("REPSY_USERNAME")
-                password = project.findProperty("repsyPassword") ?: System.getenv("REPSY_PASSWORD")
+            name = "OSSRH"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = project.findProperty("mavenCentralUsername") ?: System.getenv("MAVEN_CENTRAL_USERNAME")
+                password = project.findProperty("mavenCentralPassword") ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
             }
         }
     }
@@ -113,20 +176,21 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['-Xlint:all', '-Xlint:-processing']
 }
  
-tasks.named('publish') {
+// 發布前驗證
+tasks.named('publishAllPublicationsToMavenCentralRepository') {
     dependsOn 'build'
     doFirst {
         if (!project.version.matches(/^\d+\.\d+\.\d+$/)) {
             throw new RuntimeException("version error: ${project.version}，should be MAJOR.MINOR.PATCH format")
         }
         
-        def username = project.findProperty("repsyUsername") ?: System.getenv("REPSY_USERNAME")
-        def password = project.findProperty("repsyPassword") ?: System.getenv("REPSY_PASSWORD")
+        def username = project.findProperty("mavenCentralUsername") ?: System.getenv("MAVEN_CENTRAL_USERNAME")
+        def password = project.findProperty("mavenCentralPassword") ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
         
         if (!username || !password) {
-            throw new RuntimeException("Repsy credentials missing! Please set repsyUsername and repsyPassword in gradle.properties, or set REPSY_USERNAME and REPSY_PASSWORD environment variables")
+            throw new RuntimeException("Maven Central credentials missing! Please set mavenCentralUsername and mavenCentralPassword in gradle.properties")
         }
 
-        println "Preparing to publish ${project.group}:${project.findProperty('artifactId') ?: 'noiedigitalsystem-api'}:${project.version}"
+        println "Preparing to publish ${project.group}:noiedigitalsystem-api:${project.version} to Maven Central"
     }
 }

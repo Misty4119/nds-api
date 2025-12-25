@@ -16,10 +16,13 @@ Report/
 # 構建輸出目錄
 # 1. 先忽略所有的 .md 檔案
 *.md
-
+gpg-key.asc
+my-signing-key.asc
 # 2. 使用 ! 設定例外，將 README.md 排除在忽略名單之外（即保留它）
 !README.md
 !nds_migration_next_gen_vault_replacement_plan_for_minecraft.md
+!DEVELOPER_GUIDE_TW.md
+!GENERAL_JAVA_GUIDE.md
 # VS Code
 .vscode/
 
@@ -175,4 +178,13 @@ $RECYCLE.BIN/
 .directory
 .Trash-*
 .nfs*
+
+# ============================================
+# 內部開發文件（不應提交到公開倉庫）
+# ============================================
 AGENTS.md
+**/AGENTS.md
+Plan/
+Report/
+憂化.md
+未來日記/
