@@ -46,7 +46,7 @@ signing {
         if (keyFile.exists()) {
             signingKey = keyFile.text
         } else {
-            throw new GradleException("GPG key file not found: ${keyFile.absolutePath}")
+            throw new RuntimeException("GPG key file not found: ${keyFile.absolutePath}")
         }
     } else if (signingKeyEnv) {
         // 從環境變量讀取私鑰
@@ -61,7 +61,7 @@ signing {
         try {
             useGpgCmd()
         } catch (Exception e) {
-            throw new GradleException("GPG signing configuration failed. Please either:\n" +
+            throw new RuntimeException("GPG signing configuration failed. Please either:\n" +
                 "1. Set 'signingKeyFile' property pointing to your GPG private key file, or\n" +
                 "2. Set 'ORG_GRADLE_PROJECT_signingKey' environment variable, or\n" +
                 "3. Ensure GPG is in your system PATH and use 'useGpgCmd()'", e)
@@ -164,8 +164,8 @@ publishing {
             name = "OSSRH"
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
-                username = project.findProperty("mavenCentralUsername") ?: System.getenv("MAVEN_CENTRAL_USERNAME")
-                password = project.findProperty("mavenCentralPassword") ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
+                username = project.findProperty("central.username") ?: project.findProperty("mavenCentralUsername") ?: System.getenv("CENTRAL_USERNAME") ?: System.getenv("MAVEN_CENTRAL_USERNAME")
+                password = project.findProperty("central.password") ?: project.findProperty("mavenCentralPassword") ?: System.getenv("CENTRAL_PASSWORD") ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
             }
         }
     }
