@@ -1,0 +1,50 @@
+// [Module] NDS Protocol
+// [Component] context.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-CONTEXT-000
+// [Semantic] Request context propagation + distributed tracing contract.
+// [Constraint] Messages MUST remain immutable and replayable.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.context;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.context";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Context";
+
+// ============================================================================
+// [Index] NDS-PROTO-CONTEXT-001 NdsContext
+// ============================================================================
+
+// [Semantic] Context + trace metadata used to correlate operations across boundaries.
+// [Behavior] This message is designed for observability (trace/correlation/span).
+// [SearchTag] tracing, correlation, observability, context-propagation
+message NdsContext {
+  // Trace ID (globally unique).
+  // For distributed tracing. Recommended format: UUID.
+  // All operations in the same request chain SHOULD share the same trace_id.
+  string trace_id = 1;
+  
+  // Correlation ID.
+  // Used to correlate related operations; MAY be equal to trace_id or different.
+  // Commonly used to associate multiple independent requests into one business flow.
+  string correlation_id = 2;
+  
+  // Span ID (optional).
+  // Identifies a specific node in the request chain.
+  optional string span_id = 3;
+  
+  // Parent span ID (optional).
+  // Establishes parent-child relationships in the trace graph.
+  optional string parent_span_id = 4;
+  
+  // Metadata.
+  // Carries additional context values.
+  map<string, string> meta = 5;
+  
+  // Timestamp (Unix epoch milliseconds).
+  // Context creation time.
+  int64 timestamp = 6;
+}

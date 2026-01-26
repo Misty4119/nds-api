@@ -1,0 +1,183 @@
+// [Module] NDS Protocol
+// [Component] query.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-QUERY-000
+// [Semantic] Read-only query service contract (projection-backed).
+// [Constraint] Queries MUST NOT mutate state.
+// [Constraint] Results MUST be derived from projections/event history, not direct mutable state.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.query;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.query";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Query";
+
+import "google/protobuf/timestamp.proto";
+import "nds/common/common.proto";
+import "nds/identity/identity.proto";
+import "nds/asset/asset.proto";
+import "nds/event/event.proto";
+import "nds/context/context.proto";
+import "nds/projection/projection.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-QUERY-100 Request/Response Messages
+// ============================================================================
+
+// [Index] NDS-PROTO-QUERY-110 QueryBalanceRequest
+message QueryBalanceRequest {
+  // Asset ID.
+  nds.asset.AssetId asset = 1;
+  
+  // Identity (optional). If omitted, indicates a server-scoped asset query.
+  optional nds.identity.NdsIdentity identity = 2;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 3;
+}
+
+// [Index] NDS-PROTO-QUERY-120 QueryBalanceResponse
+message QueryBalanceResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+  
+  // Balance (valid only on success).
+  optional nds.common.Decimal balance = 2;
+}
+
+// [Index] NDS-PROTO-QUERY-130 QueryHistoryRequest
+message QueryHistoryRequest {
+  // Asset ID (optional). If omitted, queries across all assets.
+  optional nds.asset.AssetId asset = 1;
+  
+  // Identity (optional). If omitted, queries across all identities.
+  optional nds.identity.NdsIdentity identity = 2;
+  
+  // Start time (optional).
+  optional google.protobuf.Timestamp start_time = 3;
+  
+  // End time (optional).
+  optional google.protobuf.Timestamp end_time = 4;
+  
+  // Limit.
+  int32 limit = 5;
+  
+  // Offset.
+  int32 offset = 6;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 7;
+}
+
+// [Index] NDS-PROTO-QUERY-140 QueryHistoryResponse
+message QueryHistoryResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+  
+  // Events (valid only on success).
+  repeated nds.event.NdsEvent events = 2;
+  
+  // Total count (for pagination).
+  int64 total_count = 3;
+}
+
+// [Index] NDS-PROTO-QUERY-150 QueryProjectionRequest
+message QueryProjectionRequest {
+  // Projection ID.
+  nds.projection.ProjectionId projection_id = 1;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 2;
+}
+
+// [Index] NDS-PROTO-QUERY-160 QueryProjectionResponse
+message QueryProjectionResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+  
+  // Projection (valid only on success).
+  optional nds.projection.NdsProjection projection = 2;
+}
+
+// [Index] NDS-PROTO-QUERY-170 ReplayRequest
+message ReplayRequest {
+  // Projection ID.
+  nds.projection.ProjectionId projection_id = 1;
+  
+  // Target time.
+  google.protobuf.Timestamp target_time = 2;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 3;
+}
+
+// [Index] NDS-PROTO-QUERY-180 ReplayResponse
+message ReplayResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+  
+  // Projection after replay (valid only on success).
+  optional nds.projection.NdsProjection projection = 2;
+}
+
+// [Index] NDS-PROTO-QUERY-190 RegisterProjectionRequest
+message RegisterProjectionRequest {
+  // Projection ID.
+  nds.projection.ProjectionId projection_id = 1;
+  
+  // Projection config (JSON).
+  string config = 2;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 3;
+}
+
+// [Index] NDS-PROTO-QUERY-200 RegisterProjectionResponse
+message RegisterProjectionResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+}
+
+// [Index] NDS-PROTO-QUERY-210 UnregisterProjectionRequest
+message UnregisterProjectionRequest {
+  // Projection ID.
+  nds.projection.ProjectionId projection_id = 1;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 2;
+}
+
+// [Index] NDS-PROTO-QUERY-220 UnregisterProjectionResponse
+message UnregisterProjectionResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-QUERY-900 Query Service (gRPC)
+// ============================================================================
+
+// [Semantic] Read-only gRPC query service for projection-backed state.
+// [Constraint] Query methods MUST remain side-effect free.
+service NdsQueryService {
+  // Query balance.
+  rpc QueryBalance(QueryBalanceRequest) returns (QueryBalanceResponse);
+  
+  // Query historical events.
+  rpc QueryHistory(QueryHistoryRequest) returns (QueryHistoryResponse);
+  
+  // Query a projection.
+  rpc QueryProjection(QueryProjectionRequest) returns (QueryProjectionResponse);
+  
+  // Replay projection state to a target time.
+  rpc Replay(ReplayRequest) returns (ReplayResponse);
+  
+  // Register a projection.
+  rpc RegisterProjection(RegisterProjectionRequest) returns (RegisterProjectionResponse);
+  
+  // Unregister a projection.
+  rpc UnregisterProjection(UnregisterProjectionRequest) returns (UnregisterProjectionResponse);
+}

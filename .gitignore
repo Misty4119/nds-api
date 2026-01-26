@@ -1,0 +1,148 @@
+###############################################################################
+# NDS-API (.gitignore)
+# Goal: keep this repo clean and publishable.
+###############################################################################
+
+###############################################################################
+# OS
+###############################################################################
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
+*~
+
+###############################################################################
+# IDEs / Editors
+###############################################################################
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.cursor/
+.vs/
+*.sublime-*
+.project
+.classpath
+.settings/
+
+###############################################################################
+# Java / Gradle / Maven
+###############################################################################
+.gradle/
+**/build/
+**/out/
+**/*.class
+
+# Maven
+**/target/
+
+# Gradle properties (may contain credentials)
+gradle.properties
+local.properties
+signing.properties
+
+###############################################################################
+# .NET
+###############################################################################
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+# NuGet
+*.nupkg
+.nuget/
+計劃書/
+###############################################################################
+# Protocol Buffers / Buf
+###############################################################################
+spec/gen/
+java/src/main/java/noie/linmimeng/noiedigitalsystem/api/proto/
+csharp/src/Noie.Nds.Api.Proto/
+
+###############################################################################
+# Logs
+###############################################################################
+*.log
+hs_err_pid*
+crash-reports/
+
+###############################################################################
+# Secrets & Credentials (NEVER commit)
+###############################################################################
+.env
+.env.*
+**/*.local.*
+
+# Common key / certificate formats
+**/*.p12
+**/*.pfx
+**/*.pem
+**/*.key
+**/*.jks
+**/*.keystore
+**/*.gpg
+**/*.asc
+
+# Explicit signing key filenames used in local workflows
+my-signing-key.asc
+gpg-key.asc
+
+# SSH keys
+id_rsa*
+id_dsa*
+id_ed25519*
+id_ecdsa*
+known_hosts
+
+# API keys and tokens
+**/*secret*
+**/*credential*
+**/api-key*
+**/apikey*
+**/*.token
+**/auth.json
+**/secrets.json
+**/credentials.json
+**/config.local.json
+**/config.secret.json
+
+# Database files (may contain sensitive data)
+*.sqlite
+*.sqlite3
+*.db
+
+###############################################################################
+# Documentation
+###############################################################################
+# NOTE:
+# This repository is a protocol + SDKs monorepo. Documentation is intentionally
+# published and should NOT be ignored (e.g., `docs/`, `spec/docs/`).
+
+###############################################################################
+# Internal / local-only materials (do not publish)
+###############################################################################
+# AI agent routing files are workspace-local by default
+AGENTS.md
+**/AGENTS.md
+
+# Chinese-named directories (internal use)
+僅參考/
+內部/
+私密/
+機密/
+.gitignore
+###############################################################################
+# Temporary and backup files
+###############################################################################
+*.bak
+*.backup
+*.tmp
+*.temp
+*.orig
+*~

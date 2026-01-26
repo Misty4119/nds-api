@@ -1,0 +1,163 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release-java:
+    name: Release Java SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew :java:build
+
+      # --------------------------------------------------------------------
+      # Publish to Maven Central (Sonatype Central Portal - Publisher API)
+      # Docs:
+      # - Bundle format: https://central.sonatype.org/publish/publish-portal-upload/
+      # - Publisher API: https://central.sonatype.org/publish/publish-portal-api
+      # --------------------------------------------------------------------
+      - name: Publish to Maven Central (Central Portal)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          chmod +x gradlew
+
+          VERSION="${GITHUB_REF_NAME#v}"
+          GROUP_ID="io.github.misty4119"
+          ARTIFACT_ID="noiedigitalsystem-api"
+
+          # 1) Publish signed artifacts to Maven Local (~/.m2)
+          ./gradlew :java:publishMavenJavaPublicationToMavenLocal -PenableSigning=true -PreleaseVersion="${VERSION}"
+
+          # 2) Assemble Central Portal bundle (Maven Repository Layout)
+          GROUP_PATH="${GROUP_ID//./\/}"
+          SRC_DIR="${HOME}/.m2/repository/${GROUP_PATH}/${ARTIFACT_ID}/${VERSION}"
+          BUNDLE_ROOT="${PWD}/central-bundle"
+          DEST_DIR="${BUNDLE_ROOT}/${GROUP_PATH}/${ARTIFACT_ID}/${VERSION}"
+
+          if [[ ! -d "${SRC_DIR}" ]]; then
+            echo "Expected Maven Local directory not found: ${SRC_DIR}"
+            exit 1
+          fi
+
+          rm -rf "${BUNDLE_ROOT}"
+          mkdir -p "${DEST_DIR}"
+          cp -R "${SRC_DIR}/." "${DEST_DIR}/"
+
+          # 3) Generate checksums required by Central Portal (.md5, .sha1)
+          pushd "${BUNDLE_ROOT}" >/dev/null
+          while IFS= read -r -d '' f; do
+            md5sum "${f}" | awk '{print $1}' > "${f}.md5"
+            sha1sum "${f}" | awk '{print $1}' > "${f}.sha1"
+          done < <(find . -type f ! -name '*.md5' ! -name '*.sha1' -print0)
+          popd >/dev/null
+
+          # Zip from inside the directory so paths start with io/github/... not central-bundle/io/...
+          pushd "${BUNDLE_ROOT}" >/dev/null
+          zip -r ../central-bundle.zip .
+          popd >/dev/null
+
+          # 4) Upload bundle via Central Portal Publisher API (AUTOMATIC publish)
+          AUTH="$(printf "%s:%s" "${MAVEN_CENTRAL_USERNAME}" "${MAVEN_CENTRAL_PASSWORD}" | base64 -w0)"
+          DEPLOYMENT_ID="$(curl -sS -X POST \
+            -H "Authorization: Bearer ${AUTH}" \
+            -F "bundle=@central-bundle.zip" \
+            "https://central.sonatype.com/api/v1/publisher/upload?name=${GROUP_ID}:${ARTIFACT_ID}:${VERSION}&publishingType=AUTOMATIC")"
+
+          echo "Central deployment id: ${DEPLOYMENT_ID}"
+
+          # 5) Poll status until published (or failed)
+          # Note: Central Portal publishing can take a while. We treat prolonged
+          # PUBLISHING as non-fatal and rely on the Portal UI as source of truth.
+          for i in $(seq 1 180); do
+            STATUS="$(curl -sS -X POST \
+              -H "Authorization: Bearer ${AUTH}" \
+              "https://central.sonatype.com/api/v1/publisher/status?id=${DEPLOYMENT_ID}")"
+            echo "${STATUS}"
+
+            if echo "${STATUS}" | grep -q '"deploymentState":"PUBLISHED"'; then
+              echo "Published to Maven Central."
+              exit 0
+            fi
+            if echo "${STATUS}" | grep -q '"deploymentState":"FAILED"'; then
+              echo "Central publish FAILED."
+              exit 1
+            fi
+            sleep 10
+          done
+
+          echo "Timed out waiting for Central publish (still processing)."
+          echo "Check deployment status in Central Portal:"
+          echo "  https://central.sonatype.com/publishing/deployments"
+          exit 0
+        env:
+          # Central Portal token (username/password) — used for Publisher API auth
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+
+          # Pass secrets to Gradle as project properties (avoid committing secrets)
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+
+  release-csharp:
+    name: Release C# SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Build and Pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          dotnet pack csharp/ --configuration Release -o artifacts -p:Version="${VERSION}"
+      
+      - name: Publish to NuGet
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Only push .nupkg (symbols are embedded via DebugType=embedded)
+          dotnet nuget push "artifacts/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key "${NUGET_API_KEY}" --skip-duplicate
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+  create-release:
+    name: Create GitHub Release
+    needs: [release-java, release-csharp]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

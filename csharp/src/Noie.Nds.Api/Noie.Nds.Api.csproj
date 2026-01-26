@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- AOT Compatibility -->
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    
+    <!-- Package Metadata -->
+    <PackageId>Noie.Nds.Api</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>LinMimeng</Authors>
+    <Company>Noie</Company>
+    <Description>NDS API - Lightweight append-only event protocol types for .NET</Description>
+    <Copyright>Copyright (c) 2024 LinMimeng</Copyright>
+    <PackageTags>nds;append-only-events;financial;api;dotnet</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Misty4119/nds-api</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Misty4119/nds-api</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
+    <!-- Build Settings -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Noie.Nds.Api.Abstractions\Noie.Nds.Api.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Protocol Buffers Runtime -->
+    <PackageReference Include="Google.Protobuf" Version="3.28.3" />
+  </ItemGroup>
+
+</Project>

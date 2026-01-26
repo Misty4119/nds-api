@@ -1,0 +1,130 @@
+// [Module] NDS Protocol
+// [Component] projection.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-PROJECTION-000
+// [Semantic] Projection contract (derived state views optimized for queries).
+// [Constraint] Projections are derived and rebuildable from the event stream.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.projection;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.projection";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Projection";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-PROJECTION-010 ProjectionId
+// ============================================================================
+
+// [Semantic] Unique identifier for a projection.
+message ProjectionId {
+  // Projection name (e.g. "balance", "transaction_history").
+  string name = 1;
+  
+  // Projection version (for versioned projection definitions).
+  int32 version = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-PROJECTION-020 ProjectionStatus
+// ============================================================================
+
+// [Semantic] Projection lifecycle status.
+enum ProjectionStatus {
+  // Unspecified.
+  PROJECTION_STATUS_UNSPECIFIED = 0;
+  
+  // Active.
+  PROJECTION_STATUS_ACTIVE = 1;
+  
+  // Rebuilding.
+  PROJECTION_STATUS_REBUILDING = 2;
+  
+  // Disabled.
+  PROJECTION_STATUS_DISABLED = 3;
+  
+  // Error.
+  PROJECTION_STATUS_ERROR = 4;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-PROJECTION-030 NdsProjection
+// ============================================================================
+
+// [Semantic] Derived view aggregated from the event stream.
+// [Behavior] Projections are rebuildable and can be recomputed at any time.
+// [SearchTag] projection, derived-state, replay, query-optimization
+message NdsProjection {
+  // Projection ID.
+  ProjectionId id = 1;
+  
+  // Projection status.
+  ProjectionStatus status = 2;
+  
+  // Last processed event ID.
+  string last_event_id = 3;
+  
+  // Last updated time.
+  google.protobuf.Timestamp last_updated = 4;
+  
+  // Projection data (uses Any to support arbitrary types).
+  google.protobuf.Any data = 5;
+  
+  // Projection metadata.
+  map<string, string> metadata = 6;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-PROJECTION-100 Projection Payload Messages
+// ============================================================================
+
+// [Index] NDS-PROTO-PROJECTION-110 BalanceProjection
+// [Semantic] Specialized projection payload for balances.
+message BalanceProjection {
+  // Balance value (string representation of a decimal).
+  string balance = 1;
+  
+  // Asset ID.
+  string asset_id = 2;
+  
+  // Owner identity ID.
+  string owner_id = 3;
+  
+  // Last updated time.
+  google.protobuf.Timestamp last_updated = 4;
+}
+
+// [Index] NDS-PROTO-PROJECTION-120 LeaderboardEntry
+message LeaderboardEntry {
+  // Rank.
+  int32 rank = 1;
+  
+  // Identity ID.
+  string identity_id = 2;
+  
+  // Value.
+  string value = 3;
+  
+  // Extra metadata.
+  map<string, string> metadata = 4;
+}
+
+// [Index] NDS-PROTO-PROJECTION-130 LeaderboardProjection
+message LeaderboardProjection {
+  // Leaderboard name.
+  string name = 1;
+  
+  // Asset ID.
+  string asset_id = 2;
+  
+  // Entries.
+  repeated LeaderboardEntry entries = 3;
+  
+  // Last updated time.
+  google.protobuf.Timestamp last_updated = 4;
+}

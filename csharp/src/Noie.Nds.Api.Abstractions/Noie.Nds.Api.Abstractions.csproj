@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- AOT Compatibility -->
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    
+    <!-- Package Metadata -->
+    <PackageId>Noie.Nds.Api.Abstractions</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>LinMimeng</Authors>
+    <Company>Noie</Company>
+    <Description>NDS API Abstractions - Core interfaces and types for NoieDigitalSystem</Description>
+    <Copyright>Copyright (c) 2024 LinMimeng</Copyright>
+    <PackageTags>nds;append-only-events;financial;api;abstractions</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Misty4119/nds-api</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Misty4119/nds-api</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
+    <!-- Build Settings -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>

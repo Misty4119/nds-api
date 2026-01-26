@@ -1,0 +1,104 @@
+// [Module] NDS Protocol
+// [Component] asset.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-ASSET-000
+// [Semantic] Asset model contract (identifiers + metadata/tags).
+// [Constraint] Asset MUST NOT embed balances; value changes are expressed via transactions.
+// [Constraint] Tags are unbounded and intended for AI/UI/query semantic entry points.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.asset;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.asset";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Asset";
+
+import "nds/common/common.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-ASSET-010 AssetScope
+// ============================================================================
+
+// [Semantic] Scope of an asset.
+enum AssetScope {
+  // Unknown scope (default; for backward compatibility).
+  ASSET_SCOPE_UNSPECIFIED = 0;
+  
+  // Player scope (belongs to a specific player).
+  ASSET_SCOPE_PLAYER = 1;
+  
+  // Server scope (belongs to a server instance).
+  ASSET_SCOPE_SERVER = 2;
+  
+  // Global scope (belongs to the whole system).
+  ASSET_SCOPE_GLOBAL = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-ASSET-020 AssetId
+// ============================================================================
+
+// [Semantic] Globally unique asset identifier.
+// [Behavior] Canonical string form: "scope:name" (e.g. "player:coins", "server:world_boss_hp").
+message AssetId {
+  // Asset name (e.g. "coins", "gold", "world_boss_hp").
+  // Naming rule: lowercase letters + underscores only.
+  string name = 1;
+  
+  // Asset scope.
+  AssetScope scope = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-ASSET-030 NdsAsset
+// ============================================================================
+
+// [Semantic] Asset definition (metadata/tags/limits) without balances.
+// [Behavior] Balances are derived from transactions and projections.
+// [SearchTag] asset, metadata, tags, limit
+message NdsAsset {
+  // Asset ID.
+  AssetId asset_id = 1;
+  
+  // Tags for semantic queries / UI categorization / vectorization.
+  // Example: {"category": "currency", "rarity": "common", "tradable": "true"}
+  map<string, string> tags = 2;
+  
+  // Metadata (e.g. display name, icon URL, description).
+  map<string, string> metadata = 3;
+  
+  // Optional limit (maximum allowed value).
+  optional nds.common.Decimal limit = 4;
+  
+  // Created at (Unix epoch milliseconds).
+  int64 created_at = 5;
+  
+  // Updated at (Unix epoch milliseconds).
+  int64 updated_at = 6;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-ASSET-900 Asset Service (gRPC / Phase 2+)
+// ============================================================================
+
+// [Semantic] gRPC service contract for asset query/management.
+// [Trace] Service definitions are activated in Phase 2+.
+//
+// service NdsAssetService {
+//   // Create an asset.
+//   rpc CreateAsset(CreateAssetRequest) returns (CreateAssetResponse);
+//   
+//   // Get an asset.
+//   rpc GetAsset(GetAssetRequest) returns (GetAssetResponse);
+//   
+//   // Update an asset.
+//   rpc UpdateAsset(UpdateAssetRequest) returns (UpdateAssetResponse);
+//   
+//   // Delete an asset.
+//   rpc DeleteAsset(DeleteAssetRequest) returns (DeleteAssetResponse);
+//   
+//   // List assets.
+//   rpc ListAssets(ListAssetsRequest) returns (ListAssetsResponse);
+// }

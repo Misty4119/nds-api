@@ -1,0 +1,80 @@
+// [Module] NDS Protocol
+// [Component] identity.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-IDENTITY-000
+// [Semantic] Identity model contract.
+// [Constraint] Identity MUST be immutable; id MUST be globally unique.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.identity;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.identity";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Identity";
+
+// [Index] NDS-PROTO-IDENTITY-001
+// [Trace] Common types are not currently used here.
+// [Trace] Reserved import for future expansions (e.g. identity service responses).
+// import "nds/common/common.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-IDENTITY-010 IdentityType
+// ============================================================================
+
+// [Semantic] Standard identity type taxonomy.
+enum IdentityType {
+  // Unknown type (default; for backward compatibility).
+  IDENTITY_TYPE_UNSPECIFIED = 0;
+  
+  // Player identity.
+  // Recommended ID format: UUID (e.g. "550e8400-e29b-41d4-a716-446655440000").
+  IDENTITY_TYPE_PLAYER = 1;
+  
+  // System identity.
+  // Recommended ID format: system-defined string (e.g. "system:admin", "system:event").
+  IDENTITY_TYPE_SYSTEM = 2;
+  
+  // AI identity.
+  // Recommended ID format: AI-service-defined string (e.g. "ai:gpt-4", "ai:claude").
+  IDENTITY_TYPE_AI = 3;
+  
+  // External service identity.
+  // Recommended ID format: service-defined string (e.g. "external:payment:stripe").
+  IDENTITY_TYPE_EXTERNAL = 4;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-IDENTITY-020 NdsIdentity
+// ============================================================================
+
+// [Semantic] Represents any identity in the system (player/system/AI/external).
+// [Behavior] Designed as a lightweight value object (no IO required to construct).
+// [SearchTag] identity, actor, principal
+message NdsIdentity {
+  // Globally unique identity ID.
+  // Format is determined by `type` (see IdentityType docs).
+  string id = 1;
+  
+  // Identity type.
+  IdentityType type = 2;
+  
+  // Optional metadata (e.g. display name, avatar URL).
+  map<string, string> metadata = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-IDENTITY-900 Identity Service (gRPC / Phase 2+)
+// ============================================================================
+
+// [Semantic] gRPC service contract for identity query/management.
+// [Trace] Service definitions are activated in Phase 2+.
+//
+// service NdsIdentityService {
+//   // Query an identity.
+//   rpc GetIdentity(GetIdentityRequest) returns (GetIdentityResponse);
+//   
+//   // Validate an identity.
+//   rpc ValidateIdentity(ValidateIdentityRequest) returns (ValidateIdentityResponse);
+// }

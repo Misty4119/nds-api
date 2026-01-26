@@ -1,0 +1,134 @@
+// [Module] NDS Protocol
+// [Component] event.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-EVENT-000
+// [Semantic] Event model contract used for append-only history + replay.
+// [Constraint] Events MUST be immutable, serializable, and replayable.
+// [Constraint] Payload MUST NOT carry platform-specific / non-serializable objects.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.event;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.event";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Event";
+
+import "google/protobuf/timestamp.proto";
+// [Index] NDS-PROTO-EVENT-001
+// [Behavior] `Any` is intentionally not used yet (Struct is used instead).
+// [Trace] Reserved import for future extensions.
+// import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "nds/identity/identity.proto";
+import "nds/context/context.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-010 EventType
+// ============================================================================
+
+// [Semantic] Standard event type taxonomy.
+enum EventType {
+  // Unknown type (default).
+  EVENT_TYPE_UNSPECIFIED = 0;
+  
+  // Transaction event (asset delta semantics; see NdsTransaction).
+  EVENT_TYPE_TRANSACTION = 1;
+  
+  // Asset created.
+  EVENT_TYPE_ASSET_CREATED = 2;
+  
+  // Asset updated.
+  EVENT_TYPE_ASSET_UPDATED = 3;
+  
+  // Asset deleted.
+  EVENT_TYPE_ASSET_DELETED = 4;
+  
+  // Identity created.
+  EVENT_TYPE_IDENTITY_CREATED = 5;
+  
+  // Identity updated.
+  EVENT_TYPE_IDENTITY_UPDATED = 6;
+  
+  // System event.
+  EVENT_TYPE_SYSTEM = 7;
+  
+  // Custom event (extension point).
+  EVENT_TYPE_CUSTOM = 99;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-020 EventId
+// ============================================================================
+
+// [Semantic] Globally unique identifier for an event.
+message EventId {
+  // ID value (recommended: UUID; alternative: timestamp + randomness).
+  string value = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-030 NdsPayload
+// ============================================================================
+
+// [Semantic] Event payload container.
+// [Constraint] Payload MUST contain only serializable primitives / collections.
+// [Constraint] Core implementations MUST reject payloads that embed platform-specific objects.
+// [Behavior] Payload is represented as `Struct` for JSON-like dynamic structures.
+// [SearchTag] payload, serialization, replay-safety
+message NdsPayload {
+  // Payload data represented as `Struct` (JSON-like).
+  google.protobuf.Struct data = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-040 NdsEvent
+// ============================================================================
+
+// [Semantic] Immutable historical record of a state change.
+// [Behavior] All state transitions are expressed as events (append-only history).
+// [SearchTag] append-only-events, audit, replay, synchronization
+message NdsEvent {
+  // Event ID (globally unique).
+  EventId id = 1;
+  
+  // Occurrence time (UTC).
+  google.protobuf.Timestamp occurred_at = 2;
+  
+  // Actor identity.
+  nds.identity.NdsIdentity actor = 3;
+  
+  // Event type.
+  EventType type = 4;
+  
+  // Event payload.
+  NdsPayload payload = 5;
+  
+  // Schema version (for backward compatibility / migrations).
+  int32 schema_version = 6;
+  
+  // Metadata.
+  map<string, string> metadata = 7;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 8;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-900 Event Service (gRPC / Phase 2+)
+// ============================================================================
+
+// [Semantic] gRPC service contract for event publishing/subscription.
+// [Trace] Service definitions are activated in Phase 2+.
+//
+// service NdsEventService {
+//   // Publish an event.
+//   rpc PublishEvent(PublishEventRequest) returns (PublishEventResponse);
+//   
+//   // Subscribe to an event stream.
+//   rpc SubscribeEvents(SubscribeEventsRequest) returns (stream NdsEvent);
+//   
+//   // Replay events.
+//   rpc ReplayEvents(ReplayEventsRequest) returns (stream NdsEvent);
+// }

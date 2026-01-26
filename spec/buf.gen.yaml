@@ -1,0 +1,35 @@
+# buf.gen.yaml - NDS code generation configuration
+#
+# Defines how to generate language SDKs from the proto contract.
+#
+# See: https://buf.build/docs/configuration/v2/buf-gen-yaml
+
+version: v2
+
+managed:
+  enabled: true
+  override:
+    # Java package prefix for generated code
+    - file_option: java_package_prefix
+      value: noie.linmimeng.noiedigitalsystem.api.proto
+
+plugins:
+  # ===== Java =====
+  - remote: buf.build/protocolbuffers/java
+    out: ../java/src/main/java
+    opt:
+      - java_multiple_files=true
+
+  # ===== C# =====
+  - remote: buf.build/protocolbuffers/csharp
+    out: ../csharp/src/Noie.Nds.Api.Proto
+    opt:
+      - base_namespace=Noie.Nds.Api.Proto
+
+  # ===== TypeScript (future) =====
+  # - remote: buf.build/community/timostamm-protobuf-ts
+  #   out: gen/typescript
+
+  # ===== gRPC (future) =====
+  # - remote: buf.build/grpc/java
+  #   out: gen/java
