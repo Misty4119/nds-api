@@ -1,29 +1,31 @@
-# NDS Migration & Next‑Generation Economy Protocol Plan
+# NDS Migration & Next-Generation Economy Protocol Plan
 
 ## 1. Purpose & Vision
 
 ### 1.1 Background
+
 NoieDigitalSystem (NDS) has evolved beyond a traditional economy plugin. It already provides:
-- Player‑scoped digital values
-- Global (player‑related) digital values
-- Server‑scoped digital values
-- Web‑based management interface
+- Player-scoped digital values
+- Global (player-related) digital values
+- Server-scoped digital values
+- Web-based management interface
 - Web editor & admin tooling
-- Long‑term roadmap oriented toward a **next‑generation Vault replacement**
+- Long-term roadmap oriented toward a **next-generation Vault replacement**
 
 However, many of these features were designed **before the NDS Protocol was formally defined**.
 
 This plan exists to:
 - Migrate legacy mechanisms into the **new NDS Protocol architecture**
-- Preserve compatibility where strategically necessary (e.g. Vault)
-- Ensure NDS becomes a **protocol‑first system**, not a feature‑first plugin
+- Preserve compatibility where strategically necessary (e.g., Vault)
+- Ensure NDS becomes a **protocol-first system**, not a feature-first plugin
 
 ### 1.2 Core Goal
-> Transform NDS from a powerful economy plugin into a **protocol‑defined digital value infrastructure**, while allowing controlled coexistence with legacy systems.
+
+> Transform NDS from a powerful economy plugin into a **protocol-defined digital value infrastructure**, while allowing controlled coexistence with legacy systems.
 
 ---
 
-## 2. Strategic Design Principles (Non‑Negotiable)
+## 2. Strategic Design Principles (Non-Negotiable)
 
 These principles govern **all refactoring and future development**.
 
@@ -35,13 +37,13 @@ These principles govern **all refactoring and future development**.
    - All digital values are authoritative inside NDS Core
    - No external plugin owns balance state
 
-3. **Async‑First Architecture**
+3. **Async-First Architecture**
    - All reads/writes are asynchronous
    - No synchronous wrappers except controlled compatibility layers
 
-4. **Result‑Driven Design**
+4. **Result-Driven Design**
    - Operations return results, not events
-   - No event‑driven state mutation
+   - No event-driven state mutation
 
 5. **Compatibility Without Compromise**
    - Legacy support exists only as an **adapter**, never as a core dependency
@@ -66,7 +68,7 @@ These principles govern **all refactoring and future development**.
                │
 ┌──────────────┴──────────────┐
 │        NDS Core Engine      │  ← Authority & Rules
-│  (Storage, Atomicity, ACL) │
+│  (Storage, Atomicity, ACL)  │
 └──────────────▲──────────────┘
                │
 ┌──────────────┴──────────────┐
@@ -78,14 +80,14 @@ These principles govern **all refactoring and future development**.
 
 ## 4. Legacy Feature Classification
 
-### 4.1 Features to Fully Migrate (Protocol‑Native)
+### 4.1 Features to Fully Migrate (Protocol-Native)
 
 These **must be rewritten or refactored** to use the new protocol:
 
 - Player personal digital values
-- Global (player‑linked) digital values
-- Server‑scoped digital values
-- Permission‑controlled balance access
+- Global (player-linked) digital values
+- Server-scoped digital values
+- Permission-controlled balance access
 - Atomic transfer logic
 - Web editor value mutation
 
@@ -100,7 +102,7 @@ These features remain, but **only as bridges**:
 
 - Vault Economy API
 - Legacy synchronous getters/setters
-- Old plugin‑facing APIs
+- Old plugin-facing APIs
 
 Constraints:
 - Must internally call async NDS Protocol
@@ -114,19 +116,19 @@ Constraints:
 ### 5.1 Positioning
 
 Vault is treated as:
-> A **compatibility interface**, not a first‑class citizen.
+> A **compatibility interface**, not a first-class citizen.
 
 ### 5.2 Implementation Rules
 
 - Vault methods call NDS async protocol internally
 - Blocking calls are isolated and minimal
 - Precision loss is explicitly documented
-- Vault operations are **best‑effort**, not guaranteed optimal
+- Vault operations are **best-effort**, not guaranteed optimal
 
 ### 5.3 Communication to Developers
 
 - Vault support is labeled as **Legacy / Compatibility Mode**
-- NDS‑native plugins are strongly recommended
+- NDS-native plugins are strongly recommended
 
 ---
 
@@ -141,7 +143,7 @@ Vault is treated as:
 
 - Web UI becomes a **client of NDS Protocol**
 - All edits go through protocol validation
-- Same permission & atomicity rules as in‑game
+- Same permission & atomicity rules as in-game
 
 ### 6.3 Editor Constraints
 
@@ -152,7 +154,7 @@ Vault is treated as:
 
 ## 7. Migration Phases
 
-### Phase 1 – Protocol Lock‑In (Foundation)
+### Phase 1 – Protocol Lock-In (Foundation)
 
 - Freeze legacy feature expansion
 - Enforce protocol usage in new code
@@ -187,9 +189,9 @@ Deliverables:
 
 ---
 
-### Phase 4 – NDS‑Native Expansion
+### Phase 4 – NDS-Native Expansion
 
-- Encourage third‑party NDS‑native plugins
+- Encourage third-party NDS-native plugins
 - Provide documentation & examples
 - Optional certification tooling
 
@@ -204,7 +206,7 @@ Deliverables:
 
 - No feature may bypass protocol
 - No new synchronous APIs unless approved
-- No event‑based economy logic
+- No event-based economy logic
 
 ### 8.2 Code Review Checklist
 
@@ -220,7 +222,7 @@ Deliverables:
 ### Identified Risks
 
 - Developer resistance to async APIs
-- Vault‑dependent plugins expecting sync behavior
+- Vault-dependent plugins expecting sync behavior
 - Increased architectural complexity
 
 ### Mitigation
@@ -231,13 +233,13 @@ Deliverables:
 
 ---
 
-## 10. Long‑Term Outlook
+## 10. Long-Term Outlook
 
 NDS is positioned to become:
 
-- A protocol‑level replacement for Vault
+- A protocol-level replacement for Vault
 - A unified digital value infrastructure
-- A cross‑platform economy standard
+- A cross-platform economy standard
 
 Vault compatibility exists to **ease the transition**, not to define the future.
 
@@ -245,44 +247,47 @@ Vault compatibility exists to **ease the transition**, not to define the future.
 
 ---
 
-## 11. 協議遷移實務指南（開發者必讀）
+## 11. Protocol Migration Practical Guide (Required Reading for Developers)
 
-### 11.1 數值類型的強制轉換規範
+### 11.1 Mandatory Type Conversion Specification
 
-**⚠️ 關鍵規則：所有涉及餘額的操作必須使用 `BigDecimal`**
+**⚠️ Critical Rule: All balance operations MUST use `BigDecimal`**
 
-#### 問題說明
-舊版 Vault API 或直接資料庫操作可能使用 `double`、`float` 或 `int`，但 NDS 協議層**嚴格要求**使用 `BigDecimal`。
+#### Problem Description
 
-#### 遷移步驟
+Legacy Vault API or direct database operations may use `double`, `float`, or `int`, but the NDS protocol layer **strictly requires** `BigDecimal`.
 
-**步驟 1：識別所有數值操作**
+#### Migration Steps
+
+**Step 1: Identify all numeric operations**
+
 ```java
-// ❌ 舊代碼（錯誤）
+// ❌ Legacy code (incorrect)
 double balance = economy.getBalance(player);
 economy.withdrawPlayer(player, 100.5);
 
-// ✅ 新代碼（正確）
+// ✅ New code (correct)
 runtime.query().queryBalance(assetId, identity)
     .thenAccept(result -> {
         if (result.isSuccess()) {
-            BigDecimal balance = result.data(); // BigDecimal，不是 double
+            BigDecimal balance = result.data(); // BigDecimal, not double
         }
     });
 ```
 
-**步驟 2：在適配器層完成轉換**
-如果從舊版 Vault 接入，必須在適配器層立即完成轉換：
+**Step 2: Complete conversion at the adapter layer**
+
+If integrating from legacy Vault, conversion must occur immediately at the adapter layer:
 
 ```java
-// Vault 適配器示例
+// Vault adapter example
 public class VaultAdapter {
     public CompletableFuture<NdsResult<BigDecimal>> getBalance(Player player) {
-        // Vault 返回 double，立即轉換為 BigDecimal
+        // Vault returns double; convert to BigDecimal immediately
         double vaultBalance = economy.getBalance(player);
         BigDecimal ndsBalance = BigDecimal.valueOf(vaultBalance);
         
-        // 使用 NDS 協議
+        // Use NDS protocol
         AssetId assetId = AssetId.of(AssetScope.PLAYER, "coins");
         NdsIdentity identity = NdsIdentity.fromString(player.getUniqueId().toString());
         return runtime.query().queryBalance(assetId, identity);
@@ -290,37 +295,40 @@ public class VaultAdapter {
 }
 ```
 
-**步驟 3：嚴禁直接傳入原始類型**
-```java
-// ❌ 絕對禁止
-transaction.delta(100.5);  // double，編譯錯誤
-transaction.delta(100);    // int，編譯錯誤
+**Step 3: Strictly prohibit primitive type parameters**
 
-// ✅ 必須使用 BigDecimal
+```java
+// ❌ Absolutely forbidden
+transaction.delta(100.5);  // double, compilation error
+transaction.delta(100);    // int, compilation error
+
+// ✅ Must use BigDecimal
 transaction.delta(BigDecimal.valueOf(100.5));
 transaction.delta(new BigDecimal("100.5"));
 ```
 
 ---
 
-### 11.2 異步結果處理：從「監聽事件」到「監聽結果」
+### 11.2 Async Result Handling: From "Event Listening" to "Result Listening"
 
-#### 核心變化
+#### Core Change
 
-**舊機制（事件驅動）：**
+**Legacy mechanism (event-driven):**
+
 ```java
-// ❌ 舊方式：監聽 Bukkit 事件來攔截交易
+// ❌ Legacy approach: listening to Bukkit events to intercept transactions
 @EventHandler
 public void onTransaction(EconomyTransactionEvent event) {
     if (event.getAmount() > 1000) {
-        event.setCancelled(true); // 取消交易
+        event.setCancelled(true); // Cancel transaction
     }
 }
 ```
 
-**新機制（結果驅動）：**
+**New mechanism (result-driven):**
+
 ```java
-// ✅ 新方式：調用協議方法，處理返回的結果
+// ✅ New approach: call protocol methods and handle returned results
 NdsTransaction transaction = NdsTransactionBuilder.create()
     .actor(identity)
     .asset(assetId)
@@ -331,159 +339,165 @@ NdsTransaction transaction = NdsTransactionBuilder.create()
 runtime.eventBus().publish(transaction)
     .thenAcceptAsync(result -> {
         if (result.isSuccess()) {
-            // 交易成功
-            player.sendMessage("交易成功");
+            // Transaction succeeded
+            player.sendMessage("Transaction successful");
         } else {
-            // 交易失敗（餘額不足、權限檢查等）
+            // Transaction failed (insufficient balance, permission check, etc.)
             NdsError error = result.error();
-            player.sendMessage("交易失敗: " + error.message());
+            player.sendMessage("Transaction failed: " + error.message());
         }
-    }, runtime.mainThreadExecutor());
+    }, runtime.defaultExecutor());
 ```
 
-#### 關鍵差異
+#### Key Differences
 
-1. **攔截邏輯位置改變**
-   - **舊機制**：在事件監聽器中取消或修改
-   - **新機制**：在核心引擎（Core Engine）的過濾鏈中完成
-   - **影響**：所有權限檢查、餘額驗證、業務規則都在協議層統一處理
+1. **Location of interception logic changes**
+   - **Legacy mechanism**: cancel or modify in event listeners
+   - **New mechanism**: complete in the Core Engine filter chain
+   - **Impact**: All permission checks, balance validation, and business rules are uniformly processed at the protocol layer
 
-2. **不再支持事件取消**
-   - NDS 協議**不支持**通過事件監聽器來取消交易
-   - 所有驗證必須在發布前完成，或通過 `NdsResult` 表達失敗
+2. **Event cancellation is no longer supported**
+   - NDS protocol **does not support** canceling transactions through event listeners
+   - All validation must be completed before publishing, or failure is expressed through `NdsResult`
 
-3. **遷移建議**
+3. **Migration recommendations**
+
    ```java
-   // 舊代碼：事件監聽器
+   // Legacy code: event listener
    @EventHandler
    public void onTransaction(EconomyTransactionEvent event) {
-       // 業務邏輯
+       // Business logic
    }
    
-   // 新代碼：在發布前驗證，或處理結果
+   // New code: validate before publishing or handle results
    public void processTransaction(Player player, BigDecimal amount) {
-       // 方式 1：發布前驗證
+       // Approach 1: validate before publishing
        runtime.query().queryBalance(assetId, identity)
            .thenAcceptAsync(balanceResult -> {
                if (balanceResult.isSuccess() && balanceResult.data().compareTo(amount) >= 0) {
-                   // 餘額足夠，發布交易
+                   // Sufficient balance, publish transaction
                    publishTransaction(amount);
                } else {
-                   player.sendMessage("餘額不足");
+                   player.sendMessage("Insufficient balance");
                }
-           }, runtime.mainThreadExecutor());
+           }, runtime.defaultExecutor());
        
-       // 方式 2：直接發布，處理結果
+       // Approach 2: publish directly and handle results
        publishTransaction(amount)
            .thenAcceptAsync(result -> {
                if (!result.isSuccess()) {
-                   // 處理失敗（可能是餘額不足、權限問題等）
+                   // Handle failure (may be insufficient balance, permission issue, etc.)
                    handleFailure(result.error());
                }
-           }, runtime.mainThreadExecutor());
+           }, runtime.defaultExecutor());
    }
    ```
 
 ---
 
-### 11.3 命名空間與標識符（Namespace & Identifiers）
+### 11.3 Namespace & Identifiers
 
-#### AssetId 格式規範
+#### AssetId Format Specification
 
-NDS 協議採用 `scope:name` 格式，類似 Minecraft 原生的 NamespaceKey 模式。
+NDS protocol adopts the `scope:name` format, similar to Minecraft's native NamespaceKey pattern.
 
-**格式說明：**
+**Format description:**
+
 ```
 scope:name
 ```
 
-- **scope**：作用域（`PLAYER`、`SERVER`、`GLOBAL`）
-- **name**：資產名稱（小寫字母、數字、底線）
+- **scope**: Scope (`PLAYER`, `SERVER`, `GLOBAL`)
+- **name**: Asset name (lowercase letters, numbers, underscores)
 
-**範例：**
+**Examples:**
+
 ```java
-// ✅ 正確格式
+// ✅ Correct format
 AssetId coins = AssetId.of(AssetScope.PLAYER, "coins");
 // fullId() = "player:coins"
 
 AssetId bossHp = AssetId.of(AssetScope.SERVER, "world_boss_hp");
 // fullId() = "server:world_boss_hp"
 
-// 從字符串解析
+// Parse from string
 AssetId fromString = AssetId.fromString("player:coins");
 ```
 
-#### 遷移步驟
+#### Migration Steps
 
-**步驟 1：映射舊資產名稱到新格式**
+**Step 1: Map legacy asset names to new format**
+
 ```java
-// 舊代碼：直接使用字符串
+// Legacy code: using strings directly
 String digitalName = "coins";
 getPlayerDigitalAmount(playerUUID, digitalName);
 
-// 新代碼：使用 AssetId
+// New code: using AssetId
 AssetId assetId = AssetId.of(AssetScope.PLAYER, "coins");
 runtime.query().queryBalance(assetId, identity);
 ```
 
-**步驟 2：解決命名衝突**
-舊版插件可能有多個插件使用相同的「金錢名稱」，導致衝突。新協議通過 `scope:name` 解決：
+**Step 2: Resolve naming conflicts**
+
+Legacy plugins may have multiple plugins using the same "currency name", causing conflicts. The new protocol resolves this through `scope:name`:
 
 ```java
-// 插件 A 的貨幣
+// Plugin A's currency
 AssetId pluginACoins = AssetId.of(AssetScope.PLAYER, "plugin_a_coins");
 
-// 插件 B 的貨幣
+// Plugin B's currency
 AssetId pluginBCoins = AssetId.of(AssetScope.PLAYER, "plugin_b_coins");
 
-// 兩者不會衝突，因為是獨立的 AssetId
+// No conflict because they are independent AssetIds
 ```
 
-**步驟 3：遷移全局資產**
+**Step 3: Migrate global assets**
+
 ```java
-// 舊代碼：全局數值
+// Legacy code: global values
 getServerDigitalAmount("world_boss_hp");
 
-// 新代碼：服務器作用域資產
+// New code: server-scoped assets
 AssetId bossHp = AssetId.of(AssetScope.SERVER, "world_boss_hp");
-NdsIdentity serverIdentity = null; // 服務器資產不需要 identity
+NdsIdentity serverIdentity = null; // Server assets do not require identity
 runtime.query().queryBalance(bossHp, serverIdentity);
 ```
 
 ---
 
-### 11.4 Vault 適配層的「副作用」處理
+### 11.4 Vault Adapter Layer "Side Effect" Handling
 
-#### 風險說明
+#### Risk Description
 
-由於 NDS 底層是**全異步架構**，當舊插件在主線程調用 Vault API 時，適配層會嘗試使用 `join()` 或 `.get()` 阻塞等待。
+Because NDS's underlying architecture is **fully asynchronous**, when legacy plugins call Vault API on the main thread, the adapter layer will attempt to use `join()` or `.get()` to block and wait.
 
-**潛在問題：**
-- 在 **Folia**（多線程伺服器）環境下可能導致線程卡頓
-- 在高負載環境下可能影響主線程性能
-- 阻塞時間取決於資料庫響應速度
+**Potential issues:**
+- May cause thread blocking in **Folia** (multi-threaded server) environments
+- May affect main thread performance under high load
+- Blocking time depends on database response speed
 
-#### 適配層實作範例
+#### Adapter Layer Implementation Example
 
 ```java
-// Vault 適配層（簡化示例）
+// Vault adapter layer (simplified example)
 public class VaultEconomyAdapter implements Economy {
     
     @Override
     public double getBalance(Player player) {
-        // ⚠️ 警告：這是阻塞調用
+        // ⚠️ Warning: This is a blocking call
         AssetId assetId = AssetId.of(AssetScope.PLAYER, "coins");
         NdsIdentity identity = NdsIdentity.fromString(player.getUniqueId().toString());
         
         try {
-            // 阻塞等待結果（不推薦，但 Vault API 要求同步）
+            // Block waiting for result (not recommended, but Vault API requires synchronous)
             CompletableFuture<NdsResult<BigDecimal>> future = 
                 runtime.query().queryBalance(assetId, identity);
             
-            NdsResult<BigDecimal> result = future.get(5, TimeUnit.SECONDS); // 5秒超時
+            NdsResult<BigDecimal> result = future.get(5, TimeUnit.SECONDS); // 5-second timeout
             
             if (result.isSuccess()) {
-                return result.data().doubleValue(); // 精度損失（已文檔化）
+                return result.data().doubleValue(); // Precision loss (documented)
             } else {
                 return 0.0;
             }
@@ -495,36 +509,38 @@ public class VaultEconomyAdapter implements Economy {
 }
 ```
 
-#### 遷移建議
+#### Migration Recommendations
 
-**階段 1：識別 Vault 調用**
+**Phase 1: Identify Vault calls**
+
 ```java
-// 在舊插件中搜索
+// Search in legacy plugins
 economy.getBalance(...)
 economy.withdrawPlayer(...)
 economy.depositPlayer(...)
 ```
 
-**階段 2：逐步替換為 NDS 原生 API**
+**Phase 2: Gradually replace with NDS native API**
+
 ```java
-// ❌ 舊代碼（Vault）
+// ❌ Legacy code (Vault)
 double balance = economy.getBalance(player);
 economy.withdrawPlayer(player, 100.0);
 
-// ✅ 新代碼（NDS 原生）
+// ✅ New code (NDS native)
 AssetId assetId = AssetId.of(AssetScope.PLAYER, "coins");
 NdsIdentity identity = NdsIdentity.fromString(player.getUniqueId().toString());
 
-// 查詢餘額
+// Query balance
 runtime.query().queryBalance(assetId, identity)
     .thenAcceptAsync(result -> {
         if (result.isSuccess()) {
             BigDecimal balance = result.data();
-            // 使用餘額
+            // Use balance
         }
-    }, runtime.mainThreadExecutor());
+    }, runtime.defaultExecutor());
 
-// 扣除金額
+// Deduct amount
 NdsTransaction transaction = NdsTransactionBuilder.create()
     .actor(identity)
     .asset(assetId)
@@ -536,71 +552,71 @@ NdsTransaction transaction = NdsTransactionBuilder.create()
 runtime.eventBus().publish(transaction)
     .thenAcceptAsync(publishResult -> {
         if (publishResult.isSuccess()) {
-            // 扣除成功
+            // Deduction successful
         }
-    }, runtime.mainThreadExecutor());
+    }, runtime.defaultExecutor());
 ```
 
-**階段 3：監控與優化**
-- 監控 Vault 調用頻率
-- 優先遷移高頻調用的插件
-- 在 Folia 環境下特別注意性能影響
+**Phase 3: Monitoring and optimization**
+- Monitor Vault call frequency
+- Prioritize migration of high-frequency call plugins
+- Pay special attention to performance impact in Folia environments
 
 ---
 
-### 11.5 數據審計與溯源（Audit Log）的接入
+### 11.5 Data Audit & Provenance (Audit Log) Integration
 
-#### 核心概念
+#### Core Concept
 
-每一次透過協議進行的變動都可以附加 **Reason（原因）** 和 **Metadata（元數據）**，以便 Web 端管理介面能正確顯示交易來源。
+Every change made through the protocol can have an attached **Reason** and **Metadata**, enabling the Web management interface to correctly display transaction sources.
 
-#### Reason 的使用
+#### Using Reason
 
-**目的：** 標識交易的原因，用於審計和顯示。
+**Purpose:** Identify the reason for the transaction, used for auditing and display.
 
 ```java
-// ✅ 正確：提供明確的 reason
+// ✅ Correct: provide a clear reason
 NdsTransaction transaction = NdsTransactionBuilder.create()
     .actor(identity)
     .asset(assetId)
     .delta(BigDecimal.valueOf(100))
     .consistency(ConsistencyMode.STRONG)
-    .reason("SHOP_PURCHASE")  // 明確標識為商店購買
+    .reason("SHOP_PURCHASE")  // Clearly identified as shop purchase
     .build();
 
-// ❌ 錯誤：缺少 reason 或使用模糊描述
+// ❌ Incorrect: missing reason or using vague description
 NdsTransaction transaction = NdsTransactionBuilder.create()
     .actor(identity)
     .asset(assetId)
     .delta(BigDecimal.valueOf(100))
     .consistency(ConsistencyMode.STRONG)
-    .reason("transaction")  // 太模糊，無法區分交易類型
+    .reason("transaction")  // Too vague, cannot distinguish transaction type
     .build();
 ```
 
-#### Reason 命名規範
+#### Reason Naming Convention
 
-建議使用大寫字母和底線，類似枚舉常量：
+It is recommended to use uppercase letters and underscores, similar to enum constants:
 
 ```java
-// ✅ 推薦格式
+// ✅ Recommended format
 .reason("SHOP_PURCHASE")
 .reason("QUEST_REWARD")
 .reason("ADMIN_SET")
 .reason("PLAYER_TRANSFER")
 .reason("AUTOMATED_REFUND")
 
-// ❌ 不推薦
-.reason("shop purchase")  // 小寫，有空格
-.reason("購買")  // 非英文（雖然支持，但不便於國際化）
+// ❌ Not recommended
+.reason("shop purchase")  // lowercase with spaces
+.reason("購買")  // non-English (although supported, not conducive to internationalization)
 ```
 
-#### Metadata 的使用
+#### Using Metadata
 
-**目的：** 附加額外的上下文信息，不影響業務邏輯。
+**Purpose:** Attach additional context information without affecting business logic.
 
 ```java
-// 創建 metadata
+// Create metadata
 Map<String, String> metadata = new HashMap<>();
 metadata.put("shopId", "diamond_shop_001");
 metadata.put("itemId", "diamond_sword");
@@ -612,28 +628,30 @@ NdsTransaction transaction = NdsTransactionBuilder.create()
     .delta(BigDecimal.valueOf(100))
     .consistency(ConsistencyMode.STRONG)
     .reason("SHOP_PURCHASE")
-    .metadata(metadata)  // 附加元數據
+    .metadata(metadata)  // Attach metadata
     .build();
 ```
 
-#### 遷移步驟
+#### Migration Steps
 
-**步驟 1：識別現有交易邏輯**
+**Step 1: Identify existing transaction logic**
+
 ```java
-// 舊代碼：可能沒有 reason
+// Legacy code: may not have reason
 givePlayerDigital(playerUUID, "coins", amount);
 
-// 新代碼：必須提供 reason
+// New code: must provide reason
 NdsTransaction transaction = NdsTransactionBuilder.create()
     .actor(identity)
     .asset(assetId)
     .delta(amount)
     .consistency(ConsistencyMode.STRONG)
-    .reason("QUEST_REWARD")  // 明確標識
+    .reason("QUEST_REWARD")  // Clearly identified
     .build();
 ```
 
-**步驟 2：建立 Reason 常量類**
+**Step 2: Establish Reason constants class**
+
 ```java
 public class TransactionReasons {
     public static final String SHOP_PURCHASE = "SHOP_PURCHASE";
@@ -644,32 +662,33 @@ public class TransactionReasons {
 }
 ```
 
-**步驟 3：在 Web 管理介面中顯示**
-Web 端可以根據 `reason` 和 `metadata` 顯示更友好的交易記錄：
+**Step 3: Display in Web management interface**
+
+The Web interface can display more user-friendly transaction records based on `reason` and `metadata`:
 
 ```
-交易記錄：
-- 時間：2024-01-15 10:30:00
-- 類型：商店購買 (SHOP_PURCHASE)
-- 商店：diamond_shop_001
-- 物品：diamond_sword
-- 金額：-100 coins
+Transaction Record:
+- Time: 2024-01-15 10:30:00
+- Type: Shop Purchase (SHOP_PURCHASE)
+- Shop: diamond_shop_001
+- Item: diamond_sword
+- Amount: -100 coins
 ```
 
 ---
 
-### 11.6 遷移檢查清單
+### 11.6 Migration Checklist
 
-在開始遷移前，請確認：
+Before starting migration, please confirm:
 
-- [ ] 所有數值操作已轉換為 `BigDecimal`
-- [ ] 所有同步調用已改為異步回調（`.thenAccept()` 等）
-- [ ] 所有 `NdsResult` 都檢查了 `isSuccess()`
-- [ ] 所有 Bukkit API 調用都使用了 `mainThreadExecutor()`
-- [ ] 所有資產名稱已映射到 `AssetId`（`scope:name` 格式）
-- [ ] 所有交易都提供了明確的 `reason`
-- [ ] 所有 Vault 調用已識別並計劃遷移
-- [ ] 所有事件監聽器邏輯已轉移到結果處理
+- [ ] All numeric operations have been converted to `BigDecimal`
+- [ ] All synchronous calls have been changed to async callbacks (`.thenAccept()`, etc.)
+- [ ] All `NdsResult` checks `isSuccess()`
+- [ ] All Bukkit API calls use `defaultExecutor()` or `mainThreadExecutor()`
+- [ ] All asset names have been mapped to `AssetId` (`scope:name` format)
+- [ ] All transactions provide a clear `reason`
+- [ ] All Vault calls have been identified and planned for migration
+- [ ] All event listener logic has been transferred to result handling
 
 ---
 
@@ -686,6 +705,6 @@ All future decisions must reinforce this direction.
 
 ---
 
-**Version**: 2.0.0  
-**Last Updated**: 2025-12-22  
+**Version**: 2.1.0  
+**Last Updated**: 2026-01-27  
 **Status**: ✅ Stable
