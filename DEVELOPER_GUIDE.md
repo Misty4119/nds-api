@@ -531,7 +531,6 @@ PostgreSQL + Redis
 
 - **Minecraft Developer Guide**: [MINECRAFT_DEVELOPER_GUIDE.md](./MINECRAFT_DEVELOPER_GUIDE.md)
 - **Traditional Chinese Guide**: [DEVELOPER_GUIDE_TW.md](./DEVELOPER_GUIDE_TW.md)
-- **AI Development Context**: [AGENTS.md](./AGENTS.md)
 
 ---
 

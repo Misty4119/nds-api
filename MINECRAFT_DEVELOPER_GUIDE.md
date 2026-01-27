@@ -570,7 +570,6 @@ runtime.eventBus().publish(transaction)
 
 - **General Developer Guide**: [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
 - **Traditional Chinese Minecraft Guide**: [MINECRAFT_DEVELOPER_GUIDE_TW.md](./MINECRAFT_DEVELOPER_GUIDE_TW.md)
-- **AI Development Context**: [AGENTS.md](./AGENTS.md)
 
 ---
 

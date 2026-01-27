@@ -569,7 +569,6 @@ runtime.eventBus().publish(transaction)
 
 - **通用開發指南**：[DEVELOPER_GUIDE_TW.md](./DEVELOPER_GUIDE_TW.md)
 - **英文版 Minecraft 指南**：[MINECRAFT_DEVELOPER_GUIDE.md](./MINECRAFT_DEVELOPER_GUIDE.md)
-- **AI 開發上下文**：[AGENTS.md](./AGENTS.md)
 
 ---
 

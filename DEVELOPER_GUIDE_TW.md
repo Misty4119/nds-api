@@ -531,7 +531,6 @@ PostgreSQL + Redis
 
 - **Minecraft 開發指南**：[MINECRAFT_DEVELOPER_GUIDE_TW.md](./MINECRAFT_DEVELOPER_GUIDE_TW.md)
 - **英文版開發指南**：[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
-- **AI 開發上下文**：[AGENTS.md](./AGENTS.md)
 
 ---
 
