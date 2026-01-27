@@ -131,9 +131,35 @@ known_hosts
 AGENTS.md
 **/AGENTS.md
 
-# Cursor rules (workspace-local, do not publish)
+# Cursor (cursorrules, ignore files – workspace-local, do not publish)
 .cursorrules
 **/.cursorrules
+.cursorignore
+**/.cursorignore
+.cursorindexingignore
+**/.cursorindexingignore
+
+# Tabnine (project config & index cache)
+.tabnine/
+.tabnine_root
+
+# Codeium (index/context ignore – gitignore-style, often per-developer)
+.codeiumignore
+**/.codeiumignore
+.codeium/
+
+# GitHub Copilot (community .copilotignore when used via extensions)
+.copilotignore
+**/.copilotignore
+
+# Google Gemini Code Assist / Codey (.aiexclude, .geminiignore)
+.aiexclude
+**/.aiexclude
+.geminiignore
+**/.geminiignore
+
+# Windsurf (Codeium-based IDE; cache / local config)
+.windsurf/
 
 # Chinese-named directories (internal use)
 僅參考/
