@@ -13,7 +13,7 @@ jobs:
     name: Release Java SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -125,7 +125,7 @@ jobs:
     name: Release C# SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
@@ -153,7 +153,7 @@ jobs:
     needs: [release-java, release-csharp]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
