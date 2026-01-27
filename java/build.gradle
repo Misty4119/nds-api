@@ -142,11 +142,13 @@ protobuf {
 
 // [Index] NDS-JAVA-BUILD-110
 // [Behavior] Proto source directories.
+// [Trace] Use project.projectDir.parentFile to support being included as a subproject.
+def ndsApiRoot = project.projectDir.parentFile
 sourceSets {
     main {
         proto {
             // [Trace] Read proto definitions from spec/proto.
-            srcDir "${rootProject.projectDir}/spec/proto"
+            srcDir "${ndsApiRoot}/spec/proto"
         }
         java {
             // [Trace] Include generated Java sources.
