@@ -1,0 +1,206 @@
+###############################################################################
+# NDS-API (.gitignore)
+# Goal: keep this repo clean and publishable.
+###############################################################################
+
+###############################################################################
+# OS
+###############################################################################
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
+*~
+
+###############################################################################
+# IDEs / Editors
+###############################################################################
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.cursor/
+.vs/
+*.sublime-*
+.project
+.classpath
+.settings/
+
+# direnv (may contain per-developer env secrets)
+.envrc
+.direnv/
+
+###############################################################################
+# Java / Gradle / Maven
+###############################################################################
+.gradle/
+**/build/
+**/out/
+**/*.class
+
+# Maven
+**/target/
+
+# Gradle properties (may contain credentials)
+gradle.properties
+local.properties
+signing.properties
+
+###############################################################################
+# .NET
+###############################################################################
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+# NuGet
+*.nupkg
+*.snupkg
+*.nupkg.sha512
+.nuget/
+計劃書/
+
+# Test results / coverage artifacts
+**/TestResults/
+**/*.trx
+**/*.coverage
+**/*.coveragexml
+###############################################################################
+# Protocol Buffers / Buf
+###############################################################################
+spec/gen/
+java/src/main/java/noie/linmimeng/noiedigitalsystem/api/proto/
+spec/csharp/src/Noie.Nds.Api.Proto/
+
+# Node (if used by tooling in the future)
+**/node_modules/
+
+###############################################################################
+# Logs
+###############################################################################
+*.log
+hs_err_pid*
+crash-reports/
+
+# Crash dumps / diagnostics
+*.dmp
+*.dump
+*.stackdump
+
+###############################################################################
+# Secrets & Credentials (NEVER commit)
+###############################################################################
+.env
+.env.*
+**/*.local.*
+
+# dotenv variants used by some tools
+.envrc.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Common key / certificate formats
+**/*.p12
+**/*.pfx
+**/*.pem
+**/*.key
+**/*.jks
+**/*.keystore
+**/*.gpg
+**/*.asc
+
+# Explicit signing key filenames used in local workflows
+my-signing-key.asc
+gpg-key.asc
+
+# SSH keys
+id_rsa*
+id_dsa*
+id_ed25519*
+id_ecdsa*
+known_hosts
+
+# API keys and tokens
+**/*secret*
+**/*credential*
+**/api-key*
+**/apikey*
+**/*.token
+**/auth.json
+**/secrets.json
+**/credentials.json
+**/config.local.json
+**/config.secret.json
+
+# Database files (may contain sensitive data)
+*.sqlite
+*.sqlite3
+*.db
+
+###############################################################################
+# Documentation
+###############################################################################
+# NOTE:
+# This repository is a protocol + SDKs monorepo. Documentation is intentionally
+# published and should NOT be ignored (e.g., `docs/`, `spec/docs/`).
+
+###############################################################################
+# Internal / local-only materials (do not publish)
+###############################################################################
+# AI agent routing files are workspace-local by default
+AGENTS.md
+AGENTS/
+**/AGENTS.md
+
+# Cursor (cursorrules, ignore files – workspace-local, do not publish)
+.cursorrules
+CURSORRULES/
+**/.cursorrules
+.cursorignore
+**/.cursorignore
+.cursorindexingignore
+**/.cursorindexingignore
+
+# Tabnine (project config & index cache)
+.tabnine/
+.tabnine_root
+
+# Codeium (index/context ignore – gitignore-style, often per-developer)
+.codeiumignore
+**/.codeiumignore
+.codeium/
+
+# GitHub Copilot (community .copilotignore when used via extensions)
+.copilotignore
+**/.copilotignore
+
+# Google Gemini Code Assist / Codey (.aiexclude, .geminiignore)
+.aiexclude
+**/.aiexclude
+.geminiignore
+**/.geminiignore
+
+# Windsurf (Codeium-based IDE; cache / local config)
+.windsurf/
+
+# Chinese-named directories (internal use)
+僅參考/
+內部/
+私密/
+機密/
+###############################################################################
+# Temporary and backup files
+###############################################################################
+*.bak
+*.backup
+*.tmp
+*.temp
+*.orig
+*~

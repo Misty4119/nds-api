@@ -1,0 +1,63 @@
+// [Module] NDS Protocol
+// [Component] rationale.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-AUDIT-000
+// [Semantic] Structured rationale for audit / explainability.
+// [Since] 2.2.0
+
+syntax = "proto3";
+
+package nds.audit;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.audit";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Audit";
+
+import "nds/common/common.proto";
+import "nds/event/event.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-AUDIT-010 NdsRationale
+// ============================================================================
+
+// [Semantic] Lightweight structured rationale (safe to embed).
+// [Behavior] Not a full chain-of-thought; keep it auditable and compact.
+message NdsRationale {
+  // Who/what produced this rationale (e.g. "rule_engine_v1", "human_admin").
+  string source = 1;
+
+  // Confidence score in [0,1] encoded as Decimal string (exact, language-neutral).
+  optional nds.common.Decimal confidence = 2;
+
+  // Short structured steps.
+  repeated string thought_path = 3;
+
+  // Evidence references (within the same resolvable event space).
+  repeated nds.event.EventId evidence_event_ids = 4;
+
+  // Cross-system evidence references (URI-based).
+  repeated NdsRationaleRef evidence_refs = 8;
+
+  // Optional risk indicator (protocol does not define semantics/range).
+  optional nds.common.Decimal risk_score = 5;
+
+  // Extension slot.
+  map<string, string> metadata = 6;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-AUDIT-020 NdsRationaleRef
+// ============================================================================
+
+// [Semantic] External rationale/evidence reference for heavy payloads.
+message NdsRationaleRef {
+  // URI (e.g. "https://.../report.json", "ipfs://...", "file://...").
+  string uri = 1;
+
+  // Optional content hash (e.g. sha256 hex) for integrity.
+  optional string hash = 2;
+
+  // Optional mime type (e.g. "application/json").
+  optional string mime_type = 3;
+}
+

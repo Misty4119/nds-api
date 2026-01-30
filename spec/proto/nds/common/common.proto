@@ -1,0 +1,137 @@
+// [Module] NDS Protocol
+// [Component] common.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-COMMON-000
+// [Semantic] Common primitive contracts used across all NDS modules.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.common;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.common";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Common";
+
+// ============================================================================
+// [Index] NDS-PROTO-COMMON-010 Decimal
+// ============================================================================
+
+// [Semantic] High-precision decimal value.
+// [Constraint] Proto has no native BigDecimal; encode as string to preserve exactness.
+// [Behavior] Each language SDK MUST convert to its native precise decimal type via adapters.
+// [Trace] Java: BigDecimal; C#: decimal; TypeScript: string (or decimal.js).
+message Decimal {
+  // String representation (e.g. "1234.56", "-100.00").
+  string value = 1;
+  
+  // Scale (optional; used for validation/formatting).
+  int32 scale = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-COMMON-020 Result
+// ============================================================================
+
+// [Semantic] Standard success/failure envelope.
+// [Behavior] Business failures MUST be expressed via `success=false` with `error`.
+// [Trace] RPC responses embed NdsResult as the primary outcome indicator.
+message NdsResult {
+  // Whether the operation succeeded.
+  bool success = 1;
+  
+  // Error object (valid only when success=false).
+  optional NdsError error = 2;
+}
+
+// [Semantic] Structured error details.
+message NdsError {
+  // Machine-readable error code (e.g. "INSUFFICIENT_BALANCE").
+  string code = 1;
+  
+  // Human-readable message.
+  string message = 2;
+  
+  // Optional details for debugging/logging.
+  map<string, string> details = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-COMMON-030 ErrorCode
+// ============================================================================
+
+// [Semantic] Standardized error codes. SDKs MAY extend, but SHOULD not repurpose existing values.
+enum ErrorCode {
+  // Unknown error (default).
+  ERROR_CODE_UNSPECIFIED = 0;
+  
+  // ===== Asset =====
+  
+  // Asset not found.
+  ERROR_CODE_ASSET_NOT_FOUND = 1;
+  
+  // Asset already exists.
+  ERROR_CODE_ASSET_ALREADY_EXISTS = 2;
+  
+  // Insufficient balance.
+  ERROR_CODE_INSUFFICIENT_BALANCE = 3;
+  
+  // Asset limit exceeded.
+  ERROR_CODE_ASSET_LIMIT_EXCEEDED = 4;
+  
+  // ===== Identity =====
+  
+  // Identity not found.
+  ERROR_CODE_IDENTITY_NOT_FOUND = 10;
+  
+  // Invalid identity.
+  ERROR_CODE_IDENTITY_INVALID = 11;
+  
+  // ===== Transaction =====
+  
+  // Transaction failed.
+  ERROR_CODE_TRANSACTION_FAILED = 20;
+  
+  // Transaction rolled back.
+  ERROR_CODE_TRANSACTION_ROLLED_BACK = 21;
+  
+  // Consistency violation.
+  ERROR_CODE_CONSISTENCY_VIOLATION = 22;
+  
+  // ===== System =====
+  
+  // System not initialized.
+  ERROR_CODE_SYSTEM_NOT_INITIALIZED = 30;
+  
+  // System error.
+  ERROR_CODE_SYSTEM_ERROR = 31;
+  
+  // Timeout.
+  ERROR_CODE_TIMEOUT = 32;
+  
+  // ===== Validation =====
+  
+  // Invalid argument.
+  ERROR_CODE_INVALID_ARGUMENT = 40;
+  
+  // Permission denied.
+  ERROR_CODE_PERMISSION_DENIED = 41;
+
+  // ===== Policy / Governance =====
+  
+  // Policy violation.
+  ERROR_CODE_POLICY_VIOLATION = 42;
+  
+  // Rationale required.
+  ERROR_CODE_RATIONALE_REQUIRED = 43;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-COMMON-040 Metadata
+// ============================================================================
+
+// [Semantic] Generic metadata container for extensible key-value pairs.
+message Metadata {
+  // Metadata entries.
+  map<string, string> entries = 1;
+}

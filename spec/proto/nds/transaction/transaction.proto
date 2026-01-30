@@ -1,0 +1,249 @@
+// [Module] NDS Protocol
+// [Component] transaction.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-TRANSACTION-000
+// [Semantic] Transaction event contract (asset delta semantics).
+// [Constraint] delta MUST be exact decimal; positive=credit, negative=debit.
+// [Constraint] Transaction is a specialized event.
+// [Since] 2.0.0
+
+syntax = "proto3";
+
+package nds.transaction;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.transaction";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Transaction";
+
+import "google/protobuf/timestamp.proto";
+import "nds/common/common.proto";
+import "nds/identity/identity.proto";
+import "nds/asset/asset.proto";
+import "nds/event/event.proto";
+import "nds/context/context.proto";
+import "nds/audit/rationale.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-010 ConsistencyMode
+// ============================================================================
+
+// [Semantic] Consistency requirements for applying a transaction.
+enum ConsistencyMode {
+  // Unspecified (defaults to STRONG).
+  CONSISTENCY_MODE_UNSPECIFIED = 0;
+  
+  // Strong consistency.
+  // Applies immediately; prioritizes correctness.
+  // Suitable for critical economic operations (payments, transfers).
+  CONSISTENCY_MODE_STRONG = 1;
+  
+  // Eventual consistency.
+  // May apply with delay; converges over time.
+  // Suitable for non-critical operations (stats, logs).
+  CONSISTENCY_MODE_EVENTUAL = 2;
+  
+  // Optimistic consistency.
+  // Based on optimistic concurrency; may fail.
+  // Suitable for high-concurrency scenarios.
+  CONSISTENCY_MODE_OPTIMISTIC = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-020 TransactionStatus
+// ============================================================================
+
+// [Semantic] Transaction lifecycle status.
+enum TransactionStatus {
+  // Unspecified.
+  TRANSACTION_STATUS_UNSPECIFIED = 0;
+  
+  // Pending.
+  TRANSACTION_STATUS_PENDING = 1;
+  
+  // Committed.
+  TRANSACTION_STATUS_COMMITTED = 2;
+  
+  // Rolled back.
+  TRANSACTION_STATUS_ROLLED_BACK = 3;
+  
+  // Failed.
+  TRANSACTION_STATUS_FAILED = 4;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-030 NdsTransaction
+// ============================================================================
+
+// [Semantic] Economic event representing an asset delta or transfer.
+// [Behavior] All economic mutations SHOULD be expressed as transactions.
+// [SearchTag] transaction, delta, transfer, consistency
+message NdsTransaction {
+  // Base event information.
+  nds.event.EventId id = 1;
+  
+  // Occurrence time (UTC).
+  google.protobuf.Timestamp occurred_at = 2;
+  
+  // Actor identity.
+  nds.identity.NdsIdentity actor = 3;
+  
+  // Event payload (optional extra data).
+  nds.event.NdsPayload payload = 4;
+  
+  // Schema version.
+  int32 schema_version = 5;
+  
+  // Metadata.
+  map<string, string> metadata = 6;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 7;
+  
+  // ===== Transaction-specific fields =====
+  
+  // Asset ID.
+  nds.asset.AssetId asset = 10;
+  
+  // Delta (positive=credit, negative=debit).
+  nds.common.Decimal delta = 11;
+  
+  // Consistency mode.
+  ConsistencyMode consistency = 12;
+  
+  // Source identity (optional; for transfers).
+  optional nds.identity.NdsIdentity source = 13;
+  
+  // Target identity (optional; for transfers).
+  optional nds.identity.NdsIdentity target = 14;
+  
+  // Reason (optional).
+  optional string reason = 15;
+  
+  // Transaction status.
+  TransactionStatus status = 16;
+
+  // Effective enforcement policy id (optional; implementation-defined).
+  // [Since] 2.2.0
+  optional string enforcement_policy_id = 17;
+
+  // Lightweight structured rationale (optional).
+  // [Since] 2.2.0
+  optional nds.audit.NdsRationale rationale = 18;
+
+  // External rationale reference for heavy payloads (optional).
+  // [Since] 2.2.0
+  optional nds.audit.NdsRationaleRef rationale_ref = 19;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-100 Request/Response Messages
+// ============================================================================
+
+// [Index] NDS-PROTO-TRANSACTION-110 CreateTransactionRequest
+message CreateTransactionRequest {
+  // Asset ID.
+  nds.asset.AssetId asset = 1;
+  
+  // Delta.
+  nds.common.Decimal delta = 2;
+  
+  // Actor.
+  nds.identity.NdsIdentity actor = 3;
+  
+  // Consistency mode (defaults to STRONG).
+  ConsistencyMode consistency = 4;
+  
+  // Source identity (optional).
+  optional nds.identity.NdsIdentity source = 5;
+  
+  // Target identity (optional).
+  optional nds.identity.NdsIdentity target = 6;
+  
+  // Reason (optional).
+  optional string reason = 7;
+  
+  // Context (optional).
+  optional nds.context.NdsContext context = 8;
+  
+  // Extra metadata.
+  map<string, string> metadata = 9;
+}
+
+// [Index] NDS-PROTO-TRANSACTION-120 CreateTransactionResponse
+message CreateTransactionResponse {
+  // Result.
+  nds.common.NdsResult result = 1;
+  
+  // Transaction (valid only on success).
+  optional NdsTransaction transaction = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-130 PreviewTransactionResponse
+// ============================================================================
+
+message PreviewTransactionResponse {
+  nds.common.NdsResult result = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-140 BatchCreateTransactionsRequest/Response
+// ============================================================================
+
+message BatchCreateTransactionsRequest {
+  repeated CreateTransactionRequest requests = 1;
+
+  // Optional: client-provided correlation id.
+  // Implementations MAY ignore atomicity semantics; this field MUST NOT imply a required atomic guarantee.
+  optional string batch_id = 2;
+
+  // Optional: metadata.
+  map<string, string> metadata = 3;
+}
+
+message BatchCreateTransactionsResponse {
+  nds.common.NdsResult result = 1;
+  repeated CreateTransactionResponse responses = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-150 StreamTransactionsRequest
+// ============================================================================
+
+message StreamTransactionsRequest {
+  // Optional filters (implementation MAY support subset).
+  optional nds.asset.AssetId asset = 1;
+  optional nds.identity.NdsIdentity actor = 2;
+  optional nds.identity.NdsIdentity source = 3;
+  optional nds.identity.NdsIdentity target = 4;
+
+  // Start streaming from a given time (UTC).
+  optional google.protobuf.Timestamp since = 5;
+
+  // Optional status filter.
+  repeated TransactionStatus statuses = 6;
+
+  // Extra metadata for implementations.
+  map<string, string> metadata = 7;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-TRANSACTION-900 Transaction Service (gRPC / Phase 2+)
+// ============================================================================
+
+// [Semantic] gRPC service contract for transaction creation/query.
+// [Trace] Service definitions are activated in Phase 2+.
+//
+// service NdsTransactionService {
+//   // Create a transaction.
+//   rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
+//   
+//   // Create transactions in batch.
+//   rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse);
+//   
+//   // Get a transaction.
+//   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
+//   
+//   // List transactions.
+//   rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+// }

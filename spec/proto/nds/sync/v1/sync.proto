@@ -1,0 +1,147 @@
+// [Module] NDS Protocol
+// [Component] sync.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-SYNC-V1-000
+// [Semantic] v3+ streaming semantics: subscribe/replay/resume/backpressure.
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.sync.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.sync.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Sync.V1";
+
+import "google/protobuf/timestamp.proto";
+import "nds/common/v1/common_v1.proto";
+import "nds/event/v1/event_v1.proto";
+import "nds/identity/v1/identity_v1.proto";
+import "nds/ledger/v1/ledger.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-SYNC-V1-010 ResumeToken
+// ============================================================================
+
+// [Semantic] Server-issued resume token for continuation.
+// [Invariant] Clients MUST treat this as opaque.
+message ResumeToken {
+  bytes value = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-SYNC-V1-015 OrderingMode
+// ============================================================================
+
+// [Semantic] Declares the ordering guarantee of a stream.
+enum OrderingMode {
+  ORDERING_MODE_UNSPECIFIED = 0;
+
+  // A single stream has a total order; cursor is monotonically increasing.
+  ORDERING_MODE_TOTAL = 1;
+
+  // Ordering is guaranteed only within a partition (e.g. per owner/key).
+  ORDERING_MODE_PARTITIONED = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-SYNC-V1-020 SubscribeEvents
+// ============================================================================
+
+message SubscribeEventsRequest {
+  // Resume streaming from a previous position.
+  optional ResumeToken resume = 1;
+
+  // Fallback start time (UTC). Used when resume is absent/expired.
+  optional google.protobuf.Timestamp since = 2;
+
+  // Filter by event types.
+  repeated nds.event.v1.EventType types = 3;
+
+  // Filter by owner persona.
+  optional nds.identity.v1.PersonaId owner = 4;
+
+  // Flow control hint (best-effort).
+  int32 max_events_per_second = 10;
+
+  // Flow control hint: maximum number of in-flight messages the client can process.
+  optional int32 max_in_flight = 11;
+
+  // Flow control hint: preferred batch/page size (for transports that support batching).
+  optional int32 page_size = 12;
+}
+
+// [Semantic] Subscribe response envelope for streaming transports.
+// [Note] This is a shape definition; transports (gRPC/WebSocket/etc.) are implementation-defined.
+message SubscribeEventsResponse {
+  // Server-issued resume token representing the last delivered position.
+  // Implementations SHOULD update this as events are delivered.
+  optional ResumeToken resume = 1;
+
+  // Ordering guarantee of this stream.
+  optional OrderingMode ordering = 2;
+
+  oneof message {
+    // A single event delivery.
+    nds.event.v1.EventEnvelope event = 10;
+
+    // A non-fatal heartbeat to keep the stream alive.
+    Heartbeat heartbeat = 11;
+
+    // Terminal or retryable error. See nds.common.v1.ErrorCategory for retry decisions.
+    nds.common.v1.ErrorStatus error = 12;
+  }
+}
+
+message Heartbeat {
+  // Server time (UTC) when heartbeat was emitted.
+  optional google.protobuf.Timestamp at = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-SYNC-V1-030 WatchBalance
+// ============================================================================
+
+message WatchBalanceRequest {
+  nds.ledger.v1.BalanceKey key = 1;
+  optional ResumeToken resume = 2;
+
+  // Flow control hint (best-effort).
+  int32 max_updates_per_second = 10;
+
+  optional int32 max_in_flight = 11;
+}
+
+message BalanceSnapshot {
+  nds.ledger.v1.Balance balance = 1;
+  nds.event.v1.Cursor cursor = 2;
+}
+
+// [Semantic] Delta update (preferred over full-state push).
+message BalanceDelta {
+  nds.ledger.v1.BalanceKey key = 1;
+  nds.ledger.v1.Money delta = 2;
+  uint64 new_version = 3;
+  nds.event.v1.Cursor cursor = 4;
+
+  // Proof link to the committed transaction.
+  bytes proof_tx_id = 5;
+
+  // Optional proof link to the committed event (if event id differs from tx id).
+  optional bytes proof_event_id = 6;
+}
+
+// [Semantic] Watch response envelope for streaming transports.
+message WatchBalanceResponse {
+  optional ResumeToken resume = 1;
+
+  optional OrderingMode ordering = 2;
+
+  oneof message {
+    BalanceSnapshot snapshot = 10;
+    BalanceDelta delta = 11;
+    nds.common.v1.ErrorStatus error = 12;
+    Heartbeat heartbeat = 13;
+  }
+}
+

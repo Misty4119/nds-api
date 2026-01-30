@@ -1,0 +1,40 @@
+<Project>
+  <PropertyGroup>
+    <!-- 共享屬性 -->
+    <Version>3.0.0</Version>
+    <Authors>LinMimeng</Authors>
+    <Company>Noie</Company>
+    <Copyright>Copyright (c) 2024 LinMimeng</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Misty4119/nds-api</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Misty4119/nds-api</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
+    <!-- 構建設置 -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    
+    <!-- 包設置 -->
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <!-- Symbols: Use embedded PDB to avoid snupkg issues with ProjectReferences -->
+    <!-- This embeds debug symbols directly into the DLL, enabling debugging without separate .snupkg -->
+    <DebugType>embedded</DebugType>
+    <EmbedAllSources>true</EmbedAllSources>
+    
+    <!-- Source Link for better debugging experience -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- Ensure `README.md` is included in NuGet packages -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Source Link: enables stepping into source code during debugging -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

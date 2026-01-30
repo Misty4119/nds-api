@@ -1,0 +1,52 @@
+// [Module] NDS Protocol
+// [Component] metadata.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-METADATA-V1-000
+// [Semantic] v3+ typed metadata primitives + controlled extensibility.
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.metadata.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.metadata.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Metadata.V1";
+
+import "google/protobuf/any.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-METADATA-V1-010 Well-known typed metadata
+// ============================================================================
+
+message DisplayMetadata {
+  optional string display_name = 1;
+  optional string description = 2;
+  optional string icon_uri = 3;
+}
+
+message SourceMetadata {
+  // [Example] "minecraft", "discord", "web", "system", "ai"
+  optional string source_system = 1;
+
+  // [Example] campaign/task/activity identifiers.
+  optional string campaign_id = 2;
+  optional string task_id = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-METADATA-V1-020 Bundle
+// ============================================================================
+
+// [Semantic] Strongly-typed metadata bundle with controlled extensions.
+message MetadataBundle {
+  optional DisplayMetadata display = 1;
+  optional SourceMetadata source = 2;
+
+  // Typed extensions. Keep payload sizes bounded at the implementation layer.
+  repeated google.protobuf.Any extensions = 10;
+
+  // Legacy/debug-only; SHOULD NOT be used for core semantics.
+  map<string, string> legacy_entries = 99;
+}
+

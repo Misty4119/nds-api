@@ -1,0 +1,79 @@
+// [Module] NDS Protocol
+// [Component] memory.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-MEMORY-V1-000
+// [Semantic] v3+ memory-proof data structures (verifiable artifacts).
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.memory.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.memory.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Memory.V1";
+
+import "nds/identity/v1/identity_v1.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-MEMORY-V1-010 Hash
+// ============================================================================
+
+message Hash {
+  // [Example] "SHA-256"
+  string algorithm = 1;
+  bytes value = 2;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-MEMORY-V1-020 Proof
+// ============================================================================
+
+// [Semantic] Proof structure referencing ledger truth (tx/event ids) and anchoring hashes.
+message MemoryProof {
+  // Link to ledger truth.
+  optional bytes proof_tx_id = 1;
+  optional bytes proof_event_id = 2;
+
+  // Verifiable content hash.
+  Hash content_hash = 10;
+
+  // Either chain-style or batch-style anchoring (or both).
+  optional Hash prev_hash = 11;
+  optional Hash merkle_root = 12;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-MEMORY-V1-030 Redaction
+// ============================================================================
+
+enum RedactionReason {
+  REDACTION_REASON_UNSPECIFIED = 0;
+  REDACTION_REASON_PRIVACY_REQUEST = 1;
+  REDACTION_REASON_POLICY = 2;
+  REDACTION_REASON_LEGAL = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-MEMORY-V1-040 MemoryArtifact
+// ============================================================================
+
+message MemoryArtifact {
+  bytes id = 1;
+  nds.identity.v1.PersonaId owner = 2;
+  int32 schema_version = 3;
+
+  // Content. Governance MUST prevent secrets/PII from being stored here.
+  optional string narrative = 10;
+
+  // Optional embedding vector (structure only; storage/indexing is implementation-defined).
+  repeated float embedding = 11 [packed = true];
+
+  // Proof structure.
+  MemoryProof proof = 20;
+
+  // Compliance: auditable redaction marker.
+  bool redacted = 30;
+  optional RedactionReason redaction_reason = 31;
+}
+

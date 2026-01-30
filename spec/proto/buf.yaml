@@ -1,0 +1,30 @@
+# [Module] NDS Protocol
+# [Component] buf.yaml
+# [Layer] Tooling (Buf)
+# [Index] NDS-BUF-000
+# [Semantic] Buf configuration for linting and breaking-change detection.
+# [Trace] https://buf.build/docs/configuration/v2/buf-yaml
+
+version: v2
+
+modules:
+  - path: .
+    name: buf.build/misty4119/nds-spec
+
+deps:
+  # [Dependency] Google common protos (Timestamp, Any, etc.).
+  - buf.build/googleapis/googleapis
+
+breaking:
+  use:
+    - FILE
+
+lint:
+  use:
+    - STANDARD
+  except:
+    # [Behavior] Allow packages without version suffix (e.g. nds.identity vs nds.identity.v1).
+    - PACKAGE_VERSION_SUFFIX
+  ignore:
+    # [Trace] Temporarily ignore service definitions (Phase 2+ activates gRPC generation).
+    # - nds/**/*_service.proto

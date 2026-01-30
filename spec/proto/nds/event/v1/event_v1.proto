@@ -1,0 +1,90 @@
+// [Module] NDS Protocol
+// [Component] event_v1.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-EVENT-V1-000
+// [Semantic] v3+ event envelope + cursor semantics (replay/resume).
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.event.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.event.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Event.V1";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "nds/common/v1/common_v1.proto";
+import "nds/identity/v1/identity_v1.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-V1-010 Cursor / EventId
+// ============================================================================
+
+// [Semantic] Server-issued position used for streaming resume.
+// [Invariant] Clients MUST NOT construct cursors; treat as opaque.
+message Cursor {
+  bytes value = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-V1-020 EventType
+// ============================================================================
+
+// [Semantic] High-level event classification for filtering.
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+
+  // Ledger
+  EVENT_TYPE_LEDGER_TX_COMMITTED = 1;
+  EVENT_TYPE_LEDGER_BALANCE_CHANGED = 2;
+
+  // Identity
+  EVENT_TYPE_IDENTITY_BOUND = 10;
+
+  // Memory / Proof
+  EVENT_TYPE_MEMORY_ARTIFACT_ANCHORED = 20;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-EVENT-V1-030 EventEnvelope
+// ============================================================================
+
+// [Semantic] Immutable event envelope. Payload is typed via Any.
+message EventEnvelope {
+  // Server-issued unique event id (opaque bytes).
+  bytes event_id = 1;
+
+  // Cursor for replay/resume ordering semantics.
+  Cursor cursor = 2;
+
+  // Occurrence time (UTC).
+  google.protobuf.Timestamp occurred_at = 3;
+
+  // Who initiated the action.
+  nds.identity.v1.PersonaId actor = 10;
+
+  // Owner (optional; depends on event type).
+  optional nds.identity.v1.PersonaId owner = 11;
+
+  // Event classification.
+  EventType type = 20;
+
+  // Schema version of the payload.
+  int32 schema_version = 21;
+
+  // Typed payload (implementation-defined message types).
+  google.protobuf.Any payload = 30;
+
+  // Typed extensions for forward-compatible metadata.
+  repeated google.protobuf.Any extensions = 31;
+
+  // Request context for traceability and idempotency correlation.
+  // [Note] Implementations may omit ctx for events not originating from a request.
+  optional nds.common.v1.RequestContext ctx = 40;
+
+  // Legacy trace field (kept for compatibility with early v3 drafts).
+  optional string request_id = 41;
+}
+

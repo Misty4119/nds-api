@@ -1,0 +1,62 @@
+// [Module] NDS Protocol
+// [Component] identity_v1.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-IDENTITY-V1-000
+// [Semantic] v3+ identity model: Persona + external bindings.
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.identity.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.identity.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Identity.V1";
+
+// ============================================================================
+// [Index] NDS-PROTO-IDENTITY-V1-010 PersonaId
+// ============================================================================
+
+// [Semantic] Internal stable identity key representing the "same person" across platforms.
+// [Invariant] MUST be treated as opaque bytes on the wire (no string concatenation parsing).
+message PersonaId {
+  bytes value = 1;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-IDENTITY-V1-020 ExternalAccountBinding
+// ============================================================================
+
+enum ExternalProvider {
+  EXTERNAL_PROVIDER_UNSPECIFIED = 0;
+  EXTERNAL_PROVIDER_MINECRAFT = 1;
+  EXTERNAL_PROVIDER_DISCORD = 2;
+  EXTERNAL_PROVIDER_OIDC = 3;
+  EXTERNAL_PROVIDER_DEVICE = 4;
+}
+
+// [Semantic] A verifiable binding between a Persona and an external account identifier.
+message ExternalAccountBinding {
+  ExternalProvider provider = 1;
+
+  // Provider-specific external id.
+  // [Example] Minecraft UUID, Discord snowflake, OIDC subject, device id.
+  string external_id = 2;
+
+  // Verification strength (0=unverified; higher=stronger).
+  int32 verified_level = 3;
+
+  // Opaque proof blob.
+  // [Constraint] MUST NOT embed secrets (tokens/passwords/private keys).
+  bytes binding_proof = 4;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-IDENTITY-V1-030 Persona
+// ============================================================================
+
+message Persona {
+  PersonaId id = 1;
+  repeated ExternalAccountBinding bindings = 2;
+}
+

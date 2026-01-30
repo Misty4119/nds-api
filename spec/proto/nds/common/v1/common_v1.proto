@@ -1,0 +1,65 @@
+// [Module] NDS Protocol
+// [Component] common_v1.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-COMMON-V1-000
+// [Semantic] v3+ common primitives (versioned).
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.common.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.common.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Common.V1";
+
+// ============================================================================
+// [Index] NDS-PROTO-COMMON-V1-010 RequestContext
+// ============================================================================
+
+// [Semantic] Cross-cutting request context used for tracing + correctness.
+message RequestContext {
+  // Machine-generated request identifier for tracing/correlation.
+  // [Example] "req_01J2Z8..." or UUID.
+  string request_id = 1;
+
+  // Idempotency key for state-changing operations.
+  // [Behavior] Server MUST treat retries with the same key as the same intent within retention.
+  string idempotency_key = 2;
+
+  // Optional correlation id (client-defined, opaque).
+  bytes correlation_id = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-COMMON-V1-020 Error semantics
+// ============================================================================
+
+// [Semantic] Error category taxonomy for mechanical retry decisions.
+enum ErrorCategory {
+  ERROR_CATEGORY_UNSPECIFIED = 0;
+  ERROR_CATEGORY_RETRYABLE = 1;
+  ERROR_CATEGORY_CONFLICT = 2;
+  ERROR_CATEGORY_POLICY = 3;
+  ERROR_CATEGORY_VALIDATION = 4;
+  ERROR_CATEGORY_FATAL = 5;
+}
+
+// [Semantic] Structured error object designed for machine handling.
+message ErrorStatus {
+  // Machine-readable error code (stable identifier).
+  string code = 1;
+
+  // Human-readable message (not stable; for logs/UX).
+  string message = 2;
+
+  // Retry category.
+  ErrorCategory category = 3;
+
+  // Optional debugging details. MUST NOT contain secrets/PII.
+  map<string, string> details = 4;
+
+  // Optional backoff hint (flow control / overload).
+  optional int32 retry_after_seconds = 5;
+}
+

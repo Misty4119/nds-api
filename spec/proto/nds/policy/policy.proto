@@ -1,0 +1,38 @@
+// [Module] NDS Protocol
+// [Component] policy.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-POLICY-000
+// [Semantic] Portable policy descriptor (data only).
+// [Since] 2.2.0
+
+syntax = "proto3";
+
+package nds.policy;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.policy";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Policy";
+
+// ============================================================================
+// [Index] NDS-PROTO-POLICY-010 NdsPolicy
+// ============================================================================
+
+// [Semantic] A portable, implementation-defined policy descriptor.
+// [Behavior] This message carries data only; it does not define evaluation semantics.
+message NdsPolicy {
+  // Unique policy ID (e.g. "safe-ai-mode-v1").
+  string policy_id = 1;
+
+  // Policy type tag (e.g. "quota", "whitelist", "approval", "routing").
+  string policy_type = 2;
+
+  // Universal extension slot: simple parameters (protocol does not define keys).
+  map<string, string> params = 3;
+
+  // High-performance extension slot: arbitrary bytes (e.g. serialized proto/json).
+  bytes custom_config = 4;
+
+  // Metadata (non-rule attributes; implementation-defined).
+  map<string, string> metadata = 5;
+}
+

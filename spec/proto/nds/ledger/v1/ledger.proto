@@ -1,0 +1,92 @@
+// [Module] NDS Protocol
+// [Component] ledger.proto
+// [Layer] Contract (language-agnostic)
+// [Index] NDS-PROTO-LEDGER-V1-000
+// [Semantic] v3+ ledger primitives (Money, Balance, Transaction request/response).
+// [Since] 3.0.0
+
+syntax = "proto3";
+
+package nds.ledger.v1;
+
+option java_package = "noie.linmimeng.noiedigitalsystem.api.proto.ledger.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Nds.Ledger.V1";
+
+import "google/protobuf/any.proto";
+import "nds/common/v1/common_v1.proto";
+import "nds/event/v1/event_v1.proto";
+import "nds/identity/v1/identity_v1.proto";
+
+// ============================================================================
+// [Index] NDS-PROTO-LEDGER-V1-010 Money (fixed-point)
+// ============================================================================
+
+// [Semantic] Fixed-point money representation for ledger hot path.
+// [Invariant]
+// - MUST: 0 <= |nanos| < 1_000_000_000
+// - MUST: units and nanos MUST have the same sign (or nanos=0)
+// - MUST: currency_code is a controlled identifier (implementation-defined registry)
+message Money {
+  string currency_code = 1;
+  int64 units = 2;
+  int32 nanos = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-LEDGER-V1-020 Balance
+// ============================================================================
+
+message BalanceKey {
+  nds.identity.v1.PersonaId owner = 1;
+  string currency_code = 2;
+}
+
+message Balance {
+  BalanceKey key = 1;
+  Money amount = 2;
+
+  // Version for optimistic concurrency control (CAS/ETag).
+  uint64 version = 3;
+}
+
+// ============================================================================
+// [Index] NDS-PROTO-LEDGER-V1-100 Transactions (contract shape)
+// ============================================================================
+
+message CreateTransactionRequest {
+  // Actor who initiated the transaction.
+  nds.identity.v1.PersonaId actor = 1;
+
+  // Optional source/target (e.g. transfer).
+  optional nds.identity.v1.PersonaId source = 2;
+  optional nds.identity.v1.PersonaId target = 3;
+
+  // Amount (positive by convention; direction is expressed via source/target semantics).
+  Money amount = 4;
+
+  // Correctness: idempotency + tracing.
+  nds.common.v1.RequestContext ctx = 10;
+
+  // Correctness: optimistic concurrency.
+  optional uint64 expected_source_version = 11;
+  optional uint64 expected_target_version = 12;
+
+  // Optional human reason (non-hot-path).
+  optional string reason = 20;
+
+  // Typed extensions (metadata/policy hooks).
+  repeated google.protobuf.Any extensions = 30;
+}
+
+message CreateTransactionResponse {
+  // Stable transaction id (opaque bytes; implementation-defined sortable id scheme is recommended).
+  optional bytes tx_id = 1;
+
+  // Append-only event proof (can be streamed via sync).
+  optional nds.event.v1.EventEnvelope event = 2;
+
+  // Error (present when tx_id/event is absent).
+  optional nds.common.v1.ErrorStatus error = 3;
+}
+

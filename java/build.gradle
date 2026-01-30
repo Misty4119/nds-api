@@ -1,0 +1,202 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'com.vanniktech.maven.publish' version '0.28.0'
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+// [Index] NDS-JAVA-BUILD-000
+// [Semantic] Java SDK build: proto codegen + publishing metadata.
+// [Constraint] Keep publishing coordinates consistent with repository README.
+group = 'io.github.misty4119'  // [Index] NDS-JAVA-BUILD-010 [Semantic] GitHub namespace groupId.
+def releaseVersion = (System.getenv("RELEASE_VERSION")
+        ?: (project.findProperty("releaseVersion")?.toString()))
+version = releaseVersion ?: '3.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
+}
+
+// [Index] NDS-JAVA-BUILD-020
+// [Behavior] Exclude duplicates in sourcesJar (proto-generated sources).
+tasks.named('sourcesJar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// [Index] NDS-JAVA-BUILD-030
+// [Behavior] Fix task dependencies required for publishing only.
+afterEvaluate {
+    tasks.findByName('generateMetadataFileForMavenPublication')?.dependsOn(tasks.findByName('plainJavadocJar'))
+    tasks.findByName('generateMetadataFileForMavenJavaPublication')?.dependsOn(tasks.findByName('plainJavadocJar'))
+    tasks.findByName('signMavenPublication')?.dependsOn(tasks.findByName('plainJavadocJar'))
+    tasks.findByName('signMavenJavaPublication')?.dependsOn(tasks.findByName('plainJavadocJar'))
+}
+
+// [Index] NDS-JAVA-BUILD-040
+// [Behavior] In-memory GPG signing (required only for publishing).
+signing {
+    def enableSigning = (project.findProperty("enableSigning")?.toString()?.toBoolean() ?: false)
+    required {
+        // Only require signing when explicitly enabled, or when publishing to Maven Central.
+        enableSigning || gradle.taskGraph.hasTask("publishAllPublicationsToMavenCentralRepository")
+    }
+
+    def signingKeyEnv = System.getenv("ORG_GRADLE_PROJECT_signingKey") ?: project.findProperty("signingKey")
+    def signingPassword = System.getenv("ORG_GRADLE_PROJECT_signingPassword") ?: project.findProperty("signingPassword")
+    
+    if (signingKeyEnv && signingPassword) {
+        useInMemoryPgpKeys(signingKeyEnv, signingPassword)
+    }
+    // [Constraint] Local builds do not require signing.
+}
+
+mavenPublishing {
+    def enableSigning = (project.findProperty("enableSigning")?.toString()?.toBoolean() ?: false)
+
+    // [Index] NDS-JAVA-BUILD-050
+    // [Behavior] Publish via OSSRH staging; release is manual in Central Portal.
+    publishToMavenCentral("S01", false)  // [Trace] S01 host; auto-release disabled.
+
+    // [Behavior] Do not sign unless explicitly enabled (CI/release).
+    if (enableSigning) {
+        signAllPublications()
+    }
+    
+    coordinates(group, 'noiedigitalsystem-api', version)
+    
+    pom {
+        name = 'NDS-API'
+        description = 'Lightweight append-only event protocol types for Java'
+        inceptionYear = '2024'
+        url = 'https://github.com/Misty4119/nds-api'
+        
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        
+        developers {
+            developer {
+                id = 'linmimeng'
+                name = 'LinMimeng'
+                email = 'Misty4119@gmail.com'
+            }
+        }
+        
+        scm {
+            url = 'https://github.com/Misty4119/nds-api'
+            connection = 'scm:git:git://github.com/Misty4119/nds-api.git'
+            developerConnection = 'scm:git:ssh://github.com/Misty4119/nds-api.git'
+        }
+    }
+}
+repositories {
+    mavenCentral() 
+    // [Index] NDS-JAVA-BUILD-060
+    // [Decision] Keep SDK runtime-agnostic; do not depend on Paper repositories.
+    // maven { url "https://repo.papermc.io/repository/maven-public/" }
+}
+
+dependencies { 
+    // [Index] NDS-JAVA-BUILD-070
+    // [Decision] Keep SDK runtime-agnostic; do not depend on Paper API.
+    // compileOnly "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
+ 
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+ 
+    compileOnly 'org.jetbrains:annotations:24.0.0'
+    
+    // [Index] NDS-JAVA-BUILD-080
+    // [Dependency] Protocol Buffers runtime.
+    implementation 'com.google.protobuf:protobuf-java:4.29.3'
+    
+    // [Index] NDS-JAVA-BUILD-081
+    // [Trace] gRPC deps are reserved for Phase 2+ (messages only for now).
+    // implementation 'io.grpc:grpc-protobuf:1.70.0'
+    // implementation 'io.grpc:grpc-stub:1.70.0'
+
+    // [Index] NDS-JAVA-BUILD-090
+    // [Dependency] Tests (Jupiter) for deterministic adapter semantics.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+}
+
+// ============================================================================
+// [Index] NDS-JAVA-BUILD-100 Proto configuration
+// ============================================================================
+
+protobuf {
+    // [Dependency] protoc compiler version.
+    protoc {
+        artifact = 'com.google.protobuf:protoc:4.29.3'
+    }
+    
+    // [Behavior] Code generation config.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite=false'  // [Behavior] Generate full runtime (not lite).
+                }
+            }
+        }
+    }
+}
+
+// [Index] NDS-JAVA-BUILD-110
+// [Behavior] Proto source directories.
+// [Trace] Use project.projectDir.parentFile to support being included as a subproject.
+def ndsApiRoot = project.projectDir.parentFile
+sourceSets {
+    main {
+        proto {
+            // [Trace] Read proto definitions from spec/proto.
+            srcDir "${ndsApiRoot}/spec/proto"
+        }
+        java {
+            // [Trace] Include generated Java sources.
+            srcDir "${buildDir}/generated/source/proto/main/java"
+        }
+    }
+}
+
+// [Index] NDS-JAVA-BUILD-120
+// [Behavior] Publishing is managed by the Vanniktech Maven Publish plugin.
+// [Constraint] Avoid defining additional Maven publications here to prevent duplicate coordinates.
+ 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' 
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-processing']
+}
+
+// [Index] NDS-JAVA-BUILD-091
+// [Behavior] Use JUnit Jupiter for tests.
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+ 
+// [Index] NDS-JAVA-BUILD-900
+// [Constraint] Pre-publish validation (SemVer + credentials).
+tasks.named('publishAllPublicationsToMavenCentralRepository') {
+    dependsOn 'build'
+    doFirst {
+        if (!project.version.matches(/^\d+\.\d+\.\d+$/)) {
+            throw new RuntimeException("version error: ${project.version}，should be MAJOR.MINOR.PATCH format")
+        }
+        
+        def username = project.findProperty("mavenCentralUsername") ?: System.getenv("MAVEN_CENTRAL_USERNAME")
+        def password = project.findProperty("mavenCentralPassword") ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
+        
+        if (!username || !password) {
+            throw new RuntimeException("Maven Central credentials missing! Please provide mavenCentralUsername/mavenCentralPassword via Gradle properties or env.")
+        }
+
+        println "Preparing to publish ${project.group}:noiedigitalsystem-api:${project.version} to Maven Central"
+    }
+}
