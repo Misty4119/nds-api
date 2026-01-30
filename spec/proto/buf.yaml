@@ -10,6 +10,8 @@ version: v2
 modules:
   - path: .
     name: buf.build/misty4119/nds-spec
+    # [Note] This is the Buf Registry module identifier (NOT a local directory/repo name).
+    # [Behavior] Local source of truth remains: `nds-api/spec/proto/**`.
 
 deps:
   # [Dependency] Google common protos (Timestamp, Any, etc.).

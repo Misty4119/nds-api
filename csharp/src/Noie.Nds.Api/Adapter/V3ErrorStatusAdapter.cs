@@ -46,7 +46,8 @@ public static class V3ErrorStatusAdapter
 
         // Category/retryAfter are part of v3 semantics; preserve as structured details.
         details["error_category"] = status.Category.ToString();
-        if (status.RetryAfterSeconds != 0)
+        // [Behavior] RetryAfterSeconds is proto3 optional; preserve presence even when value is 0.
+        if (status.HasRetryAfterSeconds)
             details["retry_after_seconds"] = status.RetryAfterSeconds;
 
         return NdsError.Of(status.Code, status.Message, details);

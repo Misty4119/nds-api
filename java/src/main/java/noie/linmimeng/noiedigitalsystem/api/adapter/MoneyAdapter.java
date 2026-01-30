@@ -83,6 +83,10 @@ public final class MoneyAdapter {
             return null;
         }
 
+        if (proto.getCurrencyCode() == null || proto.getCurrencyCode().isBlank()) {
+            throw new IllegalArgumentException("currencyCode must be non-empty");
+        }
+
         long units = proto.getUnits();
         int nanos = proto.getNanos();
 

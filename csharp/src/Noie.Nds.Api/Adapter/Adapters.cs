@@ -30,6 +30,9 @@ namespace Noie.Nds.Api.Adapter;
 ///   <item><see cref="MoneyAdapter"/> - decimal ↔ v3 fixed-point Money</item>
 ///   <item><see cref="V3RequestContextAdapter"/> - helpers for v3 RequestContext</item>
 ///   <item><see cref="V3ErrorStatusAdapter"/> - NdsError ↔ v3 ErrorStatus</item>
+///   <item><see cref="V3IdentityV1Adapter"/> - v3 identity primitives (PersonaId)</item>
+///   <item><see cref="V3EventV1Adapter"/> - v3 event primitives (Cursor)</item>
+///   <item><see cref="V3SyncV1Adapter"/> - v3 sync primitives (ResumeToken)</item>
 ///   <item><see cref="IdentityAdapter"/> - INdsIdentity ↔ Proto NdsIdentity</item>
 ///   <item><see cref="AssetAdapter"/> - IAssetId ↔ Proto AssetId</item>
 ///   <item><see cref="ContextAdapter"/> - INdsContext ↔ Proto NdsContext</item>
