@@ -75,7 +75,10 @@ signing.properties
 ###############################################################################
 spec/gen/
 java/src/main/java/noie/linmimeng/noiedigitalsystem/api/proto/
-spec/csharp/src/Noie.Nds.Api.Proto/
+# [Legacy / Forbidden Output]
+# This repository generates C# protos into: `csharp/src/Noie.Nds.Api.Proto` (repo-root relative).
+# The `spec/csharp/` directory is an old, accidental output location and MUST remain empty.
+spec/csharp/
 
 # Node (if used by tooling in the future)
 **/node_modules/

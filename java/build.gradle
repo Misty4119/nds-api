@@ -12,7 +12,7 @@ plugins {
 group = 'io.github.misty4119'  // [Index] NDS-JAVA-BUILD-010 [Semantic] GitHub namespace groupId.
 def releaseVersion = (System.getenv("RELEASE_VERSION")
         ?: (project.findProperty("releaseVersion")?.toString()))
-version = releaseVersion ?: '3.0.0'
+version = releaseVersion ?: '3.0.1'
 
 java {
     toolchain {

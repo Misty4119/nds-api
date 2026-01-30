@@ -7,22 +7,20 @@ package noie.linmimeng.noiedigitalsystem.api.adapter;
  * 
  * <h2>使用範例</h2>
  * <pre>{@code
- * import static noie.linmimeng.noiedigitalsystem.api.adapter.Adapters.*;
- * 
  * // [Index] NDS-JAVA-ADAPTERS-EX-001 [Semantic] Decimal conversion.
- * Decimal protoDecimal = decimal().toProto(BigDecimal.valueOf(100.5));
- * BigDecimal javaBigDecimal = decimal().fromProto(protoDecimal);
+ * var protoDecimal = DecimalAdapter.toProto(BigDecimal.valueOf(100.5));
+ * BigDecimal javaBigDecimal = DecimalAdapter.fromProto(protoDecimal);
  *
  * // [Index] NDS-JAVA-ADAPTERS-EX-003 [Semantic] Money (v3 fixed-point) conversion.
- * nds.ledger.v1.Money money = money().toProto("NDS", BigDecimal.valueOf(100.5));
- * BigDecimal amount = money().fromProto(money);
+ * var money = MoneyAdapter.toProto("NDS", BigDecimal.valueOf(100.5));
+ * BigDecimal amount = MoneyAdapter.fromProto(money);
  *
  * // [Index] NDS-JAVA-ADAPTERS-EX-004 [Semantic] v3 request context.
- * var ctx = v3RequestContext().create("req-1", "idem-1");
+ * var ctx = V3RequestContextAdapter.create("req-1", "idem-1");
  * 
  * // [Index] NDS-JAVA-ADAPTERS-EX-002 [Semantic] Identity conversion.
- * nds.identity.NdsIdentity protoIdentity = identity().toProto(domainIdentity);
- * NdsIdentity domainIdentity = identity().fromProto(protoIdentity);
+ * var protoIdentity = IdentityAdapter.toProto(domainIdentity);
+ * NdsIdentity domainIdentity = IdentityAdapter.fromProto(protoIdentity);
  * }</pre>
  * 
  * @since 2.0.0
@@ -68,6 +66,33 @@ public final class Adapters {
      */
     public static Class<V3ErrorStatusAdapter> v3ErrorStatus() {
         return V3ErrorStatusAdapter.class;
+    }
+
+    /**
+     * 獲取 v3 identity (v1 package) adapter
+     *
+     * @since 3.0.0
+     */
+    public static Class<V3IdentityV1Adapter> v3IdentityV1() {
+        return V3IdentityV1Adapter.class;
+    }
+
+    /**
+     * 獲取 v3 event (v1 package) adapter
+     *
+     * @since 3.0.0
+     */
+    public static Class<V3EventV1Adapter> v3EventV1() {
+        return V3EventV1Adapter.class;
+    }
+
+    /**
+     * 獲取 v3 sync (v1 package) adapter
+     *
+     * @since 3.0.0
+     */
+    public static Class<V3SyncV1Adapter> v3SyncV1() {
+        return V3SyncV1Adapter.class;
     }
     
     /**

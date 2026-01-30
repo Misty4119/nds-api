@@ -44,5 +44,16 @@ public class MoneyAdapterTest {
         assertNotNull(value);
         assertEquals(new BigDecimal("-1.250000000"), value);
     }
+
+    @Test
+    void fromProto_shouldRejectBlankCurrencyCode() {
+        Money money = Money.newBuilder()
+            .setCurrencyCode("")
+            .setUnits(1L)
+            .setNanos(0)
+            .build();
+
+        assertThrows(IllegalArgumentException.class, () -> MoneyAdapter.fromProto(money));
+    }
 }
 
