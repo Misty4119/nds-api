@@ -26,7 +26,7 @@ jobs:
           set -euo pipefail
           VERSION="${GITHUB_REF_NAME#v}"
           npm ci
-          npm version "${VERSION}" --no-git-tag-version
+          npm version "${VERSION}" --no-git-tag-version --allow-same-version
           npm run build
           npm publish --access public
         env:
@@ -52,7 +52,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install build twine
 
-          python -c 'import os, pathlib, re; version=os.environ["VERSION"]; p=pathlib.Path("pyproject.toml"); s=p.read_text(encoding="utf-8"); s2=re.sub(r"(?m)^version\\s*=\\s*\\\"[^\\\"]+\\\"\\s*$", f"version = \\\"{version}\\\"", s, count=1); (s2!=s) or (_ for _ in ()).throw(SystemExit("Failed to update version in pyproject.toml")); p.write_text(s2, encoding="utf-8")'
+          python -c 'import os, pathlib, re; version=os.environ["VERSION"]; p=pathlib.Path("pyproject.toml"); s=p.read_text(encoding="utf-8"); s2=re.sub(r"(?m)^version\\s*=\\s*\\\"[^\\\"]+\\\"\\s*$", f"version = \\\"{version}\\\"", s, count=1); (s2!=s) and p.write_text(s2, encoding="utf-8")'
 
           python -m build
           python -m twine upload --skip-existing dist/*
@@ -66,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@master
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: '1.93.0'
       - name: Publish

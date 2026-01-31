@@ -1,6 +1,6 @@
 {
   "name": "@misty4119/nds-api",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "NDS Protocol Buffers types for TypeScript (generated from nds-api/spec).",
   "license": "Apache-2.0",
   "repository": {
@@ -32,4 +32,3 @@
     "node": ">=22"
   }
 }
-

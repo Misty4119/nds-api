@@ -11,7 +11,7 @@ Protocol SDK for **NDS-API** (NoieDigitalSystem) on TypeScript.
 ## Installation
 
 ```bash
-npm i @misty4119/nds-api@3.0.2
+npm i @misty4119/nds-api@3.0.3
 ```
 
 ## Features

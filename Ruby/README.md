@@ -11,7 +11,7 @@ Protocol SDK for **NDS-API** (NoieDigitalSystem) on Ruby.
 ## Installation
 
 ```bash
-gem install noie-nds-api -v 3.0.2
+gem install noie-nds-api -v 3.0.3
 ```
 
 ## Features
