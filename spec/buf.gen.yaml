@@ -33,7 +33,10 @@ plugins:
   #     - paths=source_relative
 
   # ===== C++ =====
-  - remote: buf.build/protocolbuffers/cpp
+  # Pin the plugin version to avoid protobuf runtime/version mismatches for checked-in gencode.
+  # NOTE: If you upgrade this, also update `Cpp/CMakeLists.txt` (NDS_API_PROTOBUF_TAG) and
+  # regenerate `Cpp/src`.
+  - remote: buf.build/protocolbuffers/cpp:v6.33.5
     out: Cpp/src
 
   # ===== TypeScript =====

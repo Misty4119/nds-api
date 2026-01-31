@@ -23,7 +23,9 @@ if(NDS_API_PROTOBUF_PROVIDER STREQUAL "system")
 else()
   include(FetchContent)
   # Use an established stable tag that contains runtime_version.h (introduced in 26.x).
-  set(NDS_API_PROTOBUF_TAG "v33.4" CACHE STRING "protobuf git tag for FetchContent")
+  # NOTE: Must match the version used to generate checked-in *.pb.h/*.pb.cc under Cpp/src.
+  # The generated headers include a hard check: `#if PROTOBUF_VERSION != ...`.
+  set(NDS_API_PROTOBUF_TAG "v33.5" CACHE STRING "protobuf git tag for FetchContent")
 
   # Keep protobuf build lightweight.
   set(protobuf_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -38,7 +40,7 @@ else()
   )
 
   # Build protobuf from repository root (supported CMake flow).
-  # See: https://github.com/protocolbuffers/protobuf/tree/v33.4/cmake
+  # See: https://github.com/protocolbuffers/protobuf/tree/v33.5/cmake
   set(protobuf_INSTALL OFF CACHE BOOL "" FORCE)
   set(protobuf_BUILD_PROTOBUF_BINARIES ON CACHE BOOL "" FORCE)
 
