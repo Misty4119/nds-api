@@ -1,9 +1,0 @@
-{
-  "name": "noie-nds-api-cpp",
-  "version-string": "3.0.4",
-  "description": "C++ build manifest for NDS-API generated protobuf types.",
-  "dependencies": [
-    "protobuf"
-  ]
-}
-

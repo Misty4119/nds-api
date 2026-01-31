@@ -54,7 +54,9 @@ jobs:
           go-version: '1.25.x'
       - name: Build
         working-directory: Go
-        run: go test ./...
+        run: |
+          go mod tidy
+          go test ./...
 
   build-cpp:
     name: Build C++ SDK
@@ -67,14 +69,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build g++-14 pkg-config
-
-      - name: Setup vcpkg (manifest mode)
-        shell: bash
-        run: |
-          set -euo pipefail
-          git clone --depth 1 https://github.com/microsoft/vcpkg "${PWD}/vcpkg"
-          "${PWD}/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          sudo apt-get install -y cmake ninja-build g++-14 pkg-config git
       - name: Build
         shell: bash
         env:
@@ -82,9 +77,7 @@ jobs:
           CXX: g++-14
         run: |
           set -euo pipefail
-          export VCPKG_ROOT="${PWD}/vcpkg"
-          export VCPKG_FEATURE_FLAGS="manifests"
-          cmake -S Cpp -B Cpp/build -G Ninja -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+          cmake -S Cpp -B Cpp/build -G Ninja -DNDS_API_PROTOBUF_PROVIDER=fetch
           cmake --build Cpp/build -j
 
   build-typescript:
