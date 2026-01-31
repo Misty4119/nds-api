@@ -10,9 +10,14 @@
     <IsAotCompatible>true</IsAotCompatible>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 
-    <!-- This project contains generated protobuf types only -->
+    <!-- Package Metadata -->
+    <PackageId>Noie.Nds.Api.Proto</PackageId>
+    <Description>NDS Protocol Buffers types for .NET (shared / non-versioned)</Description>
+    <PackageTags>nds;protobuf;proto;schema;dotnet</PackageTags>
+
+    <!-- This project contains protobuf types only -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

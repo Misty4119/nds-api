@@ -10,8 +10,13 @@
     <IsAotCompatible>true</IsAotCompatible>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 
+    <!-- Package Metadata -->
+    <PackageId>Noie.Nds.Api.Proto.V3</PackageId>
+    <Description>NDS Protocol Buffers v3+ versioned types for .NET (from spec/proto)</Description>
+    <PackageTags>nds;protobuf;proto;schema;v3;versioned;dotnet</PackageTags>
+
     <!-- Generated types only -->
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
