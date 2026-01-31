@@ -10,7 +10,7 @@ Protocol SDK for **NDS-API** (NoieDigitalSystem) on Go.
 ## Installation
 
 ```bash
-go get github.com/misty4119/nds-api/Go@v3.0.3
+go get github.com/misty4119/nds-api/Go@v3.0.4
 ```
 
 ## Features

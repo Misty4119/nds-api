@@ -11,7 +11,7 @@ Protocol SDK for **NDS-API** (NoieDigitalSystem) on Python.
 ## Installation
 
 ```bash
-pip install noie-nds-api==3.0.3
+pip install noie-nds-api==3.0.4
 ```
 
 ## Features

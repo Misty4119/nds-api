@@ -67,7 +67,14 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y cmake g++-14 pkg-config libprotobuf-dev
+          sudo apt-get install -y cmake ninja-build g++-14 pkg-config
+
+      - name: Setup vcpkg (manifest mode)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/microsoft/vcpkg "${PWD}/vcpkg"
+          "${PWD}/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
       - name: Build
         shell: bash
         env:
@@ -75,7 +82,9 @@ jobs:
           CXX: g++-14
         run: |
           set -euo pipefail
-          cmake -S Cpp -B Cpp/build
+          export VCPKG_ROOT="${PWD}/vcpkg"
+          export VCPKG_FEATURE_FLAGS="manifests"
+          cmake -S Cpp -B Cpp/build -G Ninja -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
           cmake --build Cpp/build -j
 
   build-typescript:

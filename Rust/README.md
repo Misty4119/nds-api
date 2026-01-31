@@ -11,7 +11,7 @@ Protocol SDK for **NDS-API** (NoieDigitalSystem) on Rust.
 ## Installation
 
 ```bash
-cargo add noie-nds-api@3.0.3
+cargo add noie-nds-api@3.0.4
 ```
 
 ## Features
