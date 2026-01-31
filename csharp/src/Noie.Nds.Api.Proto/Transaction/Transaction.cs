@@ -102,11 +102,11 @@ namespace Nds.Transaction {
             "YXR1cxIiCh5UUkFOU0FDVElPTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIeChpU",
             "UkFOU0FDVElPTl9TVEFUVVNfUEVORElORxABEiAKHFRSQU5TQUNUSU9OX1NU",
             "QVRVU19DT01NSVRURUQQAhIiCh5UUkFOU0FDVElPTl9TVEFUVVNfUk9MTEVE",
-            "X0JBQ0sQAxIdChlUUkFOU0FDVElPTl9TVEFUVVNfRkFJTEVEEARCqwEKOm5v",
-            "aWUubGlubWltZW5nLm5vaWVkaWdpdGFsc3lzdGVtLmFwaS5wcm90by5uZHMu",
-            "dHJhbnNhY3Rpb25CEFRyYW5zYWN0aW9uUHJvdG9QAaICA05UWKoCD05kcy5U",
-            "cmFuc2FjdGlvbsoCD05kc1xUcmFuc2FjdGlvbuICG05kc1xUcmFuc2FjdGlv",
-            "blxHUEJNZXRhZGF0YeoCEE5kczo6VHJhbnNhY3Rpb25iBnByb3RvMw=="));
+            "X0JBQ0sQAxIdChlUUkFOU0FDVElPTl9TVEFUVVNfRkFJTEVEEARChAEKE2Nv",
+            "bS5uZHMudHJhbnNhY3Rpb25CEFRyYW5zYWN0aW9uUHJvdG9QAaICA05UWKoC",
+            "D05kcy5UcmFuc2FjdGlvbsoCD05kc1xUcmFuc2FjdGlvbuICG05kc1xUcmFu",
+            "c2FjdGlvblxHUEJNZXRhZGF0YeoCEE5kczo6VHJhbnNhY3Rpb25iBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Nds.Common.CommonReflection.Descriptor, global::Nds.Identity.IdentityReflection.Descriptor, global::Nds.Asset.AssetReflection.Descriptor, global::Nds.Event.EventReflection.Descriptor, global::Nds.Context.ContextReflection.Descriptor, global::Nds.Audit.RationaleReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Nds.Transaction.ConsistencyMode), typeof(global::Nds.Transaction.TransactionStatus), }, null, new pbr::GeneratedClrTypeInfo[] {

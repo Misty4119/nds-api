@@ -1,0 +1,35 @@
+{
+  "name": "@misty4119/nds-api",
+  "version": "3.0.2",
+  "description": "NDS Protocol Buffers types for TypeScript (generated from nds-api/spec).",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Misty4119/nds-api.git"
+  },
+  "homepage": "https://github.com/Misty4119/nds-api",
+  "bugs": {
+    "url": "https://github.com/Misty4119/nds-api/issues"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "src/"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\""
+  },
+  "dependencies": {
+    "@protobuf-ts/runtime": "^2.11.1",
+    "@protobuf-ts/runtime-rpc": "^2.11.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
+

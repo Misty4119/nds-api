@@ -5,6 +5,7 @@ Cross-language protocol specification and SDKs for **NoieDigitalSystem (NDS)**.
 NDS-API provides:
 - **Protocol Buffers** definitions (canonical schema)
 - **Java SDK** (Java 21) and **.NET SDK** (.NET 10) for protocol types and adapters
+- **Go / TypeScript / Python / Rust / Ruby** generated protocol types (protobuf DTOs)
 
 NDS-API does not provide:
 - a Minecraft plugin runtime
@@ -16,6 +17,12 @@ NDS-API does not provide:
 - `spec/` — Protocol Buffers schema and protocol documentation
 - `java/` — Java SDK
 - `csharp/` — .NET SDK
+- `Go/` — Go protobuf types (generated)
+- `Cpp/` — C++ protobuf types (generated)
+- `TypeScript/` — TypeScript protobuf types (generated, published to npm)
+- `Python/` — Python protobuf types (generated, published to PyPI)
+- `Rust/` — Rust protobuf types (generated, published to crates.io)
+- `Ruby/` — Ruby protobuf types (generated, published to RubyGems)
 - `docs/` — Documentation index
 
 ## Install
@@ -53,6 +60,30 @@ If you only need interfaces and core types:
 
 ```bash
 dotnet add package Noie.Nds.Api.Abstractions
+```
+
+### TypeScript
+
+```bash
+npm i @misty4119/nds-api
+```
+
+### Python
+
+```bash
+pip install noie-nds-api
+```
+
+### Rust
+
+```bash
+cargo add noie-nds-api
+```
+
+### Ruby
+
+```bash
+gem install noie-nds-api
 ```
 
 ## Protocol packages

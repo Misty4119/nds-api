@@ -34,10 +34,9 @@ namespace Nds.Identity {
             "eXBlEh0KGUlERU5USVRZX1RZUEVfVU5TUEVDSUZJRUQQABIYChRJREVOVElU",
             "WV9UWVBFX1BMQVlFUhABEhgKFElERU5USVRZX1RZUEVfU1lTVEVNEAISFAoQ",
             "SURFTlRJVFlfVFlQRV9BSRADEhoKFklERU5USVRZX1RZUEVfRVhURVJOQUwQ",
-            "BEKZAQo3bm9pZS5saW5taW1lbmcubm9pZWRpZ2l0YWxzeXN0ZW0uYXBpLnBy",
-            "b3RvLm5kcy5pZGVudGl0eUINSWRlbnRpdHlQcm90b1ABogIDTklYqgIMTmRz",
-            "LklkZW50aXR5ygIMTmRzXElkZW50aXR54gIYTmRzXElkZW50aXR5XEdQQk1l",
-            "dGFkYXRh6gINTmRzOjpJZGVudGl0eWIGcHJvdG8z"));
+            "BEJyChBjb20ubmRzLmlkZW50aXR5Qg1JZGVudGl0eVByb3RvUAGiAgNOSViq",
+            "AgxOZHMuSWRlbnRpdHnKAgxOZHNcSWRlbnRpdHniAhhOZHNcSWRlbnRpdHlc",
+            "R1BCTWV0YWRhdGHqAg1OZHM6OklkZW50aXR5YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Nds.Identity.IdentityType), }, null, new pbr::GeneratedClrTypeInfo[] {

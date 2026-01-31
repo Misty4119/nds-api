@@ -1,6 +1,10 @@
-# buf.gen.yaml - NDS code generation configuration
+# buf.gen.yaml - NDS code generation configuration (non-C#)
 #
 # Defines how to generate language SDKs from the proto contract.
+#
+# Note:
+# - C# generation is split into `spec/buf.gen.csharp.yaml` to avoid duplicate v1 type definitions
+#   (v1 protos are generated at build time by `Noie.Nds.Api.Proto.V3`).
 #
 # See: https://buf.build/docs/configuration/v2/buf-gen-yaml
 
@@ -12,18 +16,58 @@ managed:
     # Java package prefix for generated code
     - file_option: java_package_prefix
       value: noie.linmimeng.noiedigitalsystem.api.proto
+    # Go import path prefix for generated code
+    - file_option: go_package_prefix
+      value: github.com/misty4119/nds-api/Go
 
 plugins:
-  # ===== C# =====
-  - remote: buf.build/protocolbuffers/csharp
-    out: ../csharp/src/Noie.Nds.Api.Proto
+  # ===== Go =====
+  - remote: buf.build/protocolbuffers/go
+    out: Go
     opt:
-      # [Behavior] Keep aligned with per-file `csharp_namespace` (e.g. Nds.Common).
-      - base_namespace=Nds
+      - paths=source_relative
 
-  # ===== TypeScript (future) =====
-  # - remote: buf.build/community/timostamm-protobuf-ts
-  #   out: gen/typescript
+  # - remote: buf.build/grpc/go
+  #   out: Go
+  #   opt:
+  #     - paths=source_relative
+
+  # ===== C++ =====
+  - remote: buf.build/protocolbuffers/cpp
+    out: Cpp/src
+
+  # ===== TypeScript =====
+  - remote: buf.build/community/timostamm-protobuf-ts
+    out: TypeScript/src
+    opt:
+      # [Behavior] Match upstream defaults: https://github.com/timostamm/protobuf-ts
+      - long_type_string
+      - generate_dependencies
+
+  # ===== Python =====
+  - remote: buf.build/protocolbuffers/python
+    out: Python/src
+
+  # - remote: buf.build/grpc/python
+  #   out: Python/src
+
+  # ===== Rust =====
+  - remote: buf.build/community/neoeinstein-prost
+    out: Rust/src/gen
+
+  - remote: buf.build/community/neoeinstein-prost-crate
+    out: Rust
+    opt:
+      - no_features
+      - include_file=src/gen/mod.rs
+      - only_include=.nds
+
+  # ===== Ruby =====
+  - remote: buf.build/protocolbuffers/ruby
+    out: Ruby/lib
+
+  # - remote: buf.build/grpc/ruby
+  #   out: Ruby/lib
 
   # ===== gRPC (future) =====
   # - remote: buf.build/grpc/java

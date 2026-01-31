@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noie-nds-api"
+version = "3.0.2"
+description = "NDS Protocol Buffers types for Python (generated from nds-api/spec)."
+readme = "README.md"
+requires-python = ">=3.14"
+license = "Apache-2.0"
+authors = [{ name = "Misty4119" }]
+dependencies = [
+  "protobuf>=6.31.1,<7"
+]
+
+[project.urls]
+Homepage = "https://github.com/Misty4119/nds-api"
+Repository = "https://github.com/Misty4119/nds-api"
+Issues = "https://github.com/Misty4119/nds-api/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+

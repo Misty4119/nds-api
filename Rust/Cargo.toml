@@ -1,0 +1,13 @@
+[package]
+name = "noie-nds-api"
+version = "3.0.2"
+edition = "2021"
+rust-version = "1.93"
+license = "Apache-2.0"
+description = "NDS Protocol Buffers types for Rust (generated from nds-api/spec)."
+repository = "https://github.com/Misty4119/nds-api"
+
+[dependencies]
+prost = "0.13"
+prost-types = "0.13"
+

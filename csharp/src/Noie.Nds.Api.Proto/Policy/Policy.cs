@@ -32,11 +32,10 @@ namespace Nds.Policy {
             "KAsyIy5uZHMucG9saWN5Lk5kc1BvbGljeS5NZXRhZGF0YUVudHJ5UghtZXRh",
             "ZGF0YRo5CgtQYXJhbXNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1",
             "ZRgCIAEoCVIFdmFsdWU6AjgBGjsKDU1ldGFkYXRhRW50cnkSEAoDa2V5GAEg",
-            "ASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4AUKNAQo1bm9pZS5s",
-            "aW5taW1lbmcubm9pZWRpZ2l0YWxzeXN0ZW0uYXBpLnByb3RvLm5kcy5wb2xp",
-            "Y3lCC1BvbGljeVByb3RvUAGiAgNOUFiqAgpOZHMuUG9saWN5ygIKTmRzXFBv",
-            "bGljeeICFk5kc1xQb2xpY3lcR1BCTWV0YWRhdGHqAgtOZHM6OlBvbGljeWIG",
-            "cHJvdG8z"));
+            "ASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4AUJmCg5jb20ubmRz",
+            "LnBvbGljeUILUG9saWN5UHJvdG9QAaICA05QWKoCCk5kcy5Qb2xpY3nKAgpO",
+            "ZHNcUG9saWN54gIWTmRzXFBvbGljeVxHUEJNZXRhZGF0YeoCC05kczo6UG9s",
+            "aWN5YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {

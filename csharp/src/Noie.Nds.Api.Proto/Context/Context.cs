@@ -32,10 +32,9 @@ namespace Nds.Context {
             "c0NvbnRleHQuTWV0YUVudHJ5UgRtZXRhEhwKCXRpbWVzdGFtcBgGIAEoA1IJ",
             "dGltZXN0YW1wGjcKCU1ldGFFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2",
             "YWx1ZRgCIAEoCVIFdmFsdWU6AjgBQgoKCF9zcGFuX2lkQhEKD19wYXJlbnRf",
-            "c3Bhbl9pZEKTAQo2bm9pZS5saW5taW1lbmcubm9pZWRpZ2l0YWxzeXN0ZW0u",
-            "YXBpLnByb3RvLm5kcy5jb250ZXh0QgxDb250ZXh0UHJvdG9QAaICA05DWKoC",
-            "C05kcy5Db250ZXh0ygILTmRzXENvbnRleHTiAhdOZHNcQ29udGV4dFxHUEJN",
-            "ZXRhZGF0YeoCDE5kczo6Q29udGV4dGIGcHJvdG8z"));
+            "c3Bhbl9pZEJsCg9jb20ubmRzLmNvbnRleHRCDENvbnRleHRQcm90b1ABogID",
+            "TkNYqgILTmRzLkNvbnRleHTKAgtOZHNcQ29udGV4dOICF05kc1xDb250ZXh0",
+            "XEdQQk1ldGFkYXRh6gIMTmRzOjpDb250ZXh0YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {

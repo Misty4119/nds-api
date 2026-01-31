@@ -9,6 +9,103 @@ permissions:
   contents: write
 
 jobs:
+  release-typescript:
+    name: Release TypeScript SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Build + Publish
+        working-directory: TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          npm ci
+          npm version "${VERSION}" --no-git-tag-version
+          npm run build
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_API_KEY }}
+
+  release-python:
+    name: Release Python SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Build + Publish
+        working-directory: Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          export VERSION
+
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+
+          python -c 'import os, pathlib, re; version=os.environ["VERSION"]; p=pathlib.Path("pyproject.toml"); s=p.read_text(encoding="utf-8"); s2=re.sub(r"(?m)^version\\s*=\\s*\\\"[^\\\"]+\\\"\\s*$", f"version = \\\"{version}\\\"", s, count=1); (s2!=s) or (_ for _ in ()).throw(SystemExit("Failed to update version in pyproject.toml")); p.write_text(s2, encoding="utf-8")'
+
+          python -m build
+          python -m twine upload --skip-existing dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_KEY }}
+
+  release-rust:
+    name: Release Rust SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.93.0'
+      - name: Publish
+        working-directory: Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "0,/^version = \".*\"/s//version = \"${VERSION}\"/" Cargo.toml
+          cargo publish --token "${CRATES_API_KEY}" --allow-dirty
+        env:
+          CRATES_API_KEY: ${{ secrets.CRATES_API_KEY }}
+
+  release-ruby:
+    name: Release Ruby SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0.1'
+      - name: Build + Publish
+        working-directory: Ruby
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/VERSION = \\\"[^\"]\\+\\\"/VERSION = \\\"${VERSION}\\\"/" lib/noie_nds_api/version.rb
+
+          mkdir -p "${HOME}/.gem"
+          printf -- "---\n:rubygems_api_key: %s\n" "${RUBY_API_KEY}" > "${HOME}/.gem/credentials"
+          chmod 0600 "${HOME}/.gem/credentials"
+
+          gem build noie-nds-api.gemspec
+          gem push noie-nds-api-*.gem
+        env:
+          RUBY_API_KEY: ${{ secrets.RUBY_API_KEY }}
+
   release-java:
     name: Release Java SDK
     runs-on: ubuntu-latest
@@ -150,7 +247,7 @@ jobs:
 
   create-release:
     name: Create GitHub Release
-    needs: [release-java, release-csharp]
+    needs: [release-java, release-csharp, release-typescript, release-python, release-rust, release-ruby]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

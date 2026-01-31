@@ -1,0 +1,33 @@
+# buf.gen.csharp.yaml - NDS C# protobuf generation configuration
+#
+# This template intentionally generates **unversioned** protos only.
+#
+# Rationale:
+# - `csharp/src/Noie.Nds.Api.Proto` is a committed generated-output project.
+# - Versioned protos (`nds.*.v1`) are generated at build time by `Noie.Nds.Api.Proto.V3`
+#   to avoid duplicate type definitions across assemblies.
+#
+# See: https://buf.build/docs/configuration/v2/buf-gen-yaml
+
+version: v2
+
+managed:
+  enabled: true
+
+plugins:
+  - remote: buf.build/protocolbuffers/csharp
+    out: csharp/src/Noie.Nds.Api.Proto
+    opt:
+      - base_namespace=Nds
+
+inputs:
+  - directory: spec/proto
+    exclude_paths:
+      - spec/proto/nds/common/v1
+      - spec/proto/nds/event/v1
+      - spec/proto/nds/identity/v1
+      - spec/proto/nds/ledger/v1
+      - spec/proto/nds/sync/v1
+      - spec/proto/nds/metadata/v1
+      - spec/proto/nds/memory/v1
+

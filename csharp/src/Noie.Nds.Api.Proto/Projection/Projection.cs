@@ -53,11 +53,10 @@ namespace Nds.Projection {
             "amVjdGlvblN0YXR1cxIhCh1QUk9KRUNUSU9OX1NUQVRVU19VTlNQRUNJRklF",
             "RBAAEhwKGFBST0pFQ1RJT05fU1RBVFVTX0FDVElWRRABEiAKHFBST0pFQ1RJ",
             "T05fU1RBVFVTX1JFQlVJTERJTkcQAhIeChpQUk9KRUNUSU9OX1NUQVRVU19E",
-            "SVNBQkxFRBADEhsKF1BST0pFQ1RJT05fU1RBVFVTX0VSUk9SEARCpQEKOW5v",
-            "aWUubGlubWltZW5nLm5vaWVkaWdpdGFsc3lzdGVtLmFwaS5wcm90by5uZHMu",
-            "cHJvamVjdGlvbkIPUHJvamVjdGlvblByb3RvUAGiAgNOUFiqAg5OZHMuUHJv",
-            "amVjdGlvbsoCDk5kc1xQcm9qZWN0aW9u4gIaTmRzXFByb2plY3Rpb25cR1BC",
-            "TWV0YWRhdGHqAg9OZHM6OlByb2plY3Rpb25iBnByb3RvMw=="));
+            "SVNBQkxFRBADEhsKF1BST0pFQ1RJT05fU1RBVFVTX0VSUk9SEARCfgoSY29t",
+            "Lm5kcy5wcm9qZWN0aW9uQg9Qcm9qZWN0aW9uUHJvdG9QAaICA05QWKoCDk5k",
+            "cy5Qcm9qZWN0aW9uygIOTmRzXFByb2plY3Rpb27iAhpOZHNcUHJvamVjdGlv",
+            "blxHUEJNZXRhZGF0YeoCD05kczo6UHJvamVjdGlvbmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.AnyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Nds.Projection.ProjectionStatus), }, null, new pbr::GeneratedClrTypeInfo[] {

@@ -38,10 +38,10 @@ namespace Nds.Asset {
             "CgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgBQggK",
             "Bl9saW1pdCpxCgpBc3NldFNjb3BlEhsKF0FTU0VUX1NDT1BFX1VOU1BFQ0lG",
             "SUVEEAASFgoSQVNTRVRfU0NPUEVfUExBWUVSEAESFgoSQVNTRVRfU0NPUEVf",
-            "U0VSVkVSEAISFgoSQVNTRVRfU0NPUEVfR0xPQkFMEANChwEKNG5vaWUubGlu",
-            "bWltZW5nLm5vaWVkaWdpdGFsc3lzdGVtLmFwaS5wcm90by5uZHMuYXNzZXRC",
-            "CkFzc2V0UHJvdG9QAaICA05BWKoCCU5kcy5Bc3NldMoCCU5kc1xBc3NldOIC",
-            "FU5kc1xBc3NldFxHUEJNZXRhZGF0YeoCCk5kczo6QXNzZXRiBnByb3RvMw=="));
+            "U0VSVkVSEAISFgoSQVNTRVRfU0NPUEVfR0xPQkFMEANCYAoNY29tLm5kcy5h",
+            "c3NldEIKQXNzZXRQcm90b1ABogIDTkFYqgIJTmRzLkFzc2V0ygIJTmRzXEFz",
+            "c2V04gIVTmRzXEFzc2V0XEdQQk1ldGFkYXRh6gIKTmRzOjpBc3NldGIGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Nds.Common.CommonReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Nds.Asset.AssetScope), }, null, new pbr::GeneratedClrTypeInfo[] {

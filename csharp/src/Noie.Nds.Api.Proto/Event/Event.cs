@@ -46,10 +46,9 @@ namespace Nds.Event {
             "AxIcChhFVkVOVF9UWVBFX0FTU0VUX0RFTEVURUQQBBIfChtFVkVOVF9UWVBF",
             "X0lERU5USVRZX0NSRUFURUQQBRIfChtFVkVOVF9UWVBFX0lERU5USVRZX1VQ",
             "REFURUQQBhIVChFFVkVOVF9UWVBFX1NZU1RFTRAHEhUKEUVWRU5UX1RZUEVf",
-            "Q1VTVE9NEGNChwEKNG5vaWUubGlubWltZW5nLm5vaWVkaWdpdGFsc3lzdGVt",
-            "LmFwaS5wcm90by5uZHMuZXZlbnRCCkV2ZW50UHJvdG9QAaICA05FWKoCCU5k",
-            "cy5FdmVudMoCCU5kc1xFdmVudOICFU5kc1xFdmVudFxHUEJNZXRhZGF0YeoC",
-            "Ck5kczo6RXZlbnRiBnByb3RvMw=="));
+            "Q1VTVE9NEGNCYAoNY29tLm5kcy5ldmVudEIKRXZlbnRQcm90b1ABogIDTkVY",
+            "qgIJTmRzLkV2ZW50ygIJTmRzXEV2ZW504gIVTmRzXEV2ZW50XEdQQk1ldGFk",
+            "YXRh6gIKTmRzOjpFdmVudGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.StructReflection.Descriptor, global::Nds.Identity.IdentityReflection.Descriptor, global::Nds.Context.ContextReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Nds.Event.EventType), }, null, new pbr::GeneratedClrTypeInfo[] {
