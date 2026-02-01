@@ -3,7 +3,7 @@
 module Noie
   module Nds
     module Api
-      VERSION = "3.0.4"
+      VERSION = "3.0.6"
     end
   end
 end

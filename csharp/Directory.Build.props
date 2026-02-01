@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- 共享屬性 -->
-    <Version>3.0.5</Version>
+    <Version>3.0.6</Version>
     <Authors>LinMimeng</Authors>
     <Company>Noie</Company>
     <Copyright>Copyright (c) 2024 LinMimeng</Copyright>

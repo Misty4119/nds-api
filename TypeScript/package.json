@@ -1,6 +1,6 @@
 {
   "name": "@misty4119/nds-api",
-  "version": "3.0.4",
+  "version": "3.0.6",
   "description": "NDS Protocol Buffers types for TypeScript (generated from nds-api/spec).",
   "license": "Apache-2.0",
   "repository": {

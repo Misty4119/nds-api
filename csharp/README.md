@@ -109,6 +109,8 @@ var rationale = NdsRationale.Of(
 |---------|-------------|
 | `Noie.Nds.Api.Abstractions` | Core interfaces and types |
 | `Noie.Nds.Api` | Full implementation with Proto support |
+| `Noie.Nds.Api.Proto` | Non-versioned protobuf types (e.g. `asset`, `audit`, `context`, `policy`, `projection`, `query`, `transaction`) |
+| `Noie.Nds.Api.Proto.V3` | Versioned protobuf types (`nds.*.v1/*`) generated at build time to avoid duplicate definitions |
 
 ## Compatibility
 
