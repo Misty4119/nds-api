@@ -1,28 +1,26 @@
 package noie.linmimeng.noiedigitalsystem.api.adapter;
 
 /**
- * Adapters - Proto ↔ Domain 轉換的統一入口
- * 
- * <p>提供便捷的靜態方法訪問所有 Adapter。</p>
- * 
- * <h2>使用範例</h2>
+ * [Index] NDS-JAVA-ADAPTERS-000
+ * [Semantic] Unified access point for all Proto ↔ Domain adapters.
+ *
  * <pre>{@code
  * // [Index] NDS-JAVA-ADAPTERS-EX-001 [Semantic] Decimal conversion.
  * var protoDecimal = DecimalAdapter.toProto(BigDecimal.valueOf(100.5));
- * BigDecimal javaBigDecimal = DecimalAdapter.fromProto(protoDecimal);
+ * BigDecimal value = DecimalAdapter.fromProto(protoDecimal);
+ *
+ * // [Index] NDS-JAVA-ADAPTERS-EX-002 [Semantic] Identity conversion.
+ * var proto = IdentityAdapter.toProto(domainIdentity);
+ * NdsIdentity domain = IdentityAdapter.fromProto(proto);
  *
  * // [Index] NDS-JAVA-ADAPTERS-EX-003 [Semantic] Money (v3 fixed-point) conversion.
  * var money = MoneyAdapter.toProto("NDS", BigDecimal.valueOf(100.5));
  * BigDecimal amount = MoneyAdapter.fromProto(money);
  *
- * // [Index] NDS-JAVA-ADAPTERS-EX-004 [Semantic] v3 request context.
+ * // [Index] NDS-JAVA-ADAPTERS-EX-004 [Semantic] v3 RequestContext.
  * var ctx = V3RequestContextAdapter.create("req-1", "idem-1");
- * 
- * // [Index] NDS-JAVA-ADAPTERS-EX-002 [Semantic] Identity conversion.
- * var protoIdentity = IdentityAdapter.toProto(domainIdentity);
- * NdsIdentity domainIdentity = IdentityAdapter.fromProto(protoIdentity);
  * }</pre>
- * 
+ *
  * @since 2.0.0
  */
 public final class Adapters {
@@ -31,19 +29,13 @@ public final class Adapters {
         // [Index] NDS-JAVA-ADAPTERS-001 [Constraint] Utility class; instantiation is prohibited.
     }
     
-    /**
-     * 獲取 DecimalAdapter 實例
-     * 
-     * @return DecimalAdapter 類（靜態方法）
-     */
+    /** @return {@link DecimalAdapter} (static utility; call methods directly) */
     public static Class<DecimalAdapter> decimal() {
         return DecimalAdapter.class;
     }
 
     /**
-     * 獲取 MoneyAdapter 實例（v3 fixed-point）
-     *
-     * @return MoneyAdapter 類（靜態方法）
+     * @return {@link MoneyAdapter} — v3 fixed-point Money (static utility)
      * @since 3.0.0
      */
     public static Class<MoneyAdapter> money() {
@@ -51,8 +43,7 @@ public final class Adapters {
     }
 
     /**
-     * 獲取 v3 RequestContext adapter
-     *
+     * @return {@link V3RequestContextAdapter} (static utility)
      * @since 3.0.0
      */
     public static Class<V3RequestContextAdapter> v3RequestContext() {
@@ -60,8 +51,7 @@ public final class Adapters {
     }
 
     /**
-     * 獲取 v3 ErrorStatus adapter
-     *
+     * @return {@link V3ErrorStatusAdapter} (static utility)
      * @since 3.0.0
      */
     public static Class<V3ErrorStatusAdapter> v3ErrorStatus() {
@@ -69,8 +59,7 @@ public final class Adapters {
     }
 
     /**
-     * 獲取 v3 identity (v1 package) adapter
-     *
+     * @return {@link V3IdentityV1Adapter} — v3 identity primitives (static utility)
      * @since 3.0.0
      */
     public static Class<V3IdentityV1Adapter> v3IdentityV1() {
@@ -78,8 +67,7 @@ public final class Adapters {
     }
 
     /**
-     * 獲取 v3 event (v1 package) adapter
-     *
+     * @return {@link V3EventV1Adapter} — v3 event streaming primitives (static utility)
      * @since 3.0.0
      */
     public static Class<V3EventV1Adapter> v3EventV1() {
@@ -87,63 +75,40 @@ public final class Adapters {
     }
 
     /**
-     * 獲取 v3 sync (v1 package) adapter
-     *
+     * @return {@link V3SyncV1Adapter} — v3 sync streaming primitives (static utility)
      * @since 3.0.0
      */
     public static Class<V3SyncV1Adapter> v3SyncV1() {
         return V3SyncV1Adapter.class;
     }
-    
-    /**
-     * 獲取 IdentityAdapter 實例
-     * 
-     * @return IdentityAdapter 類（靜態方法）
-     */
+
+    /** @return {@link IdentityAdapter} (static utility) */
     public static Class<IdentityAdapter> identity() {
         return IdentityAdapter.class;
     }
-    
-    /**
-     * 獲取 AssetAdapter 實例
-     * 
-     * @return AssetAdapter 類（靜態方法）
-     */
+
+    /** @return {@link AssetAdapter} (static utility) */
     public static Class<AssetAdapter> asset() {
         return AssetAdapter.class;
     }
-    
-    /**
-     * 獲取 ContextAdapter 實例
-     * 
-     * @return ContextAdapter 類（靜態方法）
-     */
+
+    /** @return {@link ContextAdapter} (static utility) */
     public static Class<ContextAdapter> context() {
         return ContextAdapter.class;
     }
-    
-    /**
-     * 獲取 EventAdapter 實例
-     * 
-     * @return EventAdapter 類（靜態方法）
-     */
+
+    /** @return {@link EventAdapter} (static utility) */
     public static Class<EventAdapter> event() {
         return EventAdapter.class;
     }
-    
-    /**
-     * 獲取 TransactionAdapter 實例
-     * 
-     * @return TransactionAdapter 類（靜態方法）
-     */
+
+    /** @return {@link TransactionAdapter} (static utility) */
     public static Class<TransactionAdapter> transaction() {
         return TransactionAdapter.class;
     }
 
     /**
-     * 獲取 PolicyAdapter 實例
-     *
-     * @return PolicyAdapter 類（靜態方法）
+     * @return {@link PolicyAdapter} (static utility)
      * @since 2.2.0
      */
     public static Class<PolicyAdapter> policy() {
@@ -151,20 +116,14 @@ public final class Adapters {
     }
 
     /**
-     * 獲取 AuditAdapter 實例
-     *
-     * @return AuditAdapter 類（靜態方法）
+     * @return {@link AuditAdapter} (static utility)
      * @since 2.2.0
      */
     public static Class<AuditAdapter> audit() {
         return AuditAdapter.class;
     }
-    
-    /**
-     * 獲取 ResultAdapter 實例
-     * 
-     * @return ResultAdapter 類（靜態方法）
-     */
+
+    /** @return {@link ResultAdapter} (static utility) */
     public static Class<ResultAdapter> result() {
         return ResultAdapter.class;
     }

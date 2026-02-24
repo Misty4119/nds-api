@@ -6,43 +6,47 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * 時間排程器接口
- * 提供時間驅動任務的註冊和管理功能
+ * [Index] NDS-JAVA-TIMESCHEDULER-000
+ * [Semantic] Time-driven task scheduler with cron support.
+ *
+ * @since 2.0.0
  */
 public interface TimeScheduler {
-    
+
     /**
-     * 獲取 NDS 系統當前時間（已校正 Config 時區）
-     * @return 當前時間的 ZonedDateTime
+     * @return current system time adjusted to the configured timezone
      */
     ZonedDateTime getSystemTime();
-    
+
     /**
-     * 註冊一個自定義週期任務
-     * @param id 任務ID（必須唯一）
-     * @param cron Cron 表達式或自然語言（如 "daily", "weekly", "0 0 0 * * *", "14:30"）
-     * @param task 執行的邏輯，接收執行時間作為參數
+     * Register a recurring task.
+     *
+     * @param id unique task ID
+     * @param cron cron expression or shorthand (e.g. "daily", "weekly", "0 0 0 * * *", "14:30")
+     * @param task callback receiving the scheduled execution time
      */
     void registerSchedule(String id, String cron, Consumer<ZonedDateTime> task);
-    
+
     /**
-     * 強制計算某玩家的自然回復（通常用於 GUI 顯示前）
-     * @param playerUuid 玩家 UUID
-     * @param key Digital 鍵名（如 "stamina"）
+     * Force-compute natural regeneration for a player's Digital key.
+     * Typically called before GUI display to ensure a fresh value.
+     *
+     * @param playerUuid player UUID
+     * @param key Digital key name (e.g. "stamina")
      */
     void calculateRegen(UUID playerUuid, String key);
-    
+
     /**
-     * 獲取指定任務的下一次執行時間
-     * @param taskId 任務ID
-     * @return 下一次執行時間，如果任務不存在則返回 empty
+     * @param taskId task ID
+     * @return next scheduled execution time; empty if the task does not exist
      */
     Optional<ZonedDateTime> getNextExecutionTime(String taskId);
-    
+
     /**
-     * 強制立即觸發一次任務（用於測試）
-     * @param taskId 任務ID
-     * @return 如果任務存在並成功觸發返回 true，否則返回 false
+     * Force-trigger a task immediately (for testing only).
+     *
+     * @param taskId task ID
+     * @return true if the task exists and was triggered; false otherwise
      */
     boolean triggerTask(String taskId);
 }

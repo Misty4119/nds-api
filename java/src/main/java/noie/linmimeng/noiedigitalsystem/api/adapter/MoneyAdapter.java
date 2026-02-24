@@ -5,11 +5,11 @@ import java.math.BigInteger;
 import noie.linmimeng.noiedigitalsystem.api.proto.ledger.v1.Money;
 
 /**
- * Money Adapter - BigDecimal ↔ Proto Money（fixed-point: units + nanos/1e9）
+ * [Index] NDS-JAVA-MONEY-000
+ * [Semantic] BigDecimal ↔ Proto Money (fixed-point: units + nanos/1e9) exact conversion.
  *
- * <p><b>v3+</b>：ledger 熱路徑金額使用 fixed-point {@link Money} 表示，以避免高頻 Decimal(string) parse。</p>
- *
- * <p>規格（normative）：見 {@code spec/docs/V3.md}。</p>
+ * <p>[Behavior] v3+ ledger hot-path uses fixed-point {@link Money} to avoid high-frequency decimal string parsing.</p>
+ * <p>[Normative] See {@code spec/docs/V3.md} for Money invariants and exact conversion rules.</p>
  *
  * @since 3.0.0
  */

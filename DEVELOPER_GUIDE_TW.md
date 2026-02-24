@@ -2,8 +2,6 @@
 
 本指南說明如何在 Java 或 .NET 專案中整合 NDS-API。
 
-若你要開發 Minecraft 插件，請見 `MINECRAFT_DEVELOPER_GUIDE_TW.md`。
-
 ## 安裝
 
 ### Java

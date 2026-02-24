@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Context Adapter - NdsContext Domain ↔ Proto 轉換
- * 
- * <p>處理 NdsContext Domain 對象與 Proto 消息之間的雙向轉換。</p>
- * 
+ * [Index] NDS-JAVA-CONTEXT-000
+ * [Semantic] NdsContext Domain ↔ Proto conversion.
+ *
  * @since 2.0.0
  */
 public final class ContextAdapter {
@@ -18,10 +17,8 @@ public final class ContextAdapter {
     }
     
     /**
-     * 將 Domain NdsContext 轉換為 Proto NdsContext
-     * 
-     * @param domain Domain NdsContext（可為 null）
-     * @return Proto NdsContext，如果輸入為 null 則返回 null
+     * @param domain domain NdsContext (nullable)
+     * @return Proto NdsContext; null if input is null
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.context.NdsContext toProto(NdsContext domain) {
         if (domain == null) {
@@ -42,10 +39,8 @@ public final class ContextAdapter {
     }
     
     /**
-     * 將 Proto NdsContext 轉換為 Domain NdsContext
-     * 
-     * @param proto Proto NdsContext（可為 null）
-     * @return Domain NdsContext，如果輸入為 null 則返回 null
+     * @param proto Proto NdsContext (nullable)
+     * @return domain NdsContext; null if proto is null or traceId is empty
      */
     public static NdsContext fromProto(noie.linmimeng.noiedigitalsystem.api.proto.context.NdsContext proto) {
         if (proto == null || proto.getTraceId().isEmpty()) {

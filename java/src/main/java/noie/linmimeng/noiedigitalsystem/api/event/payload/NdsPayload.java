@@ -4,121 +4,52 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * NDS Payload - 序列化契約（防禦層）
- * 
- * <p>事件負載必須只包含可序列化的基本類型。</p>
- * 
- * <p><b>死刑條款：</b></p>
- * <ul>
- *   <li>嚴禁 Complex Object（平台特定對象，如 Minecraft 環境中的 Entity、Location、ItemStack）</li>
- *   <li>嚴禁平台特定類型（如 Bukkit/Paper、Spring Bean 等）</li>
- *   <li>嚴禁不可序列化的對象</li>
- *   <li>Core 必須拒絕違規事件</li>
- * </ul>
- * 
- * <p><b>允許的類型：</b></p>
- * <ul>
- *   <li>String, Integer, Long, Double, Boolean</li>
- *   <li>BigDecimal, BigInteger</li>
- *   <li>List&lt;String&gt;, Map&lt;String, Object&gt;</li>
- *   <li>null</li>
- * </ul>
- * 
+ * [Index] NDS-JAVA-PAYLOAD-000
+ * [Semantic] Serializable event payload — enforces a closed set of allowed value types.
+ *
+ * <p>[Constraint] Allowed value types: String, Integer, Long, Double, Boolean, BigDecimal, BigInteger,
+ * List&lt;String&gt;, Map&lt;String, Object&gt; (recursively checked), null.</p>
+ * <p>[Constraint] Platform-specific or non-serializable objects are prohibited.
+ * The runtime MUST reject events carrying prohibited types at build time.</p>
+ *
  * @since 2.0.0
  */
 public interface NdsPayload {
-    
-    /**
-     * 獲取字符串值
-     * 
-     * @param key 鍵
-     * @return 字符串值，如果不存在則返回 null
-     */
+
+    /** @return String value for key; null if absent */
     String getString(String key);
-    
-    /**
-     * 獲取整數值
-     * 
-     * @param key 鍵
-     * @return 整數值，如果不存在則返回 null
-     */
+
+    /** @return Integer value for key; null if absent */
     Integer getInt(String key);
-    
-    /**
-     * 獲取長整數值
-     * 
-     * @param key 鍵
-     * @return 長整數值，如果不存在則返回 null
-     */
+
+    /** @return Long value for key; null if absent */
     Long getLong(String key);
-    
-    /**
-     * 獲取雙精度浮點數值
-     * 
-     * @param key 鍵
-     * @return 雙精度浮點數值，如果不存在則返回 null
-     */
+
+    /** @return Double value for key; null if absent */
     Double getDouble(String key);
-    
-    /**
-     * 獲取布爾值
-     * 
-     * @param key 鍵
-     * @return 布爾值，如果不存在則返回 null
-     */
+
+    /** @return Boolean value for key; null if absent */
     Boolean getBoolean(String key);
-    
-    /**
-     * 獲取 BigDecimal 值
-     * 
-     * @param key 鍵
-     * @return BigDecimal 值，如果不存在則返回 null
-     */
+
+    /** @return BigDecimal value for key; null if absent */
     java.math.BigDecimal getBigDecimal(String key);
-    
-    /**
-     * 獲取列表值
-     * 
-     * @param key 鍵
-     * @return 字符串列表，如果不存在則返回空列表
-     */
+
+    /** @return string list for key; empty list if absent */
     java.util.List<String> getList(String key);
-    
-    /**
-     * 獲取映射值
-     * 
-     * @param key 鍵
-     * @return 映射，如果不存在則返回空映射
-     */
+
+    /** @return nested map for key; empty map if absent */
     Map<String, Object> getMap(String key);
-    
-    /**
-     * 轉換為原始映射
-     * 
-     * @return 原始映射（用於序列化）
-     */
+
+    /** @return raw map representation (for serialization) */
     Map<String, Object> toRawMap();
-    
-    /**
-     * 檢查是否包含鍵
-     * 
-     * @param key 鍵
-     * @return true 如果包含鍵
-     */
+
+    /** @return true if key is present */
     boolean containsKey(String key);
-    
-    /**
-     * 獲取所有鍵
-     * 
-     * @return 鍵集合
-     */
+
+    /** @return all keys in this payload */
     Set<String> keys();
-    
-    /**
-     * 檢查負載是否為空
-     * 
-     * @return true 如果為空
-     */
+
+    /** @return true if this payload contains no entries */
     boolean isEmpty();
 }
 

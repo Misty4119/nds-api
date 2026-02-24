@@ -7,10 +7,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Asset Adapter - AssetId/NdsAsset Domain ↔ Proto 轉換
- * 
- * <p>處理資產相關 Domain 對象與 Proto 消息之間的雙向轉換。</p>
- * 
+ * [Index] NDS-JAVA-ASSET-000
+ * [Semantic] AssetId / NdsAsset Domain ↔ Proto conversion.
+ *
  * @since 2.0.0
  */
 public final class AssetAdapter {
@@ -24,10 +23,8 @@ public final class AssetAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain AssetId 轉換為 Proto AssetId
-     * 
-     * @param domain Domain AssetId（可為 null）
-     * @return Proto AssetId，如果輸入為 null 則返回 null
+     * @param domain domain AssetId (nullable)
+     * @return Proto AssetId; null if input is null
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.asset.AssetId toProto(AssetId domain) {
         if (domain == null) {
@@ -41,10 +38,8 @@ public final class AssetAdapter {
     }
     
     /**
-     * 將 Proto AssetId 轉換為 Domain AssetId
-     * 
-     * @param proto Proto AssetId（可為 null）
-     * @return Domain AssetId，如果輸入為 null 則返回 null
+     * @param proto Proto AssetId (nullable)
+     * @return domain AssetId; null if proto is null or name is empty
      */
     public static AssetId fromProto(noie.linmimeng.noiedigitalsystem.api.proto.asset.AssetId proto) {
         if (proto == null || proto.getName().isEmpty()) {
@@ -60,9 +55,7 @@ public final class AssetAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain AssetScope 轉換為 Proto AssetScope
-     * 
-     * @param scope Domain AssetScope
+     * @param scope domain AssetScope (nullable; treated as UNKNOWN if null)
      * @return Proto AssetScope
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.asset.AssetScope toProtoScope(AssetScope scope) {
@@ -79,10 +72,8 @@ public final class AssetAdapter {
     }
     
     /**
-     * 將 Proto AssetScope 轉換為 Domain AssetScope
-     * 
-     * @param protoScope Proto AssetScope
-     * @return Domain AssetScope
+     * @param protoScope Proto AssetScope (nullable; treated as UNKNOWN if null)
+     * @return domain AssetScope
      */
     public static AssetScope fromProtoScope(noie.linmimeng.noiedigitalsystem.api.proto.asset.AssetScope protoScope) {
         if (protoScope == null) {

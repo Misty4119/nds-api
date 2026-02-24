@@ -2,8 +2,6 @@
 
 This guide is for developers integrating NDS-API in Java or .NET applications.
 
-For Minecraft plugin integration, see `MINECRAFT_DEVELOPER_GUIDE.md`.
-
 ## Install
 
 ### Java

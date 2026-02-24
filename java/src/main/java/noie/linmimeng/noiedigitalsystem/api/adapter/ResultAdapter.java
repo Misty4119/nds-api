@@ -6,10 +6,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Result Adapter - NdsResult/NdsError Domain ↔ Proto 轉換
- * 
- * <p>處理結果相關 Domain 對象與 Proto 消息之間的雙向轉換。</p>
- * 
+ * [Index] NDS-JAVA-RESULT-000
+ * [Semantic] NdsResult / NdsError Domain ↔ Proto conversion.
+ *
  * @since 2.0.0
  */
 public final class ResultAdapter {
@@ -23,10 +22,8 @@ public final class ResultAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain NdsResult 轉換為 Proto NdsResult
-     * 
-     * @param domain Domain NdsResult（可為 null）
-     * @return Proto NdsResult，如果輸入為 null 則返回 null
+     * @param domain domain NdsResult (nullable)
+     * @return Proto NdsResult; null if input is null
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.common.NdsResult toProto(NdsResult<?> domain) {
         if (domain == null) {
@@ -44,11 +41,7 @@ public final class ResultAdapter {
         return builder.build();
     }
     
-    /**
-     * 創建成功的 Proto NdsResult
-     * 
-     * @return 成功的 Proto NdsResult
-     */
+    /** @return Proto NdsResult with success=true */
     public static noie.linmimeng.noiedigitalsystem.api.proto.common.NdsResult successProto() {
         return noie.linmimeng.noiedigitalsystem.api.proto.common.NdsResult.newBuilder()
             .setSuccess(true)
@@ -56,11 +49,9 @@ public final class ResultAdapter {
     }
     
     /**
-     * 創建失敗的 Proto NdsResult
-     * 
-     * @param code 錯誤碼
-     * @param message 錯誤消息
-     * @return 失敗的 Proto NdsResult
+     * @param code error code
+     * @param message error message
+     * @return Proto NdsResult with success=false and embedded error
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.common.NdsResult failureProto(String code, String message) {
         return noie.linmimeng.noiedigitalsystem.api.proto.common.NdsResult.newBuilder()
@@ -77,10 +68,8 @@ public final class ResultAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain NdsError 轉換為 Proto NdsError
-     * 
-     * @param domain Domain NdsError（可為 null）
-     * @return Proto NdsError，如果輸入為 null 則返回 null
+     * @param domain domain NdsError (nullable)
+     * @return Proto NdsError; null if input is null
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.common.NdsError toProto(NdsError domain) {
         if (domain == null) {
@@ -105,10 +94,8 @@ public final class ResultAdapter {
     }
     
     /**
-     * 將 Proto NdsError 轉換為 Domain NdsError
-     * 
-     * @param proto Proto NdsError（可為 null）
-     * @return Domain NdsError，如果輸入為 null 則返回 null
+     * @param proto Proto NdsError (nullable)
+     * @return domain NdsError; null if proto is null or code is empty
      */
     public static NdsError fromProto(noie.linmimeng.noiedigitalsystem.api.proto.common.NdsError proto) {
         if (proto == null || proto.getCode().isEmpty()) {

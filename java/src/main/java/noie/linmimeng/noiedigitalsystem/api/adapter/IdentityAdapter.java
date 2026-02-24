@@ -7,10 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Identity Adapter - NdsIdentity Domain ↔ Proto 轉換
- * 
- * <p>處理 NdsIdentity Domain 對象與 Proto 消息之間的雙向轉換。</p>
- * 
+ * [Index] NDS-JAVA-IDENTITY-000
+ * [Semantic] NdsIdentity / IdentityType Domain ↔ Proto conversion.
+ *
  * @since 2.0.0
  */
 public final class IdentityAdapter {
@@ -20,10 +19,8 @@ public final class IdentityAdapter {
     }
     
     /**
-     * 將 Domain NdsIdentity 轉換為 Proto NdsIdentity
-     * 
-     * @param domain Domain NdsIdentity（可為 null）
-     * @return Proto NdsIdentity，如果輸入為 null 則返回 null
+     * @param domain domain NdsIdentity (nullable)
+     * @return Proto NdsIdentity; null if input is null
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.identity.NdsIdentity toProto(NdsIdentity domain) {
         if (domain == null) {
@@ -47,10 +44,8 @@ public final class IdentityAdapter {
     }
     
     /**
-     * 將 Proto NdsIdentity 轉換為 Domain NdsIdentity
-     * 
-     * @param proto Proto NdsIdentity（可為 null）
-     * @return Domain NdsIdentity，如果輸入為 null 則返回 null
+     * @param proto Proto NdsIdentity (nullable)
+     * @return domain NdsIdentity; null if proto is null or id is empty
      */
     public static NdsIdentity fromProto(noie.linmimeng.noiedigitalsystem.api.proto.identity.NdsIdentity proto) {
         if (proto == null || proto.getId().isEmpty()) {
@@ -67,9 +62,7 @@ public final class IdentityAdapter {
     }
     
     /**
-     * 將 Domain IdentityType 轉換為 Proto IdentityType
-     * 
-     * @param type Domain IdentityType
+     * @param type domain IdentityType (nullable; treated as UNKNOWN if null)
      * @return Proto IdentityType
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.identity.IdentityType toProtoType(IdentityType type) {
@@ -87,10 +80,8 @@ public final class IdentityAdapter {
     }
     
     /**
-     * 將 Proto IdentityType 轉換為 Domain IdentityType
-     * 
-     * @param protoType Proto IdentityType
-     * @return Domain IdentityType
+     * @param protoType Proto IdentityType (nullable; treated as UNKNOWN if null)
+     * @return domain IdentityType
      */
     public static IdentityType fromProtoType(noie.linmimeng.noiedigitalsystem.api.proto.identity.IdentityType protoType) {
         if (protoType == null) {

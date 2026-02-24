@@ -8,10 +8,9 @@ import com.google.protobuf.Timestamp;
 import java.time.Instant;
 
 /**
- * Event Adapter - NdsEvent/EventId/EventType Domain ↔ Proto 轉換
- * 
- * <p>處理事件相關 Domain 對象與 Proto 消息之間的雙向轉換。</p>
- * 
+ * [Index] NDS-JAVA-EVENT-000
+ * [Semantic] NdsEvent / EventId / EventType Domain ↔ Proto conversion.
+ *
  * @since 2.0.0
  */
 public final class EventAdapter {
@@ -25,10 +24,8 @@ public final class EventAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain EventId 轉換為 Proto EventId
-     * 
-     * @param domain Domain EventId（可為 null）
-     * @return Proto EventId，如果輸入為 null 則返回 null
+     * @param domain domain EventId (nullable)
+     * @return Proto EventId; null if input is null
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.event.EventId toProto(EventId domain) {
         if (domain == null) {
@@ -41,10 +38,8 @@ public final class EventAdapter {
     }
     
     /**
-     * 將 Proto EventId 轉換為 Domain EventId
-     * 
-     * @param proto Proto EventId（可為 null）
-     * @return Domain EventId，如果輸入為 null 則返回 null
+     * @param proto Proto EventId (nullable)
+     * @return domain EventId; null if proto is null or value is empty
      */
     public static EventId fromProto(noie.linmimeng.noiedigitalsystem.api.proto.event.EventId proto) {
         if (proto == null || proto.getValue().isEmpty()) {
@@ -59,9 +54,7 @@ public final class EventAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain EventType 轉換為 Proto EventType
-     * 
-     * @param type Domain EventType
+     * @param type domain EventType (nullable; treated as UNSPECIFIED if null)
      * @return Proto EventType
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.event.EventType toProtoType(EventType type) {
@@ -82,10 +75,8 @@ public final class EventAdapter {
     }
     
     /**
-     * 將 Proto EventType 轉換為 Domain EventType
-     * 
-     * @param protoType Proto EventType
-     * @return Domain EventType
+     * @param protoType Proto EventType (nullable; defaults to CUSTOM if null or unrecognized)
+     * @return domain EventType
      */
     public static EventType fromProtoType(noie.linmimeng.noiedigitalsystem.api.proto.event.EventType protoType) {
         if (protoType == null) {
@@ -109,10 +100,8 @@ public final class EventAdapter {
     // ========================================================================
     
     /**
-     * 將 Java Instant 轉換為 Proto Timestamp
-     * 
-     * @param instant Java Instant（可為 null）
-     * @return Proto Timestamp，如果輸入為 null 則返回 null
+     * @param instant Java Instant (nullable)
+     * @return Proto Timestamp; null if input is null
      */
     public static Timestamp toProtoTimestamp(Instant instant) {
         if (instant == null) {
@@ -126,10 +115,8 @@ public final class EventAdapter {
     }
     
     /**
-     * 將 Proto Timestamp 轉換為 Java Instant
-     * 
-     * @param timestamp Proto Timestamp（可為 null）
-     * @return Java Instant，如果輸入為 null 則返回 null
+     * @param timestamp Proto Timestamp (nullable)
+     * @return Java Instant; null if input is null
      */
     public static Instant fromProtoTimestamp(Timestamp timestamp) {
         if (timestamp == null) {

@@ -11,16 +11,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Audit Adapter - NdsRationale Domain ↔ Proto 轉換
+ * [Index] NDS-JAVA-AUDIT-000
+ * [Semantic] NdsRationale / NdsRationaleRef Domain ↔ Proto conversion.
  *
  * @since 2.2.0
  */
 public final class AuditAdapter {
 
     private AuditAdapter() {
-        // Utility class
+        // [Index] NDS-JAVA-AUDIT-001 [Constraint] Utility class; instantiation is prohibited.
     }
 
+    /**
+     * @param domain domain rationale ref (nullable)
+     * @return Proto NdsRationaleRef; null if input is null
+     */
     public static noie.linmimeng.noiedigitalsystem.api.proto.audit.NdsRationaleRef toProto(NdsRationaleRef domain) {
         if (domain == null) return null;
 
@@ -37,6 +42,10 @@ public final class AuditAdapter {
         return builder.build();
     }
 
+    /**
+     * @param proto Proto NdsRationaleRef (nullable)
+     * @return domain NdsRationaleRef; null if proto is null or uri is empty
+     */
     public static NdsRationaleRef fromProto(noie.linmimeng.noiedigitalsystem.api.proto.audit.NdsRationaleRef proto) {
         if (proto == null || proto.getUri().isEmpty()) return null;
         return NdsRationaleRef.of(
@@ -46,6 +55,10 @@ public final class AuditAdapter {
         );
     }
 
+    /**
+     * @param domain domain NdsRationale (nullable)
+     * @return Proto NdsRationale; null if input is null
+     */
     public static noie.linmimeng.noiedigitalsystem.api.proto.audit.NdsRationale toProto(NdsRationale domain) {
         if (domain == null) return null;
 
@@ -89,6 +102,10 @@ public final class AuditAdapter {
         return builder.build();
     }
 
+    /**
+     * @param proto Proto NdsRationale (nullable)
+     * @return domain NdsRationale; null if proto is null or source is empty
+     */
     public static NdsRationale fromProto(noie.linmimeng.noiedigitalsystem.api.proto.audit.NdsRationale proto) {
         if (proto == null || proto.getSource().isEmpty()) return null;
 

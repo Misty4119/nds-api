@@ -9,13 +9,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * NoieDigitalSystem API Bridge - 橋接實作
- * 
- * <p>將舊 API 調用橋接到新的 NdsRuntime。</p>
- * 
- * <p><b>注意：</b>此類是舊 API 的橋接框架，具體的橋接邏輯需要在 nds-core 中實作。</p>
- * <p>所有方法目前都拋出 UnsupportedOperationException，需要在 nds-core 中提供完整實作。</p>
- * 
+ * [Index] NDS-JAVA-BRIDGE-000
+ * [Semantic] Skeleton bridge from the deprecated v1 API to the current NdsRuntime.
+ *
+ * <p>[Constraint] All methods throw {@link UnsupportedOperationException};
+ * concrete implementations must be provided by nds-core.</p>
+ *
  * @since 2.0.0
  */
 public class NoieDigitalSystemAPIBridge implements NoieDigitalSystemAPI {

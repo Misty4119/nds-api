@@ -4,12 +4,11 @@ import noie.linmimeng.noiedigitalsystem.api.proto.common.Decimal;
 import java.math.BigDecimal;
 
 /**
- * Decimal Adapter - BigDecimal ↔ Proto Decimal 轉換
- * 
- * <p>處理 Java BigDecimal 與 Proto Decimal 之間的精確轉換。</p>
- * 
- * <p><b>重要</b>：Proto 使用字符串表示 BigDecimal 以確保精度不丟失。</p>
- * 
+ * [Index] NDS-JAVA-DECIMAL-000
+ * [Semantic] BigDecimal ↔ Proto Decimal exact conversion.
+ *
+ * <p>[Constraint] Proto encodes decimals as plain strings to preserve full precision across languages.</p>
+ *
  * @since 2.0.0
  */
 public final class DecimalAdapter {
@@ -19,10 +18,8 @@ public final class DecimalAdapter {
     }
     
     /**
-     * 將 Java BigDecimal 轉換為 Proto Decimal
-     * 
-     * @param value Java BigDecimal（可為 null）
-     * @return Proto Decimal，如果輸入為 null 則返回 null
+     * @param value BigDecimal (nullable)
+     * @return Proto Decimal; null if input is null
      */
     public static Decimal toProto(BigDecimal value) {
         if (value == null) {
@@ -35,10 +32,8 @@ public final class DecimalAdapter {
     }
     
     /**
-     * 將 Proto Decimal 轉換為 Java BigDecimal
-     * 
-     * @param proto Proto Decimal（可為 null）
-     * @return Java BigDecimal，如果輸入為 null 則返回 null
+     * @param proto Proto Decimal (nullable)
+     * @return BigDecimal; null if input is null or value is empty
      */
     public static BigDecimal fromProto(Decimal proto) {
         if (proto == null || proto.getValue().isEmpty()) {
@@ -48,22 +43,16 @@ public final class DecimalAdapter {
     }
     
     /**
-     * 將 Proto Decimal 轉換為 Java BigDecimal（帶默認值）
-     * 
-     * @param proto Proto Decimal（可為 null）
-     * @param defaultValue 默認值
-     * @return Java BigDecimal，如果輸入為 null 則返回默認值
+     * @param proto Proto Decimal (nullable)
+     * @param defaultValue value returned when proto is null or empty
+     * @return BigDecimal; defaultValue if proto is null or empty
      */
     public static BigDecimal fromProto(Decimal proto, BigDecimal defaultValue) {
         BigDecimal result = fromProto(proto);
         return result != null ? result : defaultValue;
     }
     
-    /**
-     * 創建表示零的 Proto Decimal
-     * 
-     * @return 表示零的 Proto Decimal
-     */
+    /** @return Proto Decimal representing zero (value="0", scale=0) */
     public static Decimal zero() {
         return Decimal.newBuilder()
             .setValue("0")

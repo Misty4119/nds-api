@@ -22,121 +22,84 @@ import java.util.Map;
 public interface NdsTransactionBuilder {
     
     /**
-     * 設置交易 ID
-     * 
-     * @param id 交易 ID（如果為 null，則自動生成）
-     * @return 構建器實例
+     * @param id transaction ID; auto-generated if null
+     * @return this builder
      */
     NdsTransactionBuilder id(EventId id);
-    
+
     /**
-     * 設置交易發生時間
-     * 
-     * @param occurredAt 發生時間（如果為 null，則使用當前時間）
-     * @return 構建器實例
+     * @param occurredAt event timestamp; defaults to current time if null
+     * @return this builder
      */
     NdsTransactionBuilder occurredAt(Instant occurredAt);
-    
+
     /**
-     * 設置交易發起者
-     * 
-     * @param actor 身份對象（必須）
-     * @return 構建器實例
+     * @param actor initiating identity (required)
+     * @return this builder
      */
     NdsTransactionBuilder actor(NdsIdentity actor);
-    
+
     /**
-     * 設置資產 ID
-     * 
-     * @param asset 資產 ID（必須）
-     * @return 構建器實例
+     * @param asset asset subject to the delta (required)
+     * @return this builder
      */
     NdsTransactionBuilder asset(AssetId asset);
-    
+
     /**
-     * 設置變更量
-     * 
-     * @param delta 變更量（必須，正數表示增加，負數表示減少）
-     * @return 構建器實例
+     * @param delta amount change: positive = credit, negative = debit (required)
+     * @return this builder
      */
     NdsTransactionBuilder delta(BigDecimal delta);
-    
+
     /**
-     * 設置一致性模式
-     * 
-     * @param consistency 一致性模式（必須）
-     * @return 構建器實例
+     * @param consistency consistency requirement (required)
+     * @return this builder
      */
     NdsTransactionBuilder consistency(ConsistencyMode consistency);
-    
+
     /**
-     * 設置源身份（可選，用於轉賬）
-     * 
-     * @param source 源身份
-     * @return 構建器實例
+     * @param source debited identity for transfers (optional)
+     * @return this builder
      */
     NdsTransactionBuilder source(NdsIdentity source);
-    
+
     /**
-     * 設置目標身份（可選，用於轉賬）
-     * 
-     * @param target 目標身份
-     * @return 構建器實例
+     * @param target credited identity for transfers (optional)
+     * @return this builder
      */
     NdsTransactionBuilder target(NdsIdentity target);
-    
+
     /**
-     * 設置交易原因（可選）
-     * 
-     * @param reason 交易原因
-     * @return 構建器實例
+     * @param reason human-readable reason (optional)
+     * @return this builder
      */
     NdsTransactionBuilder reason(String reason);
-    
+
     /**
-     * 設置模式版本
-     * 
-     * @param schemaVersion 模式版本（默認為 1）
-     * @return 構建器實例
+     * @param schemaVersion payload schema version (default: 1)
+     * @return this builder
      */
     NdsTransactionBuilder schemaVersion(int schemaVersion);
-    
+
     /**
-     * 設置元數據
-     * 
-     * @param metadata 元數據映射（可為 null）
-     * @return 構建器實例
+     * @param metadata additional key-value metadata (nullable)
+     * @return this builder
      */
     NdsTransactionBuilder metadata(Map<String, String> metadata);
-    
+
     /**
-     * 構建交易事件
-     * 
-     * <p><b>⚠️ 重要：Payload 運行時類型檢查</b></p>
-     * <p>構建時會自動創建 Payload（包含 asset, delta, consistency, source, target, reason 等字段），
-     * 並進行運行時類型檢查（見 {@link noie.linmimeng.noiedigitalsystem.api.event.NdsEventBuilder#build()}）。</p>
-     * 
-     * <p><b>自動構建的 Payload 結構：</b></p>
-     * <ul>
-     *   <li>asset: String (AssetId.fullId())</li>
-     *   <li>delta: BigDecimal</li>
-     *   <li>consistency: String (ConsistencyMode.name())</li>
-     *   <li>source: String (NdsIdentity 的字符串表示，如果設置)</li>
-     *   <li>target: String (NdsIdentity 的字符串表示，如果設置)</li>
-     *   <li>reason: String (如果設置)</li>
-     * </ul>
-     * 
-     * @return 不可變的交易事件對象
-     * @throws IllegalStateException 如果必填字段缺失
-     * @throws IllegalArgumentException 如果 Payload 包含違規類型
+     * Build the immutable transaction event.
+     *
+     * <p>[Behavior] Payload is auto-constructed from: asset (fullId), delta, consistency, source, target, reason.</p>
+     * <p>[Constraint] Payload values undergo runtime type validation (see {@link noie.linmimeng.noiedigitalsystem.api.event.NdsEventBuilder#build()}).</p>
+     *
+     * @return immutable NdsTransaction
+     * @throws IllegalStateException if required fields are missing
+     * @throws IllegalArgumentException if payload contains prohibited types
      */
     NdsTransaction build();
-    
-    /**
-     * 創建新的交易構建器
-     * 
-     * @return 新的構建器實例
-     */
+
+    /** @return new NdsTransactionBuilder (implementation provided by nds-core) */
     static NdsTransactionBuilder create() {
         // [Index] NDS-JAVA-TRANSACTIONBUILDER-900 [Trace] Implementation is provided by nds-core.
         throw new UnsupportedOperationException("NdsTransactionBuilder implementation must be provided by nds-core");

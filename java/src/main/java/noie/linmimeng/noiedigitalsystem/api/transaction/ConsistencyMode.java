@@ -1,39 +1,36 @@
 package noie.linmimeng.noiedigitalsystem.api.transaction;
 
 /**
- * Consistency Mode - 一致性模式
- * 
- * <p>定義交易的一致性要求。</p>
- * 
+ * [Index] NDS-JAVA-CONSISTENCYMODE-000
+ * [Semantic] Consistency requirements for applying a transaction.
+ *
  * @since 2.0.0
  */
 public enum ConsistencyMode {
     /**
-     * 強一致性
-     * 交易必須立即生效，保證數據一致性
-     * 適用於：關鍵經濟操作（支付、轉賬）
+     * Strong consistency.
+     * Applies immediately; prioritizes correctness.
+     * Suitable for critical economic operations (payments, transfers).
      */
     STRONG,
-    
+
     /**
-     * 最終一致性
-     * 交易可以延遲生效，最終保證一致性
-     * 適用於：非關鍵操作（統計、日誌）
+     * Eventual consistency.
+     * May apply with delay; converges over time.
+     * Suitable for non-critical operations (stats, logs).
      */
     EVENTUAL,
-    
+
     /**
-     * 樂觀一致性
-     * 交易基於樂觀鎖，可能失敗
-     * 適用於：高並發場景
+     * Optimistic consistency.
+     * Based on optimistic concurrency; may fail.
+     * Suitable for high-concurrency scenarios.
      */
     OPTIMISTIC;
-    
+
     /**
-     * 從字符串解析一致性模式
-     * 
-     * @param str 字符串
-     * @return 一致性模式，如果無法解析則返回 STRONG
+     * @param str string token (case-insensitive)
+     * @return parsed mode; defaults to {@link #STRONG} if null or unrecognized
      */
     public static ConsistencyMode fromString(String str) {
         if (str == null) return STRONG;

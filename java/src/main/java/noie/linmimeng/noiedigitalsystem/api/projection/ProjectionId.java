@@ -1,52 +1,35 @@
 package noie.linmimeng.noiedigitalsystem.api.projection;
 
 /**
- * Projection ID - 投影標識符
- * 
- * <p>投影的唯一標識符。</p>
- * 
+ * [Index] NDS-JAVA-PROJECTIONID-000
+ * [Semantic] Globally unique projection identifier (namespace:name).
+ *
  * @since 2.0.0
  */
 public interface ProjectionId {
-    
-    /**
-     * 獲取 ID 字符串
-     * 
-     * @return ID 字符串（格式：namespace:name，如 "balance:player:coins"）
-     */
+
+    /** @return full ID string in "namespace:name" format (e.g. "balance:player:coins") */
     String value();
-    
-    /**
-     * 獲取命名空間
-     * 
-     * @return 命名空間（如 "balance", "asset"）
-     */
+
+    /** @return namespace segment (e.g. "balance", "asset") */
     String namespace();
-    
-    /**
-     * 獲取名稱
-     * 
-     * @return 名稱（如 "player:coins"）
-     */
+
+    /** @return name segment (e.g. "player:coins") */
     String name();
-    
+
     /**
-     * 創建 ProjectionId
-     * 
-     * @param namespace 命名空間
-     * @param name 名稱
-     * @return ProjectionId 實例
+     * @param namespace namespace segment
+     * @param name name segment
+     * @return ProjectionId instance
      */
     static ProjectionId of(String namespace, String name) {
         return new ProjectionIdImpl(namespace, name);
     }
-    
+
     /**
-     * 從字符串解析 ProjectionId
-     * 
-     * @param value ID 字符串
-     * @return ProjectionId 實例
-     * @throws IllegalArgumentException 如果格式無效
+     * @param value non-empty "namespace:name" string
+     * @return parsed ProjectionId
+     * @throws IllegalArgumentException if value is null, empty, or malformed
      */
     static ProjectionId fromString(String value) {
         if (value == null || value.isEmpty()) {

@@ -5,16 +5,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Policy Adapter - NdsPolicy Domain ↔ Proto 轉換
+ * [Index] NDS-JAVA-POLICY-000
+ * [Semantic] NdsPolicy Domain ↔ Proto conversion.
  *
  * @since 2.2.0
  */
 public final class PolicyAdapter {
 
     private PolicyAdapter() {
-        // Utility class
+        // [Index] NDS-JAVA-POLICY-001 [Constraint] Utility class; instantiation is prohibited.
     }
 
+    /**
+     * @param domain domain NdsPolicy (nullable)
+     * @return Proto NdsPolicy; null if input is null
+     */
     public static noie.linmimeng.noiedigitalsystem.api.proto.policy.NdsPolicy toProto(NdsPolicy domain) {
         if (domain == null) return null;
 
@@ -35,6 +40,10 @@ public final class PolicyAdapter {
         return builder.build();
     }
 
+    /**
+     * @param proto Proto NdsPolicy (nullable)
+     * @return domain NdsPolicy; null if proto is null or policyId/policyType is empty
+     */
     public static NdsPolicy fromProto(noie.linmimeng.noiedigitalsystem.api.proto.policy.NdsPolicy proto) {
         if (proto == null || proto.getPolicyId().isEmpty() || proto.getPolicyType().isEmpty()) {
             return null;

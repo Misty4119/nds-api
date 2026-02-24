@@ -3,10 +3,9 @@ package noie.linmimeng.noiedigitalsystem.api.adapter;
 import noie.linmimeng.noiedigitalsystem.api.transaction.ConsistencyMode;
 
 /**
- * Transaction Adapter - Transaction Domain ↔ Proto 轉換
- * 
- * <p>處理交易相關 Domain 對象與 Proto 消息之間的雙向轉換。</p>
- * 
+ * [Index] NDS-JAVA-TRANSACTION-000
+ * [Semantic] Transaction Domain ↔ Proto conversion.
+ *
  * @since 2.0.0
  */
 public final class TransactionAdapter {
@@ -20,9 +19,7 @@ public final class TransactionAdapter {
     // ========================================================================
     
     /**
-     * 將 Domain ConsistencyMode 轉換為 Proto ConsistencyMode
-     * 
-     * @param mode Domain ConsistencyMode
+     * @param mode domain ConsistencyMode (nullable; defaults to STRONG if null)
      * @return Proto ConsistencyMode
      */
     public static noie.linmimeng.noiedigitalsystem.api.proto.transaction.ConsistencyMode toProtoMode(ConsistencyMode mode) {
@@ -38,10 +35,8 @@ public final class TransactionAdapter {
     }
     
     /**
-     * 將 Proto ConsistencyMode 轉換為 Domain ConsistencyMode
-     * 
-     * @param protoMode Proto ConsistencyMode
-     * @return Domain ConsistencyMode
+     * @param protoMode Proto ConsistencyMode (nullable; defaults to STRONG if null or unrecognized)
+     * @return domain ConsistencyMode
      */
     public static ConsistencyMode fromProtoMode(noie.linmimeng.noiedigitalsystem.api.proto.transaction.ConsistencyMode protoMode) {
         if (protoMode == null) {

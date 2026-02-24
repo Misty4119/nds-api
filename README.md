@@ -8,7 +8,6 @@ NDS-API provides:
 - **Go / TypeScript / Python / Rust / Ruby** generated protocol types (protobuf DTOs)
 
 NDS-API does not provide:
-- a Minecraft plugin runtime
 - database/storage implementations
 - networking/transport implementations
 
@@ -99,9 +98,6 @@ See `spec/docs/README.md` for the protocol documentation entry point.
 
 - General guide (EN): `DEVELOPER_GUIDE.md`
 - General guide (繁體中文): `DEVELOPER_GUIDE_TW.md`
-- Minecraft guide (EN): `MINECRAFT_DEVELOPER_GUIDE.md`
-- Minecraft guide (繁體中文): `MINECRAFT_DEVELOPER_GUIDE_TW.md`
-- Minecraft migration plan (EN): `nds_migration_next_gen_vault_replacement_plan_for_minecraft.md`
 
 ## Local verification (optional)
 

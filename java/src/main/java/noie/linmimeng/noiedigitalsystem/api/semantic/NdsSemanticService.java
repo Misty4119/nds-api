@@ -7,44 +7,35 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * NDS Semantic Service - 語義服務接口
- * 
- * <p>負責提供語義化功能。</p>
- * 
+ * [Index] NDS-JAVA-SEMANTICSERVICE-000
+ * [Semantic] Service for semantic extraction, vectorization, and semantic search.
+ *
  * @since 2.0.0
  */
 public interface NdsSemanticService {
-    
+
     /**
-     * 語義化資產
-     * 
-     * @param asset 資產對象
-     * @return CompletableFuture 包含語義化結果
+     * @param asset asset to semanticize
+     * @return async result containing the extracted NdsSemantic
      */
     CompletableFuture<NdsResult<NdsSemantic>> semanticize(NdsAsset asset);
-    
+
     /**
-     * 語義化事件
-     * 
-     * @param event 事件對象
-     * @return CompletableFuture 包含語義化結果
+     * @param event event to semanticize
+     * @return async result containing the extracted NdsSemantic
      */
     CompletableFuture<NdsResult<NdsSemantic>> semanticize(NdsEvent event);
-    
+
     /**
-     * 向量化數據
-     * 
-     * @param semantic 語義對象
-     * @return CompletableFuture 包含向量化結果
+     * @param semantic semantic object to vectorize
+     * @return async result containing the NdsTensor embedding
      */
     CompletableFuture<NdsResult<NdsTensor>> vectorize(NdsSemantic semantic);
-    
+
     /**
-     * 語義搜索
-     * 
-     * @param query 查詢語義對象
-     * @param limit 限制數量
-     * @return CompletableFuture 包含搜索結果
+     * @param query query semantic object
+     * @param limit maximum number of results
+     * @return async result containing matched NdsSemantic objects by similarity
      */
     CompletableFuture<NdsResult<List<NdsSemantic>>> search(NdsSemantic query, int limit);
 }

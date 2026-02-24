@@ -1,66 +1,39 @@
 package noie.linmimeng.noiedigitalsystem.api.event;
 
 /**
- * Event Type - 事件類型
- * 
- * <p>定義系統支持的事件類型。</p>
- * 
+ * [Index] NDS-JAVA-EVENTTYPE-000
+ * [Semantic] Standard event type taxonomy.
+ *
  * @since 2.0.0
  */
 public enum EventType {
-    /**
-     * 交易事件
-     * 用於資產轉移（見 NdsTransaction）
-     */
+    /** Asset delta event (see NdsTransaction). */
     TRANSACTION,
-    
-    /**
-     * 資產創建事件
-     * 用於創建新資產
-     */
+
+    /** Asset creation event. */
     ASSET_CREATED,
-    
-    /**
-     * 資產更新事件
-     * 用於更新資產元數據
-     */
+
+    /** Asset metadata update event. */
     ASSET_UPDATED,
-    
-    /**
-     * 資產刪除事件
-     * 用於刪除資產
-     */
+
+    /** Asset deletion event. */
     ASSET_DELETED,
-    
-    /**
-     * 身份創建事件
-     * 用於創建新身份
-     */
+
+    /** Identity creation event. */
     IDENTITY_CREATED,
-    
-    /**
-     * 身份更新事件
-     * 用於更新身份元數據
-     */
+
+    /** Identity metadata update event. */
     IDENTITY_UPDATED,
-    
-    /**
-     * 系統事件
-     * 用於系統級操作
-     */
+
+    /** System-level event. */
     SYSTEM,
-    
-    /**
-     * 自定義事件
-     * 用於擴展
-     */
+
+    /** Custom / extension event. */
     CUSTOM;
-    
+
     /**
-     * 從字符串解析事件類型
-     * 
-     * @param str 字符串
-     * @return 事件類型，如果無法解析則返回 CUSTOM
+     * @param str string token (case-insensitive)
+     * @return parsed type; defaults to {@link #CUSTOM} if null or unrecognized
      */
     public static EventType fromString(String str) {
         if (str == null) return CUSTOM;

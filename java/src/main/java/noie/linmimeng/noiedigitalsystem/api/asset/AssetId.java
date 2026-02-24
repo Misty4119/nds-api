@@ -1,41 +1,26 @@
 package noie.linmimeng.noiedigitalsystem.api.asset;
 
 /**
- * Asset ID - 資產標識符
- * 
- * <p>資產的唯一標識符，必須全局唯一。</p>
- * 
+ * [Index] NDS-JAVA-ASSETID-000
+ * [Semantic] Globally unique asset identifier (scope:name).
+ *
  * @since 2.0.0
  */
 public interface AssetId {
-    
-    /**
-     * 獲取資產名稱
-     * 
-     * @return 資產名稱（如 "coins", "gold", "world_boss_hp"）
-     */
+
+    /** @return asset name (e.g. "coins", "gold") */
     String name();
-    
-    /**
-     * 獲取完整 ID 字符串
-     * 
-     * @return 完整 ID（格式：scope:name，如 "player:coins", "server:world_boss_hp"）
-     */
+
+    /** @return canonical full ID string in "scope:name" format (e.g. "player:coins") */
     String fullId();
-    
-    /**
-     * 獲取作用域
-     * 
-     * @return 作用域
-     */
+
+    /** @return ownership scope */
     AssetScope scope();
-    
+
     /**
-     * 從字符串解析 AssetId
-     * 
-     * @param fullId 完整 ID 字符串
-     * @return AssetId 實例
-     * @throws IllegalArgumentException 如果格式無效
+     * @param fullId non-empty "scope:name" string
+     * @return parsed AssetId
+     * @throws IllegalArgumentException if fullId is null, empty, or malformed
      */
     static AssetId fromString(String fullId) {
         if (fullId == null || fullId.isEmpty()) {
@@ -50,13 +35,11 @@ public interface AssetId {
         AssetScope scope = AssetScope.fromString(scopeStr);
         return of(scope, name);
     }
-    
+
     /**
-     * 創建 AssetId
-     * 
-     * @param scope 作用域
-     * @param name 名稱
-     * @return AssetId 實例
+     * @param scope ownership scope
+     * @param name asset name
+     * @return AssetId instance
      */
     static AssetId of(AssetScope scope, String name) {
         return new AssetIdImpl(scope, name);

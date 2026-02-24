@@ -1,35 +1,25 @@
 package noie.linmimeng.noiedigitalsystem.api.event;
 
 /**
- * Event ID - 事件標識符
- * 
- * <p>事件的全局唯一標識符。</p>
- * 
+ * [Index] NDS-JAVA-EVENTID-000
+ * [Semantic] Globally unique event identifier.
+ *
  * @since 2.0.0
  */
 public interface EventId {
-    
-    /**
-     * 獲取 ID 字符串
-     * 
-     * @return ID 字符串（格式：UUID 或時間戳+隨機數）
-     */
+
+    /** @return ID string (UUID or timestamp-based) */
     String value();
-    
-    /**
-     * 創建新的 EventId
-     * 
-     * @return 新的 EventId 實例
-     */
+
+    /** @return new EventId backed by a random UUID */
     static EventId generate() {
         return new EventIdImpl(java.util.UUID.randomUUID().toString());
     }
-    
+
     /**
-     * 從字符串創建 EventId
-     * 
-     * @param value ID 字符串
-     * @return EventId 實例
+     * @param value non-empty ID string
+     * @return EventId wrapping the given value
+     * @throws IllegalArgumentException if value is null or empty
      */
     static EventId fromString(String value) {
         if (value == null || value.isEmpty()) {
