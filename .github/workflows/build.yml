@@ -167,7 +167,7 @@ jobs:
           ./gradlew :java:build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-sdk
           path: java/build/libs/*.jar
@@ -197,7 +197,7 @@ jobs:
         run: dotnet pack csharp/ --configuration Release --no-build -o artifacts
       
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: csharp-sdk
           path: artifacts/*.nupkg
