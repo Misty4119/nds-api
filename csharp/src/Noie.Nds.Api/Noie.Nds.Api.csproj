@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <!-- Protocol Buffers Runtime -->
-    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
+    <PackageReference Include="Google.Protobuf" Version="3.34.0" />
   </ItemGroup>
 
 </Project>
