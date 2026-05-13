@@ -21,9 +21,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.34.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
     <!-- Build-time codegen only -->
-    <PackageReference Include="Grpc.Tools" Version="2.78.0" PrivateAssets="all" />
+    <PackageReference Include="Grpc.Tools" Version="2.80.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
