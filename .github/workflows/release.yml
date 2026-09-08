@@ -13,7 +13,7 @@ jobs:
     name: Release TypeScript SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -36,7 +36,7 @@ jobs:
     name: Release Python SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -64,7 +64,7 @@ jobs:
     name: Release Rust SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -84,7 +84,7 @@ jobs:
     name: Release Ruby SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -110,7 +110,7 @@ jobs:
     name: Release Java SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -222,7 +222,7 @@ jobs:
     name: Release C# SDK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
@@ -250,7 +250,7 @@ jobs:
     needs: [release-java, release-csharp, release-typescript, release-python, release-rust, release-ruby]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
